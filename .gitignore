@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.tgz
+.DS_Store
+.env*
+!*.example
+examples/launch-film/build/
+examples/launch-film/assets/stock/
+examples/launch-film/public/
+*.blend*
+__pycache__/
+
