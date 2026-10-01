@@ -2,7 +2,8 @@
 import {mkdtemp,writeFile,readFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';import {join,resolve,dirname} from 'node:path';import {spawnSync} from 'node:child_process';
 const npmCli=process.env.npm_execpath??join(dirname(process.execPath),'node_modules/npm/bin/npm-cli.js');
-const tarball=resolve(process.argv[2]??'spatial-imagery-0.1.0.tgz');
+const version=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version;
+const tarball=resolve(process.argv[2]??`spatial-imagery-${version}.tgz`);
 const dir=await mkdtemp(join(tmpdir(),'spatial-imagery-consumer-'));
 function run(command,args,cwd=dir){const r=spawnSync(command,args,{cwd,encoding:'utf8'});if(r.status!==0)throw new Error(r.stderr||r.stdout);return r.stdout;}
 try{
@@ -12,4 +13,8 @@ try{
   console.log(run(process.execPath,['consumer.mjs']));
   console.log(run(process.execPath,['node_modules/spatial-imagery/dist/cli.js','init','film']));
   console.log(run(process.execPath,['node_modules/spatial-imagery/dist/cli.js','check','film/storyboard.json']));
+  const planner=await readFile(join(dir,'node_modules/spatial-imagery/templates/production/planner.md'),'utf8');
+  if(!planner.includes('FilmDesign'))throw Error('Production templates not packaged');
+  await writeFile(join(dir,'production.mjs'),`import {requestJSON,makeFilm} from 'spatial-imagery/production'; if(typeof makeFilm!=='function'||typeof requestJSON!=='function')throw Error('Production exports missing');`);
+  console.log(run(process.execPath,['production.mjs']));
 }finally{await rm(dir,{recursive:true,force:true});}

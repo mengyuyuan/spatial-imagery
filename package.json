@@ -1,11 +1,11 @@
 {
   "name": "spatial-imagery",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "空间意象 — subject-led spatial storytelling, camera choreography and sound continuity SDK",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": {".": {"types": "./dist/index.d.ts", "import": "./dist/index.js"}, "./node": {"types": "./dist/node.d.ts", "import": "./dist/node.js"}},
+  "exports": {".": {"types": "./dist/index.d.ts", "import": "./dist/index.js"}, "./node": {"types": "./dist/node.d.ts", "import": "./dist/node.js"}, "./production": {"types":"./dist/production-node.d.ts", "import":"./dist/production-node.js"}},
   "bin": {"spatial-imagery": "./dist/cli.js"},
   "files": ["dist", "templates", "docs", "LICENSE", "NOTICE.md", "README.md", "README.zh-CN.md"],
   "engines": {"node": ">=22"},

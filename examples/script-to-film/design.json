@@ -1,0 +1,2477 @@
+{
+  "version": 1,
+  "scriptSha256": "b1add23f2642d154046cf941cc2394175919fd26de9347cf1f2055c7aee5557a",
+  "title": "城市的节奏 · Script-to-film integration",
+  "width": 1280,
+  "height": 720,
+  "fps": 30,
+  "durationInFrames": 600,
+  "background": "#f3f0e6",
+  "direction": "从实拍交通灯中接出同一绿色主体，速度场→结构→路径接力；米白、森林绿与珊瑚色；连续配乐和随动作收束的运动声。验证通用执行器，不宣称新审美基准。",
+  "shots": [
+    {
+      "id": "SH01",
+      "to": 150,
+      "state": "full",
+      "lines": [
+        "L001"
+      ],
+      "keyword": "节奏",
+      "subject": "signal 主体与关系结构",
+      "initial": "真实城市信号灯与车流",
+      "action": "信号灯与车流动态入画，绿色焦点移交给图形",
+      "result": "真实节奏成为图形主体",
+      "camera": "稳定观察信号灯，焦点接棒",
+      "sound": "现成运动声包络随起势、减速与到位变化；音乐保持连续。",
+      "assets": [
+        "traffic-127",
+        "music",
+        "motion"
+      ],
+      "readFrames": 30,
+      "from": 0,
+      "handoff": {
+        "to": "SH02",
+        "method": "主体/方向接力",
+        "continuity": "上一主体的方向与状态进入下一镜，文字留在屏幕坐标"
+      }
+    },
+    {
+      "id": "SH02",
+      "to": 276,
+      "state": "full",
+      "lines": [
+        "L002"
+      ],
+      "keyword": "加速",
+      "subject": "signal 主体与关系结构",
+      "initial": "绿色主体进入速度场",
+      "action": "短线掠过；相机追随主体后放慢",
+      "result": "主体减速，速度不是目的",
+      "camera": "横向追随并减速",
+      "sound": "现成运动声包络随起势、减速与到位变化；音乐保持连续。",
+      "assets": [
+        "music",
+        "motion"
+      ],
+      "readFrames": 30,
+      "from": 150,
+      "handoff": {
+        "to": "SH03",
+        "method": "主体/方向接力",
+        "continuity": "上一主体的方向与状态进入下一镜，文字留在屏幕坐标"
+      }
+    },
+    {
+      "id": "SH03",
+      "to": 395,
+      "state": "full",
+      "lines": [
+        "L003"
+      ],
+      "keyword": "方向",
+      "subject": "signal 主体与关系结构",
+      "initial": "散乱元素围绕主体",
+      "action": "元素落位成可读结构；圆变方",
+      "result": "观察、选择、出发的关系出现",
+      "camera": "拉回全局，让结构可读",
+      "sound": "现成运动声包络随起势、减速与到位变化；音乐保持连续。",
+      "assets": [
+        "music",
+        "motion",
+        "contact"
+      ],
+      "readFrames": 30,
+      "from": 276,
+      "handoff": {
+        "to": "SH04",
+        "method": "主体/方向接力",
+        "continuity": "上一主体的方向与状态进入下一镜，文字留在屏幕坐标"
+      }
+    },
+    {
+      "id": "SH04",
+      "to": 522,
+      "state": "full",
+      "lines": [
+        "L004"
+      ],
+      "keyword": "接成",
+      "subject": "signal 主体与关系结构",
+      "initial": "主体离开结构",
+      "action": "沿曲线传递焦点，路径与接收点渐次出现",
+      "result": "变化有可追踪的去向",
+      "camera": "沿主体去向轻推",
+      "sound": "现成运动声包络随起势、减速与到位变化；音乐保持连续。",
+      "assets": [
+        "music",
+        "motion",
+        "contact",
+        "opening"
+      ],
+      "readFrames": 30,
+      "from": 395,
+      "handoff": {
+        "to": "SH05",
+        "method": "主体/方向接力",
+        "continuity": "上一主体的方向与状态进入下一镜，文字留在屏幕坐标"
+      }
+    },
+    {
+      "id": "SH05",
+      "to": 600,
+      "state": "full",
+      "lines": [
+        "L004"
+      ],
+      "keyword": "节奏",
+      "subject": "signal 主体与关系结构",
+      "initial": "接力完成",
+      "action": "图形收声并退场，文字落稳",
+      "result": "思想形成自己的节奏",
+      "camera": "回到正视、稳定阅读",
+      "sound": "现成运动声包络随起势、减速与到位变化；音乐保持连续。",
+      "assets": [
+        "music",
+        "contact",
+        "opening"
+      ],
+      "readFrames": 30,
+      "from": 522
+    }
+  ],
+  "camera": {
+    "x": [
+      {
+        "frame": 0,
+        "value": 0
+      },
+      {
+        "frame": 150,
+        "value": 0
+      },
+      {
+        "frame": 210,
+        "value": 220
+      },
+      {
+        "frame": 267,
+        "value": 300
+      },
+      {
+        "frame": 315,
+        "value": 0
+      },
+      {
+        "frame": 390,
+        "value": 0
+      },
+      {
+        "frame": 460,
+        "value": 70
+      },
+      {
+        "frame": 520,
+        "value": 0
+      },
+      {
+        "frame": 600,
+        "value": 0
+      }
+    ],
+    "y": 0,
+    "zoom": [
+      {
+        "frame": 0,
+        "value": 1
+      },
+      {
+        "frame": 150,
+        "value": 1
+      },
+      {
+        "frame": 250,
+        "value": 1.08
+      },
+      {
+        "frame": 315,
+        "value": 1
+      },
+      {
+        "frame": 390,
+        "value": 1
+      },
+      {
+        "frame": 470,
+        "value": 1.04
+      },
+      {
+        "frame": 520,
+        "value": 1
+      }
+    ],
+    "perspective": 1400
+  },
+  "layers": [
+    {
+      "id": "paper",
+      "type": "rect",
+      "from": 0,
+      "to": 600,
+      "space": "world",
+      "x": 640,
+      "y": 360,
+      "width": 1280,
+      "height": 720,
+      "fill": "#f3f0e6"
+    },
+    {
+      "id": "traffic",
+      "type": "video",
+      "from": 0,
+      "to": 150,
+      "asset": "traffic-127",
+      "sourceIn": 1,
+      "x": 640,
+      "y": 360,
+      "width": 1280,
+      "height": 720,
+      "opacity": [
+        {
+          "frame": 0,
+          "value": 0
+        },
+        {
+          "frame": 12,
+          "value": 1
+        },
+        {
+          "frame": 120,
+          "value": 1
+        },
+        {
+          "frame": 149,
+          "value": 0
+        }
+      ],
+      "scale": [
+        {
+          "frame": 0,
+          "value": 1.06
+        },
+        {
+          "frame": 120,
+          "value": 1
+        },
+        {
+          "frame": 149,
+          "value": 0.8
+        }
+      ]
+    },
+    {
+      "id": "intro-title",
+      "type": "text",
+      "from": 8,
+      "to": 135,
+      "space": "screen",
+      "text": "城市，有自己的节奏。",
+      "fontSize": 64,
+      "fill": "#f3f0e6",
+      "width": 1100,
+      "height": 140,
+      "x": 640,
+      "y": 125,
+      "opacity": [
+        {
+          "frame": 8,
+          "value": 0
+        },
+        {
+          "frame": 24,
+          "value": 1
+        },
+        {
+          "frame": 112,
+          "value": 1
+        },
+        {
+          "frame": 134,
+          "value": 0
+        }
+      ],
+      "reveal": [
+        {
+          "frame": 8,
+          "value": 0
+        },
+        {
+          "frame": 32,
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "signal",
+      "type": "rect",
+      "from": 125,
+      "to": 556,
+      "x": [
+        {
+          "frame": 125,
+          "value": 970
+        },
+        {
+          "frame": 150,
+          "value": 1080
+        },
+        {
+          "frame": 200,
+          "value": 860
+        },
+        {
+          "frame": 260,
+          "value": 960
+        },
+        {
+          "frame": 300,
+          "value": 640
+        },
+        {
+          "frame": 365,
+          "value": 640
+        },
+        {
+          "frame": 415,
+          "value": 415
+        },
+        {
+          "frame": 480,
+          "value": 960
+        },
+        {
+          "frame": 530,
+          "value": 640
+        },
+        {
+          "frame": 555,
+          "value": 640
+        }
+      ],
+      "y": [
+        {
+          "frame": 125,
+          "value": 350
+        },
+        {
+          "frame": 210,
+          "value": 370
+        },
+        {
+          "frame": 270,
+          "value": 360
+        },
+        {
+          "frame": 390,
+          "value": 360
+        },
+        {
+          "frame": 445,
+          "value": 480
+        },
+        {
+          "frame": 490,
+          "value": 360
+        },
+        {
+          "frame": 555,
+          "value": 360
+        }
+      ],
+      "width": [
+        {
+          "frame": 125,
+          "value": 80
+        },
+        {
+          "frame": 148,
+          "value": 95
+        },
+        {
+          "frame": 260,
+          "value": 95
+        },
+        {
+          "frame": 310,
+          "value": 130
+        },
+        {
+          "frame": 385,
+          "value": 130
+        },
+        {
+          "frame": 460,
+          "value": 72
+        },
+        {
+          "frame": 530,
+          "value": 120
+        },
+        {
+          "frame": 555,
+          "value": 0
+        }
+      ],
+      "height": [
+        {
+          "frame": 125,
+          "value": 80
+        },
+        {
+          "frame": 148,
+          "value": 95
+        },
+        {
+          "frame": 260,
+          "value": 95
+        },
+        {
+          "frame": 310,
+          "value": 130
+        },
+        {
+          "frame": 385,
+          "value": 130
+        },
+        {
+          "frame": 460,
+          "value": 72
+        },
+        {
+          "frame": 530,
+          "value": 120
+        },
+        {
+          "frame": 555,
+          "value": 0
+        }
+      ],
+      "radius": [
+        {
+          "frame": 125,
+          "value": 50
+        },
+        {
+          "frame": 280,
+          "value": 50
+        },
+        {
+          "frame": 330,
+          "value": 12
+        },
+        {
+          "frame": 390,
+          "value": 12
+        },
+        {
+          "frame": 455,
+          "value": 40
+        }
+      ],
+      "fill": "#00a989",
+      "opacity": [
+        {
+          "frame": 125,
+          "value": 0
+        },
+        {
+          "frame": 137,
+          "value": 1
+        },
+        {
+          "frame": 538,
+          "value": 1
+        },
+        {
+          "frame": 555,
+          "value": 0
+        }
+      ],
+      "rotateZ": [
+        {
+          "frame": 125,
+          "value": 0
+        },
+        {
+          "frame": 260,
+          "value": 0
+        },
+        {
+          "frame": 330,
+          "value": 90
+        },
+        {
+          "frame": 390,
+          "value": 90
+        },
+        {
+          "frame": 460,
+          "value": 180
+        },
+        {
+          "frame": 530,
+          "value": 360
+        }
+      ]
+    },
+    {
+      "id": "lane-0",
+      "type": "rect",
+      "from": 140,
+      "to": 278,
+      "x": [
+        {
+          "frame": 140,
+          "value": 80
+        },
+        {
+          "frame": 208,
+          "value": 440
+        },
+        {
+          "frame": 266,
+          "value": 340
+        },
+        {
+          "frame": 277,
+          "value": 340
+        }
+      ],
+      "y": 290,
+      "width": [
+        {
+          "frame": 140,
+          "value": 8
+        },
+        {
+          "frame": 170,
+          "value": 60
+        },
+        {
+          "frame": 230,
+          "value": 110
+        },
+        {
+          "frame": 270,
+          "value": 8
+        }
+      ],
+      "height": 6,
+      "fill": "#24352f",
+      "opacity": [
+        {
+          "frame": 140,
+          "value": 0
+        },
+        {
+          "frame": 160,
+          "value": 0.3
+        },
+        {
+          "frame": 248,
+          "value": 0.3
+        },
+        {
+          "frame": 277,
+          "value": 0
+        }
+      ],
+      "z": -120
+    },
+    {
+      "id": "lane-1",
+      "type": "rect",
+      "from": 140,
+      "to": 278,
+      "x": [
+        {
+          "frame": 140,
+          "value": 195
+        },
+        {
+          "frame": 208,
+          "value": 555
+        },
+        {
+          "frame": 266,
+          "value": 455
+        },
+        {
+          "frame": 277,
+          "value": 455
+        }
+      ],
+      "y": 360,
+      "width": [
+        {
+          "frame": 140,
+          "value": 8
+        },
+        {
+          "frame": 170,
+          "value": 60
+        },
+        {
+          "frame": 230,
+          "value": 110
+        },
+        {
+          "frame": 270,
+          "value": 8
+        }
+      ],
+      "height": 6,
+      "fill": "#24352f",
+      "opacity": [
+        {
+          "frame": 140,
+          "value": 0
+        },
+        {
+          "frame": 160,
+          "value": 0.3
+        },
+        {
+          "frame": 248,
+          "value": 0.3
+        },
+        {
+          "frame": 277,
+          "value": 0
+        }
+      ],
+      "z": 0
+    },
+    {
+      "id": "lane-2",
+      "type": "rect",
+      "from": 140,
+      "to": 278,
+      "x": [
+        {
+          "frame": 140,
+          "value": 310
+        },
+        {
+          "frame": 208,
+          "value": 670
+        },
+        {
+          "frame": 266,
+          "value": 570
+        },
+        {
+          "frame": 277,
+          "value": 570
+        }
+      ],
+      "y": 430,
+      "width": [
+        {
+          "frame": 140,
+          "value": 8
+        },
+        {
+          "frame": 170,
+          "value": 60
+        },
+        {
+          "frame": 230,
+          "value": 110
+        },
+        {
+          "frame": 270,
+          "value": 8
+        }
+      ],
+      "height": 6,
+      "fill": "#24352f",
+      "opacity": [
+        {
+          "frame": 140,
+          "value": 0
+        },
+        {
+          "frame": 160,
+          "value": 0.3
+        },
+        {
+          "frame": 248,
+          "value": 0.3
+        },
+        {
+          "frame": 277,
+          "value": 0
+        }
+      ],
+      "z": 120
+    },
+    {
+      "id": "lane-3",
+      "type": "rect",
+      "from": 140,
+      "to": 278,
+      "x": [
+        {
+          "frame": 140,
+          "value": 425
+        },
+        {
+          "frame": 208,
+          "value": 785
+        },
+        {
+          "frame": 266,
+          "value": 685
+        },
+        {
+          "frame": 277,
+          "value": 685
+        }
+      ],
+      "y": 290,
+      "width": [
+        {
+          "frame": 140,
+          "value": 8
+        },
+        {
+          "frame": 170,
+          "value": 60
+        },
+        {
+          "frame": 230,
+          "value": 110
+        },
+        {
+          "frame": 270,
+          "value": 8
+        }
+      ],
+      "height": 6,
+      "fill": "#24352f",
+      "opacity": [
+        {
+          "frame": 140,
+          "value": 0
+        },
+        {
+          "frame": 160,
+          "value": 0.3
+        },
+        {
+          "frame": 248,
+          "value": 0.3
+        },
+        {
+          "frame": 277,
+          "value": 0
+        }
+      ],
+      "z": -120
+    },
+    {
+      "id": "lane-4",
+      "type": "rect",
+      "from": 140,
+      "to": 278,
+      "x": [
+        {
+          "frame": 140,
+          "value": 540
+        },
+        {
+          "frame": 208,
+          "value": 900
+        },
+        {
+          "frame": 266,
+          "value": 800
+        },
+        {
+          "frame": 277,
+          "value": 800
+        }
+      ],
+      "y": 360,
+      "width": [
+        {
+          "frame": 140,
+          "value": 8
+        },
+        {
+          "frame": 170,
+          "value": 60
+        },
+        {
+          "frame": 230,
+          "value": 110
+        },
+        {
+          "frame": 270,
+          "value": 8
+        }
+      ],
+      "height": 6,
+      "fill": "#24352f",
+      "opacity": [
+        {
+          "frame": 140,
+          "value": 0
+        },
+        {
+          "frame": 160,
+          "value": 0.3
+        },
+        {
+          "frame": 248,
+          "value": 0.3
+        },
+        {
+          "frame": 277,
+          "value": 0
+        }
+      ],
+      "z": 0
+    },
+    {
+      "id": "lane-5",
+      "type": "rect",
+      "from": 140,
+      "to": 278,
+      "x": [
+        {
+          "frame": 140,
+          "value": 655
+        },
+        {
+          "frame": 208,
+          "value": 1015
+        },
+        {
+          "frame": 266,
+          "value": 915
+        },
+        {
+          "frame": 277,
+          "value": 915
+        }
+      ],
+      "y": 430,
+      "width": [
+        {
+          "frame": 140,
+          "value": 8
+        },
+        {
+          "frame": 170,
+          "value": 60
+        },
+        {
+          "frame": 230,
+          "value": 110
+        },
+        {
+          "frame": 270,
+          "value": 8
+        }
+      ],
+      "height": 6,
+      "fill": "#24352f",
+      "opacity": [
+        {
+          "frame": 140,
+          "value": 0
+        },
+        {
+          "frame": 160,
+          "value": 0.3
+        },
+        {
+          "frame": 248,
+          "value": 0.3
+        },
+        {
+          "frame": 277,
+          "value": 0
+        }
+      ],
+      "z": 120
+    },
+    {
+      "id": "lane-6",
+      "type": "rect",
+      "from": 140,
+      "to": 278,
+      "x": [
+        {
+          "frame": 140,
+          "value": 770
+        },
+        {
+          "frame": 208,
+          "value": 1130
+        },
+        {
+          "frame": 266,
+          "value": 1030
+        },
+        {
+          "frame": 277,
+          "value": 1030
+        }
+      ],
+      "y": 290,
+      "width": [
+        {
+          "frame": 140,
+          "value": 8
+        },
+        {
+          "frame": 170,
+          "value": 60
+        },
+        {
+          "frame": 230,
+          "value": 110
+        },
+        {
+          "frame": 270,
+          "value": 8
+        }
+      ],
+      "height": 6,
+      "fill": "#24352f",
+      "opacity": [
+        {
+          "frame": 140,
+          "value": 0
+        },
+        {
+          "frame": 160,
+          "value": 0.3
+        },
+        {
+          "frame": 248,
+          "value": 0.3
+        },
+        {
+          "frame": 277,
+          "value": 0
+        }
+      ],
+      "z": -120
+    },
+    {
+      "id": "lane-7",
+      "type": "rect",
+      "from": 140,
+      "to": 278,
+      "x": [
+        {
+          "frame": 140,
+          "value": 885
+        },
+        {
+          "frame": 208,
+          "value": 1245
+        },
+        {
+          "frame": 266,
+          "value": 1145
+        },
+        {
+          "frame": 277,
+          "value": 1145
+        }
+      ],
+      "y": 360,
+      "width": [
+        {
+          "frame": 140,
+          "value": 8
+        },
+        {
+          "frame": 170,
+          "value": 60
+        },
+        {
+          "frame": 230,
+          "value": 110
+        },
+        {
+          "frame": 270,
+          "value": 8
+        }
+      ],
+      "height": 6,
+      "fill": "#24352f",
+      "opacity": [
+        {
+          "frame": 140,
+          "value": 0
+        },
+        {
+          "frame": 160,
+          "value": 0.3
+        },
+        {
+          "frame": 248,
+          "value": 0.3
+        },
+        {
+          "frame": 277,
+          "value": 0
+        }
+      ],
+      "z": 0
+    },
+    {
+      "id": "lane-8",
+      "type": "rect",
+      "from": 140,
+      "to": 278,
+      "x": [
+        {
+          "frame": 140,
+          "value": 1000
+        },
+        {
+          "frame": 208,
+          "value": 1360
+        },
+        {
+          "frame": 266,
+          "value": 1260
+        },
+        {
+          "frame": 277,
+          "value": 1260
+        }
+      ],
+      "y": 430,
+      "width": [
+        {
+          "frame": 140,
+          "value": 8
+        },
+        {
+          "frame": 170,
+          "value": 60
+        },
+        {
+          "frame": 230,
+          "value": 110
+        },
+        {
+          "frame": 270,
+          "value": 8
+        }
+      ],
+      "height": 6,
+      "fill": "#24352f",
+      "opacity": [
+        {
+          "frame": 140,
+          "value": 0
+        },
+        {
+          "frame": 160,
+          "value": 0.3
+        },
+        {
+          "frame": 248,
+          "value": 0.3
+        },
+        {
+          "frame": 277,
+          "value": 0
+        }
+      ],
+      "z": 120
+    },
+    {
+      "id": "lane-9",
+      "type": "rect",
+      "from": 140,
+      "to": 278,
+      "x": [
+        {
+          "frame": 140,
+          "value": 1115
+        },
+        {
+          "frame": 208,
+          "value": 1475
+        },
+        {
+          "frame": 266,
+          "value": 1375
+        },
+        {
+          "frame": 277,
+          "value": 1375
+        }
+      ],
+      "y": 290,
+      "width": [
+        {
+          "frame": 140,
+          "value": 8
+        },
+        {
+          "frame": 170,
+          "value": 60
+        },
+        {
+          "frame": 230,
+          "value": 110
+        },
+        {
+          "frame": 270,
+          "value": 8
+        }
+      ],
+      "height": 6,
+      "fill": "#24352f",
+      "opacity": [
+        {
+          "frame": 140,
+          "value": 0
+        },
+        {
+          "frame": 160,
+          "value": 0.3
+        },
+        {
+          "frame": 248,
+          "value": 0.3
+        },
+        {
+          "frame": 277,
+          "value": 0
+        }
+      ],
+      "z": -120
+    },
+    {
+      "id": "lane-10",
+      "type": "rect",
+      "from": 140,
+      "to": 278,
+      "x": [
+        {
+          "frame": 140,
+          "value": 1230
+        },
+        {
+          "frame": 208,
+          "value": 1590
+        },
+        {
+          "frame": 266,
+          "value": 1490
+        },
+        {
+          "frame": 277,
+          "value": 1490
+        }
+      ],
+      "y": 360,
+      "width": [
+        {
+          "frame": 140,
+          "value": 8
+        },
+        {
+          "frame": 170,
+          "value": 60
+        },
+        {
+          "frame": 230,
+          "value": 110
+        },
+        {
+          "frame": 270,
+          "value": 8
+        }
+      ],
+      "height": 6,
+      "fill": "#24352f",
+      "opacity": [
+        {
+          "frame": 140,
+          "value": 0
+        },
+        {
+          "frame": 160,
+          "value": 0.3
+        },
+        {
+          "frame": 248,
+          "value": 0.3
+        },
+        {
+          "frame": 277,
+          "value": 0
+        }
+      ],
+      "z": 0
+    },
+    {
+      "id": "fast-title",
+      "type": "text",
+      "from": 151,
+      "to": 267,
+      "space": "screen",
+      "text": "快，不是一直加速。",
+      "fontSize": 68,
+      "fill": "#182c26",
+      "width": 1140,
+      "height": 130,
+      "x": 640,
+      "y": 140,
+      "reveal": [
+        {
+          "frame": 151,
+          "value": 0
+        },
+        {
+          "frame": 167,
+          "value": 1
+        }
+      ],
+      "opacity": [
+        {
+          "frame": 151,
+          "value": 0
+        },
+        {
+          "frame": 167,
+          "value": 1
+        },
+        {
+          "frame": 247,
+          "value": 1
+        },
+        {
+          "frame": 266,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "fast-label",
+      "type": "text",
+      "from": 160,
+      "to": 267,
+      "space": "screen",
+      "text": "ACCELERATE  /  FIND THE BEAT",
+      "fontSize": 17,
+      "fill": "#46766c",
+      "width": 800,
+      "height": 50,
+      "x": 640,
+      "y": 584,
+      "opacity": [
+        {
+          "frame": 160,
+          "value": 0
+        },
+        {
+          "frame": 183,
+          "value": 1
+        },
+        {
+          "frame": 250,
+          "value": 1
+        },
+        {
+          "frame": 266,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "grid-0",
+      "type": "rect",
+      "from": 276,
+      "to": 398,
+      "x": [
+        {
+          "frame": 276,
+          "value": 160
+        },
+        {
+          "frame": 311,
+          "value": 450
+        }
+      ],
+      "y": [
+        {
+          "frame": 276,
+          "value": 200
+        },
+        {
+          "frame": 311,
+          "value": 350
+        }
+      ],
+      "width": [
+        {
+          "frame": 276,
+          "value": 15
+        },
+        {
+          "frame": 313,
+          "value": 132
+        }
+      ],
+      "height": [
+        {
+          "frame": 276,
+          "value": 15
+        },
+        {
+          "frame": 313,
+          "value": 100
+        }
+      ],
+      "radius": 12,
+      "fill": "#c4d6cc",
+      "rotateZ": [
+        {
+          "frame": 276,
+          "value": -80
+        },
+        {
+          "frame": 315,
+          "value": 0
+        }
+      ],
+      "opacity": [
+        {
+          "frame": 276,
+          "value": 0
+        },
+        {
+          "frame": 311,
+          "value": 0.9
+        },
+        {
+          "frame": 373,
+          "value": 0.9
+        },
+        {
+          "frame": 397,
+          "value": 0
+        }
+      ],
+      "z": [
+        {
+          "frame": 276,
+          "value": -420
+        },
+        {
+          "frame": 315,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "grid-1",
+      "type": "rect",
+      "from": 276,
+      "to": 398,
+      "x": [
+        {
+          "frame": 276,
+          "value": 320
+        },
+        {
+          "frame": 311,
+          "value": 640
+        }
+      ],
+      "y": [
+        {
+          "frame": 276,
+          "value": 270
+        },
+        {
+          "frame": 311,
+          "value": 350
+        }
+      ],
+      "width": [
+        {
+          "frame": 276,
+          "value": 15
+        },
+        {
+          "frame": 313,
+          "value": 132
+        }
+      ],
+      "height": [
+        {
+          "frame": 276,
+          "value": 15
+        },
+        {
+          "frame": 313,
+          "value": 100
+        }
+      ],
+      "radius": 12,
+      "fill": "#ff6948",
+      "rotateZ": [
+        {
+          "frame": 276,
+          "value": -40
+        },
+        {
+          "frame": 315,
+          "value": 0
+        }
+      ],
+      "opacity": [
+        {
+          "frame": 276,
+          "value": 0
+        },
+        {
+          "frame": 311,
+          "value": 0.9
+        },
+        {
+          "frame": 373,
+          "value": 0.9
+        },
+        {
+          "frame": 397,
+          "value": 0
+        }
+      ],
+      "z": [
+        {
+          "frame": 276,
+          "value": -280
+        },
+        {
+          "frame": 315,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "grid-2",
+      "type": "rect",
+      "from": 276,
+      "to": 398,
+      "x": [
+        {
+          "frame": 276,
+          "value": 480
+        },
+        {
+          "frame": 311,
+          "value": 830
+        }
+      ],
+      "y": [
+        {
+          "frame": 276,
+          "value": 340
+        },
+        {
+          "frame": 311,
+          "value": 350
+        }
+      ],
+      "width": [
+        {
+          "frame": 276,
+          "value": 15
+        },
+        {
+          "frame": 313,
+          "value": 132
+        }
+      ],
+      "height": [
+        {
+          "frame": 276,
+          "value": 15
+        },
+        {
+          "frame": 313,
+          "value": 100
+        }
+      ],
+      "radius": 12,
+      "fill": "#c4d6cc",
+      "rotateZ": [
+        {
+          "frame": 276,
+          "value": 0
+        },
+        {
+          "frame": 315,
+          "value": 0
+        }
+      ],
+      "opacity": [
+        {
+          "frame": 276,
+          "value": 0
+        },
+        {
+          "frame": 311,
+          "value": 0.9
+        },
+        {
+          "frame": 373,
+          "value": 0.9
+        },
+        {
+          "frame": 397,
+          "value": 0
+        }
+      ],
+      "z": [
+        {
+          "frame": 276,
+          "value": -140
+        },
+        {
+          "frame": 315,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "grid-3",
+      "type": "rect",
+      "from": 276,
+      "to": 398,
+      "x": [
+        {
+          "frame": 276,
+          "value": 640
+        },
+        {
+          "frame": 311,
+          "value": 450
+        }
+      ],
+      "y": [
+        {
+          "frame": 276,
+          "value": 410
+        },
+        {
+          "frame": 311,
+          "value": 485
+        }
+      ],
+      "width": [
+        {
+          "frame": 276,
+          "value": 15
+        },
+        {
+          "frame": 313,
+          "value": 132
+        }
+      ],
+      "height": [
+        {
+          "frame": 276,
+          "value": 15
+        },
+        {
+          "frame": 313,
+          "value": 100
+        }
+      ],
+      "radius": 12,
+      "fill": "#c4d6cc",
+      "rotateZ": [
+        {
+          "frame": 276,
+          "value": 40
+        },
+        {
+          "frame": 315,
+          "value": 0
+        }
+      ],
+      "opacity": [
+        {
+          "frame": 276,
+          "value": 0
+        },
+        {
+          "frame": 311,
+          "value": 0.9
+        },
+        {
+          "frame": 373,
+          "value": 0.9
+        },
+        {
+          "frame": 397,
+          "value": 0
+        }
+      ],
+      "z": [
+        {
+          "frame": 276,
+          "value": 0
+        },
+        {
+          "frame": 315,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "grid-4",
+      "type": "rect",
+      "from": 276,
+      "to": 398,
+      "x": [
+        {
+          "frame": 276,
+          "value": 800
+        },
+        {
+          "frame": 311,
+          "value": 640
+        }
+      ],
+      "y": [
+        {
+          "frame": 276,
+          "value": 480
+        },
+        {
+          "frame": 311,
+          "value": 485
+        }
+      ],
+      "width": [
+        {
+          "frame": 276,
+          "value": 15
+        },
+        {
+          "frame": 313,
+          "value": 132
+        }
+      ],
+      "height": [
+        {
+          "frame": 276,
+          "value": 15
+        },
+        {
+          "frame": 313,
+          "value": 100
+        }
+      ],
+      "radius": 12,
+      "fill": "#c4d6cc",
+      "rotateZ": [
+        {
+          "frame": 276,
+          "value": 80
+        },
+        {
+          "frame": 315,
+          "value": 0
+        }
+      ],
+      "opacity": [
+        {
+          "frame": 276,
+          "value": 0
+        },
+        {
+          "frame": 311,
+          "value": 0.9
+        },
+        {
+          "frame": 373,
+          "value": 0.9
+        },
+        {
+          "frame": 397,
+          "value": 0
+        }
+      ],
+      "z": [
+        {
+          "frame": 276,
+          "value": 140
+        },
+        {
+          "frame": 315,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "grid-5",
+      "type": "rect",
+      "from": 276,
+      "to": 398,
+      "x": [
+        {
+          "frame": 276,
+          "value": 960
+        },
+        {
+          "frame": 311,
+          "value": 830
+        }
+      ],
+      "y": [
+        {
+          "frame": 276,
+          "value": 550
+        },
+        {
+          "frame": 311,
+          "value": 485
+        }
+      ],
+      "width": [
+        {
+          "frame": 276,
+          "value": 15
+        },
+        {
+          "frame": 313,
+          "value": 132
+        }
+      ],
+      "height": [
+        {
+          "frame": 276,
+          "value": 15
+        },
+        {
+          "frame": 313,
+          "value": 100
+        }
+      ],
+      "radius": 12,
+      "fill": "#c4d6cc",
+      "rotateZ": [
+        {
+          "frame": 276,
+          "value": 120
+        },
+        {
+          "frame": 315,
+          "value": 0
+        }
+      ],
+      "opacity": [
+        {
+          "frame": 276,
+          "value": 0
+        },
+        {
+          "frame": 311,
+          "value": 0.9
+        },
+        {
+          "frame": 373,
+          "value": 0.9
+        },
+        {
+          "frame": 397,
+          "value": 0
+        }
+      ],
+      "z": [
+        {
+          "frame": 276,
+          "value": 280
+        },
+        {
+          "frame": 315,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "pause-title",
+      "type": "text",
+      "from": 277,
+      "to": 392,
+      "space": "screen",
+      "text": "停一下，方向才清楚。",
+      "fontSize": 64,
+      "fill": "#182c26",
+      "width": 1120,
+      "height": 120,
+      "x": 640,
+      "y": 140,
+      "opacity": [
+        {
+          "frame": 277,
+          "value": 0
+        },
+        {
+          "frame": 296,
+          "value": 1
+        },
+        {
+          "frame": 374,
+          "value": 1
+        },
+        {
+          "frame": 391,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "grid-text-0",
+      "type": "text",
+      "from": 312,
+      "to": 390,
+      "text": "观察",
+      "fontSize": 27,
+      "fill": "#182c26",
+      "width": 150,
+      "height": 80,
+      "x": 450,
+      "y": 355,
+      "opacity": [
+        {
+          "frame": 312,
+          "value": 0
+        },
+        {
+          "frame": 326,
+          "value": 1
+        },
+        {
+          "frame": 373,
+          "value": 1
+        },
+        {
+          "frame": 389,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "grid-text-1",
+      "type": "text",
+      "from": 312,
+      "to": 390,
+      "text": "选择",
+      "fontSize": 27,
+      "fill": "#182c26",
+      "width": 150,
+      "height": 80,
+      "x": 640,
+      "y": 355,
+      "opacity": [
+        {
+          "frame": 312,
+          "value": 0
+        },
+        {
+          "frame": 326,
+          "value": 1
+        },
+        {
+          "frame": 373,
+          "value": 1
+        },
+        {
+          "frame": 389,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "grid-text-2",
+      "type": "text",
+      "from": 312,
+      "to": 390,
+      "text": "出发",
+      "fontSize": 27,
+      "fill": "#182c26",
+      "width": 150,
+      "height": 80,
+      "x": 830,
+      "y": 355,
+      "opacity": [
+        {
+          "frame": 312,
+          "value": 0
+        },
+        {
+          "frame": 326,
+          "value": 1
+        },
+        {
+          "frame": 373,
+          "value": 1
+        },
+        {
+          "frame": 389,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "route",
+      "type": "path",
+      "from": 390,
+      "to": 528,
+      "x": 640,
+      "y": 405,
+      "width": 1000,
+      "height": 280,
+      "path": "M40 70 C 220 70 190 225 370 225 S 650 0 960 70",
+      "stroke": "#a1bcb1",
+      "strokeWidth": 4,
+      "reveal": [
+        {
+          "frame": 390,
+          "value": 0
+        },
+        {
+          "frame": 474,
+          "value": 1
+        }
+      ],
+      "opacity": [
+        {
+          "frame": 390,
+          "value": 1
+        },
+        {
+          "frame": 505,
+          "value": 1
+        },
+        {
+          "frame": 527,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "relay-0",
+      "type": "ellipse",
+      "from": 398,
+      "to": 528,
+      "x": 180,
+      "y": 335,
+      "width": [
+        {
+          "frame": 398,
+          "value": 0
+        },
+        {
+          "frame": 415,
+          "value": 20
+        },
+        {
+          "frame": 430,
+          "value": 38
+        }
+      ],
+      "height": [
+        {
+          "frame": 398,
+          "value": 0
+        },
+        {
+          "frame": 415,
+          "value": 20
+        },
+        {
+          "frame": 430,
+          "value": 38
+        }
+      ],
+      "fill": "#00a989",
+      "opacity": [
+        {
+          "frame": 398,
+          "value": 0
+        },
+        {
+          "frame": 413,
+          "value": 1
+        },
+        {
+          "frame": 505,
+          "value": 1
+        },
+        {
+          "frame": 527,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "relay-1",
+      "type": "ellipse",
+      "from": 398,
+      "to": 528,
+      "x": 480,
+      "y": 555,
+      "width": [
+        {
+          "frame": 398,
+          "value": 0
+        },
+        {
+          "frame": 427,
+          "value": 20
+        },
+        {
+          "frame": 442,
+          "value": 38
+        }
+      ],
+      "height": [
+        {
+          "frame": 398,
+          "value": 0
+        },
+        {
+          "frame": 427,
+          "value": 20
+        },
+        {
+          "frame": 442,
+          "value": 38
+        }
+      ],
+      "fill": "#ff6948",
+      "opacity": [
+        {
+          "frame": 398,
+          "value": 0
+        },
+        {
+          "frame": 425,
+          "value": 1
+        },
+        {
+          "frame": 505,
+          "value": 1
+        },
+        {
+          "frame": 527,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "relay-2",
+      "type": "ellipse",
+      "from": 398,
+      "to": 528,
+      "x": 825,
+      "y": 380,
+      "width": [
+        {
+          "frame": 398,
+          "value": 0
+        },
+        {
+          "frame": 439,
+          "value": 20
+        },
+        {
+          "frame": 454,
+          "value": 38
+        }
+      ],
+      "height": [
+        {
+          "frame": 398,
+          "value": 0
+        },
+        {
+          "frame": 439,
+          "value": 20
+        },
+        {
+          "frame": 454,
+          "value": 38
+        }
+      ],
+      "fill": "#00a989",
+      "opacity": [
+        {
+          "frame": 398,
+          "value": 0
+        },
+        {
+          "frame": 437,
+          "value": 1
+        },
+        {
+          "frame": 505,
+          "value": 1
+        },
+        {
+          "frame": 527,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "relay-3",
+      "type": "ellipse",
+      "from": 398,
+      "to": 528,
+      "x": 1150,
+      "y": 335,
+      "width": [
+        {
+          "frame": 398,
+          "value": 0
+        },
+        {
+          "frame": 451,
+          "value": 20
+        },
+        {
+          "frame": 466,
+          "value": 38
+        }
+      ],
+      "height": [
+        {
+          "frame": 398,
+          "value": 0
+        },
+        {
+          "frame": 451,
+          "value": 20
+        },
+        {
+          "frame": 466,
+          "value": 38
+        }
+      ],
+      "fill": "#ff6948",
+      "opacity": [
+        {
+          "frame": 398,
+          "value": 0
+        },
+        {
+          "frame": 449,
+          "value": 1
+        },
+        {
+          "frame": 505,
+          "value": 1
+        },
+        {
+          "frame": 527,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "relay-title",
+      "type": "text",
+      "from": 395,
+      "to": 520,
+      "space": "screen",
+      "text": "把变化，接起来。",
+      "fontSize": 72,
+      "fill": "#182c26",
+      "width": 1100,
+      "height": 130,
+      "x": 640,
+      "y": 135,
+      "opacity": [
+        {
+          "frame": 395,
+          "value": 0
+        },
+        {
+          "frame": 413,
+          "value": 1
+        },
+        {
+          "frame": 504,
+          "value": 1
+        },
+        {
+          "frame": 519,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "end-title",
+      "type": "text",
+      "from": 522,
+      "to": 600,
+      "space": "screen",
+      "text": "让想法\n走出自己的节奏。",
+      "fontSize": 83,
+      "fontWeight": 800,
+      "fill": "#182c26",
+      "width": 1130,
+      "height": 270,
+      "x": 640,
+      "y": 310,
+      "opacity": [
+        {
+          "frame": 522,
+          "value": 0
+        },
+        {
+          "frame": 550,
+          "value": 1
+        }
+      ],
+      "scale": [
+        {
+          "frame": 522,
+          "value": 0.88
+        },
+        {
+          "frame": 550,
+          "value": 1
+        }
+      ],
+      "reveal": [
+        {
+          "frame": 522,
+          "value": 0
+        },
+        {
+          "frame": 548,
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "end-sub",
+      "type": "text",
+      "from": 544,
+      "to": 600,
+      "space": "screen",
+      "text": "空间意象  /  SPATIAL IMAGERY",
+      "fontSize": 24,
+      "fill": "#008870",
+      "width": 1040,
+      "height": 60,
+      "x": 640,
+      "y": 525,
+      "opacity": [
+        {
+          "frame": 544,
+          "value": 0
+        },
+        {
+          "frame": 565,
+          "value": 1
+        }
+      ]
+    }
+  ],
+  "cues": [
+    {
+      "id": "music-bed",
+      "asset": "music",
+      "role": "music",
+      "start": 0,
+      "end": 20,
+      "sourceIn": 18.5,
+      "fadeIn": 0.35,
+      "fadeOut": 0.8,
+      "gainDb": -12
+    },
+    {
+      "id": "move-0",
+      "asset": "motion",
+      "role": "motion",
+      "start": 4.5,
+      "end": 8.7,
+      "sourceIn": 0.2,
+      "fadeIn": 0.4,
+      "fadeOut": 0.6,
+      "gainDb": -22,
+      "pan": [
+        -0.5,
+        0.3
+      ],
+      "intensity": [
+        {
+          "frame": 135,
+          "value": 0.15
+        },
+        {
+          "frame": 156,
+          "value": 0.8
+        },
+        {
+          "frame": 240,
+          "value": 0.4
+        },
+        {
+          "frame": 261,
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "id": "move-1",
+      "asset": "motion",
+      "role": "motion",
+      "start": 9.2,
+      "end": 12.8,
+      "sourceIn": 0.2,
+      "fadeIn": 0.4,
+      "fadeOut": 0.6,
+      "gainDb": -26,
+      "pan": [
+        0.2,
+        -0.1
+      ],
+      "intensity": [
+        {
+          "frame": 276,
+          "value": 0.15
+        },
+        {
+          "frame": 297,
+          "value": 0.8
+        },
+        {
+          "frame": 363,
+          "value": 0.4
+        },
+        {
+          "frame": 384,
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "id": "move-2",
+      "asset": "motion",
+      "role": "motion",
+      "start": 13.2,
+      "end": 17.3,
+      "sourceIn": 0.2,
+      "fadeIn": 0.4,
+      "fadeOut": 0.6,
+      "gainDb": -23,
+      "pan": [
+        -0.5,
+        0.6
+      ],
+      "intensity": [
+        {
+          "frame": 396,
+          "value": 0.15
+        },
+        {
+          "frame": 417,
+          "value": 0.8
+        },
+        {
+          "frame": 498,
+          "value": 0.4
+        },
+        {
+          "frame": 519,
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "id": "contact-0",
+      "asset": "contact",
+      "role": "contact",
+      "start": 9.95,
+      "end": 10.09,
+      "sourceIn": 0,
+      "fadeIn": 0.006,
+      "fadeOut": 0.055,
+      "gainDb": -11,
+      "pan": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "contact-1",
+      "asset": "contact",
+      "role": "contact",
+      "start": 15.15,
+      "end": 15.290000000000001,
+      "sourceIn": 0,
+      "fadeIn": 0.006,
+      "fadeOut": 0.055,
+      "gainDb": -11,
+      "pan": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "contact-2",
+      "asset": "contact",
+      "role": "contact",
+      "start": 18.15,
+      "end": 18.29,
+      "sourceIn": 0,
+      "fadeIn": 0.006,
+      "fadeOut": 0.055,
+      "gainDb": -11,
+      "pan": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "open",
+      "asset": "opening",
+      "role": "motion",
+      "start": 17.35,
+      "end": 18.25,
+      "sourceIn": 0,
+      "fadeIn": 0.1,
+      "fadeOut": 0.2,
+      "gainDb": -21,
+      "pan": [
+        -0.1,
+        0
+      ]
+    }
+  ]
+}

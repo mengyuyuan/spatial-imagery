@@ -1,0 +1,15 @@
+{
+  "model": {
+    "baseUrl": "https://api.openai.com/v1",
+    "model": "YOUR_MODEL_ID",
+    "apiKeyEnv": "SPATIAL_IMAGERY_API_KEY",
+    "jsonMode": true,
+    "timeoutMs": 120000
+  },
+  "width": 1280,
+  "height": 720,
+  "fps": 30,
+  "durationSeconds": 20,
+  "brief": "按台词设计独立的视觉语言，主体接力，镜头有发现，变化后留阅读时间。",
+  "policy": {"music":"allowed", "narration":"off", "footage":"required"}
+}

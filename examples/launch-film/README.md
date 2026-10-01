@@ -27,7 +27,7 @@ The renderer requires WebGL/ANGLE; Chinese system fonts and FFmpeg/ffprobe are n
 
 The music is Mixkit **Minimal Techno 01** by Alejandro Magaña (A. M.), cropped from 18.5 to 48.5 seconds for video synchronization. Mixkit music terms permit web/social video uses but exclude TV/radio, games and CD/DVD. Three Sonniss effects are downloaded separately for synchronization; raw or processed audio is not redistributed as an SDK asset. Ten CC0 source effects are included. Only the finished synchronized film is public alongside code and provenance. See [NOTICE](../../NOTICE.md).
 
-本版按用户返修要求以文字推动快节奏变化。技术检查、关键帧审看与主观听审分别记录；没有把画面变化数量或正常编码等同于审美认可。用户尚未评价这个具体版本。
+本版按用户返修要求以文字推动快节奏变化。技术检查、关键帧审看与主观听审分别记录；没有把画面变化数量或正常编码等同于审美认可。该具体版本已收为认可样片；认可范围与制作方技术/听审证据分别保存。
 
 ## v1 / Previous production study
 

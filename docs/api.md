@@ -1,6 +1,6 @@
 # API reference / 接口说明
 
-All exports come from `spatial-imagery`. The emitted declarations in `dist/*.d.ts` are the complete type contract. Core functions do not read files, access the network, run a renderer or mutate caller input.
+Browser-safe exports come from `spatial-imagery`. Filesystem/media helpers use `spatial-imagery/node`; the executable production API uses `spatial-imagery/production`. The emitted declarations in `dist/*.d.ts` are the complete type contract. Core sampling functions do not read files, access the network, run a renderer or mutate caller input.
 
 ## Time and coordinates / 时间与坐标
 
@@ -36,6 +36,8 @@ The launch example exports SDK states to JSON and Blender consumes them. That ma
 
 ## CLI
 
+v0.2 adds `make <script.md> --out <project> --config <config.json> --catalog <assets.json> [--design <design.json>] [--install] [--render]`, `render <project> [--install]` and `search <query> --out <catalog.json> [--key-env <variable>]`. See [script-to-video](script-to-video.md). `make` creates a new editable project and never overwrites an existing output directory. A configured model designs the film unless an explicit design is imported; no silent template fallback is used.
+
 `spatial-imagery init <directory>` creates a starter storyboard and refuses to overwrite an existing one. `check <file>` prints structured issues and exits 1 on errors. `catalog <file> [query]` searches assets in a valid plan. It does not download files or execute instructions embedded in metadata.
 
 `audit <storyboard.json>` hashes the local assets relative to the design file's directory. It resolves symlinks and refuses paths outside that project root. A missing raw stock clip is an expected error until you run the explicit example downloader. `media <video> <fps> <frames>` uses ffprobe on PATH and checks decoded frame count, frame rate, video-stream duration and audio duration. It requires an audio stream; use the Node API with `audio: false` for a silent render.
@@ -52,6 +54,9 @@ The launch example exports SDK states to JSON and Blender consumes them. That ma
 Node-only auditing stays out of the browser core dependency graph. 本地哈希核验和媒体检查位于单独的 Node 子入口，不影响浏览器端核心包；校验文件身份不等于许可或审美通过。
 
 ## Known boundaries / 当前边界
+
+- `scriptLines`, `normalizeScript` and `validateFilm` are browser-safe design helpers. `makeFilm`, `requestJSON`, `searchPexels`, `installProject` and `renderProject` belong to the Node production subpath; these may access the network/filesystem or run explicitly requested production commands.
+- `FilmDesign` supports global-frame scene layers/camera keys, script-line coverage, real media and second-based audio cues. Default generated geometry is 2D/CSS 2.5D. A project's editable composition is the extension point for bespoke/true-3D rendering.
 
 - Spatial samplers do not model collisions, deformation, materials or lighting; the renderer owns geometry and shading.
 - Equal-power panning assumes a mono source; downmix deliberately or implement an appropriate stereo balance in your mixer.

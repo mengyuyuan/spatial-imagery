@@ -4,6 +4,8 @@
 
 The SDK supplies execution tools. The design table states the creative intent. The encoded film is what gets reviewed. Calling a few functions does not mean the whole pipeline was completed. Keep actual outputs and mark missing work unverified or not applicable.
 
+The v0.2 [script-to-video runner](script-to-video.md) connects scripts, configurable model/imported designs, acquired assets, editable animation projects, audio and rendering. It executes applicable stages below; it does not replace footage review or final viewing/listening. Music, narration, procedural-only mode, duration, canvas and style belong to each project rather than becoming universal rules from a previous film.
+
 ## 1. Establish scope and source truth
 
 For a spoken video, verify the originals, transcript, word timing and corrections; edit the speech before visual packaging. Preserve meaning, order and emotion. Do not speed up speech just to fit animation. For a film without source speech, use research → proposal → script → scene plan → assets → edit → compose → publish. A local revision updates only the affected records and neighboring handoffs.

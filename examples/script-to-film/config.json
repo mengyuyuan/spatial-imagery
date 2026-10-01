@@ -1,0 +1,11 @@
+{
+  "width": 1280,
+  "height": 720,
+  "fps": 30,
+  "durationSeconds": 20,
+  "policy": {
+    "music": "allowed",
+    "narration": "off",
+    "footage": "required"
+  }
+}

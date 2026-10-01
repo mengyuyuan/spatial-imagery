@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "date": "2026-10-01",
+  "tests": {"passed": 35, "failed": 0, "command": "npm run check"},
+  "package": {"cleanConsumerInstall": "passed", "command": "npm run test:package"},
+  "model": {
+    "compatibleHttpProtocol": "passed against a local HTTP fixture",
+    "boundedDesignRepair": "passed against a local HTTP fixture",
+    "liveProvider": "unverified; no production model credentials supplied",
+    "exampleDesignOrigin": "Codex-authored design imported with --design"
+  },
+  "research": {
+    "example": "Mixkit source page, use conditions, actual download and sampled source frame checked; selected traffic footage is used at 0–5 seconds",
+    "pexelsLiveApi": "unverified; no Pexels credentials supplied"
+  },
+  "video": {
+    "path": "../../media/script-to-film-integration.mp4",
+    "sha256": "2bfbc98cea7d16733e7a65d26a711455c9b9a96e531bb1bd85d5009c6d448370",
+    "frames": 600,
+    "fps": 30,
+    "seconds": 20,
+    "technicalPassed": true,
+    "evidence": "qa.json",
+    "sampledFrameInspection": "completed",
+    "normalSpeedViewing": "unverified",
+    "subjectiveListening": "unverified",
+    "userAestheticApproval": "unreviewed"
+  }
+}

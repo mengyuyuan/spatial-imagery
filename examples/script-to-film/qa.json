@@ -1,0 +1,63 @@
+{
+  "file": "final.mp4",
+  "sha256": "2bfbc98cea7d16733e7a65d26a711455c9b9a96e531bb1bd85d5009c6d448370",
+  "scriptSha256": "b1add23f2642d154046cf941cc2394175919fd26de9347cf1f2055c7aee5557a",
+  "designSha256": "2cbe008d41888c6457cf3519184a7289be62caaa4f6ebfe01a646ef05044ad7e",
+  "compositionSha256": "8079020467dc8fcc7b7055fcdaa1292bff4942b27ce1b4e8d11efe9a6b72cda5",
+  "technicalPassed": true,
+  "issues": [],
+  "frames": 600,
+  "seconds": 20,
+  "width": 1280,
+  "height": 720,
+  "audio": {
+    "audio": true,
+    "sampleRate": 48000,
+    "channels": 2,
+    "samples": 960000,
+    "cues": 8,
+    "preGainPeak": 0.2894902229309082,
+    "masterGain": 1,
+    "preNormalizationPeakDb": -10.767321985802267,
+    "loudness": {
+      "targetLufs": -16,
+      "targetTruePeakDb": -1.5,
+      "measured": {
+        "input_i": "-19.29",
+        "input_tp": "-10.77",
+        "input_lra": "0.60",
+        "input_thresh": "-29.31",
+        "output_i": "-15.90",
+        "output_tp": "-7.39",
+        "output_lra": "0.70",
+        "output_thresh": "-25.92",
+        "normalization_type": "linear",
+        "target_offset": "-0.10"
+      }
+    },
+    "subjectiveListening": "unverified",
+    "note": "Stereo music/narration preserved; movement/contact sources deliberately downmixed for equal-power panning. Whole-film two-pass normalization; no synthesized sound."
+  },
+  "stills": [
+    0,
+    75,
+    149,
+    150,
+    213,
+    275,
+    276,
+    335,
+    394,
+    395,
+    458,
+    521,
+    522,
+    561,
+    599
+  ],
+  "review": {
+    "normalSpeed": "unverified",
+    "listening": "unverified",
+    "aesthetic": "unreviewed"
+  }
+}

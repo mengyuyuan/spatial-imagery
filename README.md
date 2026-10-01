@@ -8,21 +8,27 @@ https://github.com/user-attachments/assets/37f98ee4-dff0-4948-8d79-7f060c86b287
 
 **30-second launch film — sound on.** Kinetic type, spatial camera moves, transforming shapes and a shared music beat. [Download the MP4](media/spatial-imagery-kinetic-v2.mp4).
 
-**Status: v0.1.0, early SDK.** The package turns tested production ideas into deterministic functions and explicit records. It does not automatically write a good story, perform transcription/matting/relighting, or render a finished film from a prompt. Those remain production stages described in the workflow.
+**Status: v0.2.0 — script-to-video runner and SDK.** A configured OpenAI-compatible model can turn a script into an editable timed design, acquire selected media, generate a Remotion project and render an MP4 with sound and QA. You can also import a design from Codex or a designer. Artistic review, speech transcription, person matting and relighting remain separate production work. [Script-to-video guide](docs/script-to-video.md).
+
+```sh
+# After npm ci && npm run build; configure your model and key environment variable.
+node dist/cli.js make script.md --config film.config.json --catalog assets.json --out my-film --install --render
+```
 
 ## What is implemented
 
 | Capability | What you get |
 |---|---|
+| Script to video | Configurable model, bounded design repair, Pexels video search, acquired asset verification, editable 2D/2.5D project, sound mix and actual MP4 checks |
 | Motion | Pure seconds-based scalar tracks and cubic Hermite paths with analytical velocity |
 | Camera | Subject following, look-ahead, perspective projection and screen-space handoff diagnostics |
 | Sound | Audible-anchor alignment, motion intensity, fades, equal-power material crossfades, stereo pan, sample-rate gain envelopes |
 | Design | Typed A/B/full-frame shots, subject state chains, camera task, sound intent, reading windows, handoff records and JSON validation |
 | Libraries | Separate source assets and immutable sample versions, source/hash/license metadata, scoped approval and search |
 | Audit | Node-only file hashes, project-boundary checks and actual decoded video/audio duration checks via ffprobe |
-| Example | An original bilingual 30-second film, Blender scene driven by SDK poses, Remotion composition and reproducible SFX mix |
+| Examples | A bilingual 30-second launch film, original Blender/Remotion sources, and a new 20-second script-runner integration film |
 
-No runtime dependencies in the core. Remotion and Blender are optional renderers, installed separately for the example.
+No runtime dependencies in the core. The production runner installs Remotion in the generated project; the separate Blender example has its own renderer requirements. [Watch and reproduce the script-runner test](examples/script-to-film/README.md).
 
 ## Run locally
 
@@ -36,10 +42,10 @@ npm test
 node dist/cli.js init ./my-film
 node dist/cli.js check ./my-film/storyboard.json
 npm pack
-# In another project, install the generated spatial-imagery-0.1.0.tgz.
+# In another project, install the generated spatial-imagery-0.2.0.tgz.
 ```
 
-While the launch PR is open, check out its feature branch to access the full source. Never run `npm install spatial-imagery` assuming this repository owns a registry name.
+The complete source is on `main`. Never run `npm install spatial-imagery` assuming this repository owns a registry name.
 
 ```ts
 import {motionPath, followCamera, sampleCue} from 'spatial-imagery';

@@ -8,21 +8,27 @@ https://github.com/user-attachments/assets/37f98ee4-dff0-4948-8d79-7f060c86b287
 
 **30 秒宣传片，建议打开声音。** 文字驱动、空间镜头、元素变形，与音乐节拍共同推进。[下载 MP4](media/spatial-imagery-kinetic-v2.mp4)。
 
-**当前为 v0.1.0 早期版本。** 我们把视频返修中形成的方法写成确定性函数和明确记录。SDK 不会自动替你完成审美判断、转录、抠像或真人重打光，也不宣称输入一句话就能得到专业成片；这些仍按制作管线完成。
+**当前为 v0.2.0，包含脚本出片执行器与底层 SDK。** 配置 OpenAI 兼容模型后，可从脚本生成可编辑设计表，获取选用素材，生成动画工程、混合声音并渲染 MP4；也能使用 Codex 或人工审定的设计表。审美复核、口播转录、真人抠像与重打光仍是独立制作环节。[脚本出片详细说明](docs/script-to-video.zh-CN.md)。
+
+```sh
+# 先运行 npm ci 和 npm run build，再配置模型及密钥环境变量。
+node dist/cli.js make script.md --config film.config.json --catalog assets.json --out my-film --install --render
+```
 
 ## 已封装的能力
 
 | 模块 | 实际提供 |
 |---|---|
+| 脚本出片 | 可配置模型、有限次数设计修正、Pexels 视频搜索、素材获取核验、可编辑二维/2.5D 工程、连续混音、成片检查 |
 | 运动 | 按绝对秒采样的数值轨道、三次 Hermite 空间轨迹与解析速度 |
 | 镜头 | 跟随主体、前视、透视投影、切点屏幕位置/速度/尺度诊断 |
 | 声音 | 可闻锚点对齐、运动力度、淡入淡出、材质等功率交叉淡化、声像、音频采样级增益 |
 | 设计表 | A/B/全屏状态、主体状态链、镜头任务、声音意图、阅读窗口、交接记录与 JSON 校验 |
 | 素材与样片库 | 原素材与样片版本分开检索，来源/哈希/许可记录，认可绑定具体版本与范围 |
 | 检查 | 独立 Node 入口验证文件哈希、项目路径边界、实际解码帧数及音视频时长 |
-| 宣传片 | 30 秒中英双语示例；SDK 输出镜头和运动数据，Blender 渲染，Remotion 合成，现成音效混音 |
+| 样片 | 30 秒中英双语宣传片、Blender/Remotion 源码，以及新的 20 秒脚本出片集成测试片 |
 
-核心包没有运行时依赖。Blender、Remotion 等渲染器单独安装。
+核心包没有运行时依赖。出片执行器在生成工程中安装 Remotion；Blender 示例另有渲染环境要求。[查看和复现脚本出片测试](examples/script-to-film/README.md)。
 
 ## 从源码运行
 
@@ -38,7 +44,7 @@ node dist/cli.js check ./my-film/storyboard.json
 npm pack
 ```
 
-PR 尚未合并时，切换到该 PR 的功能分支查看完整代码。生成的 `spatial-imagery-0.1.0.tgz` 可安装到其他项目；不要直接假定 npm 同名包属于本仓库。
+完整源码保存在 `main`。生成的 `spatial-imagery-0.2.0.tgz` 可安装到其他项目；不要直接假定 npm 同名包属于本仓库。
 
 ```ts
 import {motionPath, followCamera, sampleCue} from 'spatial-imagery';

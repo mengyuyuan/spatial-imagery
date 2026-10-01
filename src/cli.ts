@@ -2,12 +2,29 @@
 import {readFile, mkdir, writeFile} from 'node:fs/promises';
 import {resolve, join, dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {parseArgs} from 'node:util';
 import {validatePlan, searchAssets, type Plan} from './index.js';
 import {auditAssets,auditMedia,probeMedia} from './node.js';
+import {makeFilm,renderProject,installProject,searchPexels} from './production-node.js';
 const [command, ...args] = process.argv.slice(2);
-const usage = '空间意象 / Spatial Imagery\n  spatial-imagery init <directory>\n  spatial-imagery check <storyboard.json>\n  spatial-imagery catalog <storyboard.json> [query]\n  spatial-imagery audit <storyboard.json>\n  spatial-imagery media <video> <fps> <frames>\n';
+const usage = '空间意象 / Spatial Imagery\n  spatial-imagery make <script.md> --out <project> [--config config.json] [--catalog assets.json] [--design design.json] [--install] [--render]\n  spatial-imagery render <project> [--install]\n  spatial-imagery search <query> --out <catalog.json> [--key-env PEXELS_API_KEY]\n  spatial-imagery init <directory>\n  spatial-imagery check <storyboard.json>\n  spatial-imagery catalog <storyboard.json> [query]\n  spatial-imagery audit <storyboard.json>\n  spatial-imagery media <video> <fps> <frames>\n';
 try {
-  if(command==='init') {
+  if(command==='make'){
+    const {values,positionals}=parseArgs({args,allowPositionals:true,options:{out:{type:'string'},config:{type:'string'},catalog:{type:'string'},design:{type:'string'},render:{type:'boolean'},install:{type:'boolean'}}});
+    if(positionals.length!==1||!values.out)throw new Error(usage);
+    console.log(JSON.stringify(await makeFilm({script:positionals[0]!,out:values.out,...values}),null,2));
+  }else if(command==='render'){
+    const {values,positionals}=parseArgs({args,allowPositionals:true,options:{install:{type:'boolean'}}});
+    if(positionals.length!==1)throw new Error(usage);
+    if(values.install)await installProject(positionals[0]!);
+    await renderProject(positionals[0]!);
+  }else if(command==='search'){
+    const {values,positionals}=parseArgs({args,allowPositionals:true,options:{out:{type:'string'},'key-env':{type:'string',default:'PEXELS_API_KEY'}}});
+    if(positionals.length!==1||!values.out)throw new Error(usage);
+    const results=await searchPexels(positionals[0]!,values['key-env']!);
+    await writeFile(resolve(values.out),JSON.stringify(results,null,2)+'\n',{flag:'wx'});
+    console.log(JSON.stringify({catalog:resolve(values.out),candidates:results.length,review:'unreviewed'}));
+  }else if(command==='init') {
     if(args.length!==1) throw new Error(usage);
     const dir=resolve(args[0]!); await mkdir(dir,{recursive:true});
     const template=await readFile(fileURLToPath(new URL('../templates/storyboard.json',import.meta.url)),'utf8');
