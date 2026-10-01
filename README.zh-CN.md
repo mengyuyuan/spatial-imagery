@@ -4,7 +4,9 @@
 
 [English](README.md) · [完整制作管线](docs/pipeline.zh-CN.md) · [API](docs/api.md) · [宣传片源码](examples/launch-film/README.md)
 
-[![空间意象：文字驱动宣传片](media/kinetic-v2-poster.png)](media/spatial-imagery-kinetic-v2.mp4)
+https://github.com/user-attachments/assets/37f98ee4-dff0-4948-8d79-7f060c86b287
+
+**30 秒宣传片，建议打开声音。** 文字驱动、空间镜头、元素变形，与音乐节拍共同推进。[下载 MP4](media/spatial-imagery-kinetic-v2.mp4)。
 
 **当前为 v0.1.0 早期版本。** 我们把视频返修中形成的方法写成确定性函数和明确记录。SDK 不会自动替你完成审美判断、转录、抠像或真人重打光，也不宣称输入一句话就能得到专业成片；这些仍按制作管线完成。
 
