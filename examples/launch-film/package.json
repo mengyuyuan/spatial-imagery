@@ -1,0 +1,22 @@
+{
+  "name": "spatial-imagery-launch-film",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.tsx",
+    "render": "node render.mjs"
+  },
+  "dependencies": {
+    "@react-three/fiber": "9.8.1",
+    "@remotion/bundler": "4.0.526",
+    "@remotion/cli": "4.0.526",
+    "@remotion/renderer": "4.0.526",
+    "@remotion/three": "4.0.526",
+    "@types/three": "0.186.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "remotion": "4.0.526",
+    "spatial-imagery": "file:../..",
+    "three": "0.186.1"
+  }
+}

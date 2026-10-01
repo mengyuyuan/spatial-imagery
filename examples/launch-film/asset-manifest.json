@@ -1,0 +1,85 @@
+[
+  {
+    "id": "audio:engineCircular_001.ogg",
+    "path": "assets/audio/engineCircular_001.ogg",
+    "source": "https://kenney.nl/assets/sci-fi-sounds",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "e1df3a942842a24f7c4056db3177e8008edd73d4f3985fd95f55362bc85058bc",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "audio:forceField_002.ogg",
+    "path": "assets/audio/forceField_002.ogg",
+    "source": "https://kenney.nl/assets/sci-fi-sounds",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "051b0eafc479695af4ca3607d41fd4be41bae7c21f4f9508d004722b09f1bd63",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "audio:doorOpen_000.ogg",
+    "path": "assets/audio/doorOpen_000.ogg",
+    "source": "https://kenney.nl/assets/sci-fi-sounds",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "5b7e07eccd4413ad9ef3720c2d14f9cc699f4c50111e9b2f48bd60e6f1a164c3",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "audio:impactSoft_medium_003.ogg",
+    "path": "assets/audio/impactSoft_medium_003.ogg",
+    "source": "https://kenney.nl/assets/impact-sounds",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "5c4a1f35fde7e14046931da7bc3d1b23736541b7190ba107e08a379c4ca43cd6",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "audio:impactSoft_heavy_001.ogg",
+    "path": "assets/audio/impactSoft_heavy_001.ogg",
+    "source": "https://kenney.nl/assets/impact-sounds",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "4d0096364ba9e46119d2ff6df493fdc101bd2e1efae061da5e5f77a53b3fdcb6",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "audio:switch1.wav",
+    "path": "assets/audio/switch1.wav",
+    "source": "https://github.com/code4fukui/sound-cc0",
+    "license": "CC0-1.0 (README audio dedication); software Unlicense",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "43bfa8dde4a8553802b826518aff7246f510037e563009166b93584be626dba2",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "audio:metal1.wav",
+    "path": "assets/audio/metal1.wav",
+    "source": "https://github.com/code4fukui/sound-cc0",
+    "license": "CC0-1.0 (README audio dedication); software Unlicense",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "3d1f75a723cb43f34906f9d88cbe804e0ac1f9e02ac4c79a08efa080f6fcda0c",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "video:ink",
+    "path": "assets/stock/ink.mp4",
+    "source": "https://mixkit.co/free-stock-video/pink-ink-cloud-entering-water-41992/",
+    "download": "https://assets.mixkit.co/videos/41992/41992-720.mp4",
+    "license": "Mixkit Stock Video Free License",
+    "license_url": "https://mixkit.co/license/#videoFree",
+    "sha256": "d6a11fa26aa008f5a33f82b68d94d752b56288eb64a0505de4ea3982f8c71739",
+    "redistribution": "excluded from source package; used within edited film",
+    "source_in_seconds": 3,
+    "used_seconds": 5.4,
+    "review": "decoded and representative frame inspected; normal-speed review not completed"
+  }
+]

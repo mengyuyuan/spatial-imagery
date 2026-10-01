@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "title": "空间意象 / Spatial Imagery — first relay",
+  "fps": 30,
+  "durationInFrames": 180,
+  "assets": [],
+  "shots": [
+    {"id":"SH01","from":0,"to":90,"state":"full","keyword":"Start with a subject / 先有主体","subject":"EL01 folded sheet","initial":"Flat on a table","action":"Fold up and move toward an opening","result":"A recognizable folded sheet leads the viewer","camera":"Follow sheet; reveal depth with foreground occlusion","sound":"Paper movement, fade with deceleration; source still to be selected","assets":[],"readFrames":20,"handoff":{"to":"SH02","method":"Subject continuity","continuity":"Same sheet, screen direction and velocity"}},
+    {"id":"SH02","from":90,"to":180,"state":"full","keyword":"Reveal the relationship / 揭示关系","subject":"EL01 becomes a page in a book","initial":"Sheet enters the book","action":"Camera pulls back; pages settle together","result":"One idea becomes part of a sequence","camera":"Pull back to show book; hold for reading","sound":"Crossfade paper into book close; stop before hold","assets":[],"readFrames":30}
+  ]
+}

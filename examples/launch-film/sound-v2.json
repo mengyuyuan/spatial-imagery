@@ -1,0 +1,829 @@
+{
+  "bpm": 128,
+  "beatSeconds": 0.46875,
+  "music": {
+    "asset": "music:162",
+    "sourceSeconds": [
+      18.5,
+      48.5
+    ],
+    "gain": 0.27757797493952646,
+    "fadeIn": 0.035,
+    "fadeOut": 1.2,
+    "beatAnalysis": "approximate 128 BPM grid fitted to automatically detected stable beats; not listening approval"
+  },
+  "peakBeforeMaster": 0.5263345241546631,
+  "masterGain": 1.5199458961672074,
+  "peakDbfs": -1.938200260161128,
+  "cues": [
+    {
+      "id": "SFX01",
+      "asset": "impactSoft_heavy_001.ogg",
+      "start": 0,
+      "end": 0.46875,
+      "sourceIn": 0,
+      "fadeIn": 0.0703125,
+      "fadeOut": 0.1875,
+      "gainDb": -5,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.572041,
+      "sourceSha256": "4d0096364ba9e46119d2ff6df493fdc101bd2e1efae061da5e5f77a53b3fdcb6",
+      "filters": [
+        "atrim=start=0:end=0.572041",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.2203541333333334",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 1.218685662263808
+    },
+    {
+      "id": "SFX02",
+      "asset": "doorOpen_000.ogg",
+      "start": 0.09375,
+      "end": 1.03125,
+      "sourceIn": 0,
+      "fadeIn": 0.06,
+      "fadeOut": 0.18,
+      "gainDb": -11,
+      "pan": [
+        -0.5,
+        0.25
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.53161,
+      "sourceSha256": "5b7e07eccd4413ad9ef3720c2d14f9cc699f4c50111e9b2f48bd60e6f1a164c3",
+      "filters": [
+        "atrim=start=0:end=0.53161",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.5670506666666667",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 2.6829110229959197
+    },
+    {
+      "id": "SFX03",
+      "asset": "switch1.wav",
+      "start": 0.984375,
+      "end": 1.1953125000000002,
+      "sourceIn": 0,
+      "fadeIn": 0.031640625,
+      "fadeOut": 0.084375,
+      "gainDb": -14,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.38458,
+      "sourceSha256": "43bfa8dde4a8553802b826518aff7246f510037e563009166b93584be626dba2",
+      "filters": [
+        "atrim=start=0:end=0.38458",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.823194074074072",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 1.5713423010970586
+    },
+    {
+      "id": "SFX04",
+      "asset": "v2-whoosh-fast.wav",
+      "start": 1.640625,
+      "end": 2.390625,
+      "sourceIn": 0,
+      "fadeIn": 0.08,
+      "fadeOut": 0.25,
+      "gainDb": -9,
+      "pan": [
+        -0.7,
+        0.65
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 1.076323,
+      "sourceSha256": "901286146ffe5a138152c6bef3c94f8158249fcac01c3f9270cb53808e996363",
+      "filters": [
+        "atrim=start=0:end=1.076323",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.4350973333333332",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 1.1404311206091884
+    },
+    {
+      "id": "SFX05",
+      "asset": "v2-whoosh-particle.wav",
+      "start": 2.4375,
+      "end": 3.5625,
+      "sourceIn": 0.1,
+      "fadeIn": 0.08,
+      "fadeOut": 0.25,
+      "gainDb": -13,
+      "pan": [
+        0.3,
+        -0.4
+      ],
+      "lowpass": 6500,
+      "sourceOut": 1.3,
+      "intensity": "event envelope",
+      "sourceSha256": "260549f43752421376ec7ab23c902bc941b4c79959013d8fe8ca17825fd0ae50",
+      "filters": [
+        "atrim=start=0.1:end=1.3",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.0666666666666667",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 1.2625850284196685
+    },
+    {
+      "id": "SFX06",
+      "asset": "impactGlass_light_001.ogg",
+      "start": 3.75,
+      "end": 3.984375,
+      "sourceIn": 0,
+      "fadeIn": 0.03515625,
+      "fadeOut": 0.09375,
+      "gainDb": -11,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.209592,
+      "sourceSha256": "05e513fbd42829060eb37855f8c3866722ec5c39a8937c9bfde518cc609effa2",
+      "filters": [
+        "atrim=start=0:end=0.209592",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.8942592",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 0.7259310678459999
+    },
+    {
+      "id": "SFX07",
+      "asset": "v2-passby.wav",
+      "start": 3.8906250000000004,
+      "end": 5.625,
+      "sourceIn": 0.7,
+      "fadeIn": 0.24,
+      "fadeOut": 0.36,
+      "gainDb": -12,
+      "pan": [
+        -0.2,
+        0.35
+      ],
+      "lowpass": 4500,
+      "sourceOut": 2.8,
+      "intensity": "event envelope",
+      "sourceSha256": "1032d40f53b94c89aef5a95f49fd8bbdb7945a7edc7b544352f5841e3424174f",
+      "filters": [
+        "atrim=start=0.7:end=2.8",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.2108108108108109",
+        "highpass=f=100",
+        "lowpass=f=4500"
+      ],
+      "normalization": 0.8367542711224492
+    },
+    {
+      "id": "SFX08",
+      "asset": "v2-passby.wav",
+      "start": 5.625,
+      "end": 9.28125,
+      "sourceIn": 0.3,
+      "fadeIn": 0.35,
+      "fadeOut": 0.5,
+      "gainDb": -10,
+      "pan": [
+        -0.55,
+        0.55
+      ],
+      "lowpass": 5000,
+      "sourceOut": 4.5,
+      "intensity": "authored acceleration envelope",
+      "sourceSha256": "1032d40f53b94c89aef5a95f49fd8bbdb7945a7edc7b544352f5841e3424174f",
+      "filters": [
+        "atrim=start=0.3:end=4.5",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.1487179487179489",
+        "highpass=f=100",
+        "lowpass=f=5000"
+      ],
+      "normalization": 0.778485807858038
+    },
+    {
+      "id": "SFX09",
+      "asset": "impactSoft_heavy_001.ogg",
+      "start": 9.375,
+      "end": 9.7734375,
+      "sourceIn": 0,
+      "fadeIn": 0.059765624999999996,
+      "fadeOut": 0.15937500000000002,
+      "gainDb": -5,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.572041,
+      "sourceSha256": "4d0096364ba9e46119d2ff6df493fdc101bd2e1efae061da5e5f77a53b3fdcb6",
+      "filters": [
+        "atrim=start=0:end=0.572041",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.4357107450980393",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 1.3772746728159557
+    },
+    {
+      "id": "SFX10",
+      "asset": "forceField_002.ogg",
+      "start": 9.515625,
+      "end": 11.015625,
+      "sourceIn": 0.04,
+      "fadeIn": 0.1,
+      "fadeOut": 0.3,
+      "gainDb": -13,
+      "pan": [
+        0.2,
+        -0.1
+      ],
+      "lowpass": 3700,
+      "intensity": "event envelope",
+      "sourceOut": 0.955079,
+      "sourceSha256": "051b0eafc479695af4ca3607d41fd4be41bae7c21f4f9508d004722b09f1bd63",
+      "filters": [
+        "atrim=start=0.04:end=0.955079",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.6100526666666667",
+        "highpass=f=100",
+        "lowpass=f=3700"
+      ],
+      "normalization": 0.6097251487766483
+    },
+    {
+      "id": "SFX11",
+      "asset": "v2-whoosh-fast.wav",
+      "start": 11.109375,
+      "end": 11.765624999999998,
+      "sourceIn": 0,
+      "fadeIn": 0.08,
+      "fadeOut": 0.25,
+      "gainDb": -10,
+      "pan": [
+        -0.6,
+        0.6
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 1.076323,
+      "sourceSha256": "901286146ffe5a138152c6bef3c94f8158249fcac01c3f9270cb53808e996363",
+      "filters": [
+        "atrim=start=0:end=1.076323",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.6401112380952425",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 1.2224862185783765
+    },
+    {
+      "id": "SFX12",
+      "asset": "impactGlass_light_001.ogg",
+      "start": 11.484375,
+      "end": 11.765625,
+      "sourceIn": 0,
+      "fadeIn": 0.003,
+      "fadeOut": 0.12,
+      "gainDb": -15,
+      "pan": [
+        -0.4,
+        -0.3
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.209592,
+      "sourceSha256": "05e513fbd42829060eb37855f8c3866722ec5c39a8937c9bfde518cc609effa2",
+      "filters": [
+        "atrim=start=0:end=0.209592",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.745216",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 0.7259310678459999
+    },
+    {
+      "id": "SFX13",
+      "asset": "impactGlass_light_002.ogg",
+      "start": 11.79375,
+      "end": 12.075000000000001,
+      "sourceIn": 0,
+      "fadeIn": 0.003,
+      "fadeOut": 0.12,
+      "gainDb": -14.4,
+      "pan": [
+        -0.18000000000000002,
+        -0.07999999999999999
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.209592,
+      "sourceSha256": "710db7451bb7857b9140dfe6afe4621ea2188ad65eda3919c569d1bb285b933d",
+      "filters": [
+        "atrim=start=0:end=0.209592",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.7452159999999953",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 0.8343152065648183
+    },
+    {
+      "id": "SFX14",
+      "asset": "impactGlass_light_001.ogg",
+      "start": 12.103125,
+      "end": 12.384375,
+      "sourceIn": 0,
+      "fadeIn": 0.003,
+      "fadeOut": 0.12,
+      "gainDb": -13.8,
+      "pan": [
+        0.03999999999999998,
+        0.14
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.209592,
+      "sourceSha256": "05e513fbd42829060eb37855f8c3866722ec5c39a8937c9bfde518cc609effa2",
+      "filters": [
+        "atrim=start=0:end=0.209592",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.745216",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 0.7259310678459999
+    },
+    {
+      "id": "SFX15",
+      "asset": "impactGlass_light_002.ogg",
+      "start": 12.4125,
+      "end": 12.693750000000001,
+      "sourceIn": 0,
+      "fadeIn": 0.003,
+      "fadeOut": 0.12,
+      "gainDb": -13.2,
+      "pan": [
+        0.26,
+        0.36000000000000004
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.209592,
+      "sourceSha256": "710db7451bb7857b9140dfe6afe4621ea2188ad65eda3919c569d1bb285b933d",
+      "filters": [
+        "atrim=start=0:end=0.209592",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.7452159999999953",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 0.8343152065648183
+    },
+    {
+      "id": "SFX16",
+      "asset": "doorOpen_000.ogg",
+      "start": 13.171875,
+      "end": 13.734375,
+      "sourceIn": 0,
+      "fadeIn": 0.08,
+      "fadeOut": 0.225,
+      "gainDb": -8,
+      "pan": [
+        -0.6,
+        0.4
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.53161,
+      "sourceSha256": "5b7e07eccd4413ad9ef3720c2d14f9cc699f4c50111e9b2f48bd60e6f1a164c3",
+      "filters": [
+        "atrim=start=0:end=0.53161",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.9450844444444445",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 2.6829110229959197
+    },
+    {
+      "id": "SFX17",
+      "asset": "metal1.wav",
+      "start": 14.25,
+      "end": 14.6015625,
+      "sourceIn": 0,
+      "fadeIn": 0.052734375,
+      "fadeOut": 0.140625,
+      "gainDb": -13,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.480583,
+      "sourceSha256": "3d1f75a723cb43f34906f9d88cbe804e0ac1f9e02ac4c79a08efa080f6fcda0c",
+      "filters": [
+        "atrim=start=0:end=0.480583",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.3669916444444443",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 0.82
+    },
+    {
+      "id": "SFX18",
+      "asset": "v2-whoosh-particle.wav",
+      "start": 14.34375,
+      "end": 15.093750000000002,
+      "sourceIn": 0.1,
+      "fadeIn": 0.08,
+      "fadeOut": 0.25,
+      "gainDb": -12,
+      "pan": [
+        0.5,
+        -0.4
+      ],
+      "lowpass": 6500,
+      "sourceOut": 1.1,
+      "intensity": "event envelope",
+      "sourceSha256": "260549f43752421376ec7ab23c902bc941b4c79959013d8fe8ca17825fd0ae50",
+      "filters": [
+        "atrim=start=0.1:end=1.1",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.3333333333333302",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 2.581818095149355
+    },
+    {
+      "id": "SFX19",
+      "asset": "impactGlass_heavy_000.ogg",
+      "start": 15,
+      "end": 15.328125000000002,
+      "sourceIn": 0,
+      "fadeIn": 0.003,
+      "fadeOut": 0.13125,
+      "gainDb": -12,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.241224,
+      "sourceSha256": "b44b39a940e8948e74b9bd3776bff980df43cf220abdaf0d467dc4c43c0244a5",
+      "filters": [
+        "atrim=start=0:end=0.241224",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.7351588571428531",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 0.9290405576248821
+    },
+    {
+      "id": "SFX20",
+      "asset": "v2-whoosh-fast.wav",
+      "start": 16.7109375,
+      "end": 17.320312499999996,
+      "sourceIn": 0,
+      "fadeIn": 0.08,
+      "fadeOut": 0.24375000000000002,
+      "gainDb": -13,
+      "pan": [
+        0.4,
+        -0.3
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 1.076323,
+      "sourceSha256": "901286146ffe5a138152c6bef3c94f8158249fcac01c3f9270cb53808e996363",
+      "filters": [
+        "atrim=start=0:end=1.076323",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.7662736410256512",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 1.2850133663715915
+    },
+    {
+      "id": "SFX21",
+      "asset": "engineCircular_001.ogg",
+      "start": 16.96875,
+      "end": 18.515625,
+      "sourceIn": 0.8,
+      "fadeIn": 0.22,
+      "fadeOut": 0.35,
+      "gainDb": -20,
+      "pan": [
+        -0.3,
+        0.3
+      ],
+      "lowpass": 2300,
+      "sourceOut": 2.5,
+      "intensity": "event envelope",
+      "sourceSha256": "e1df3a942842a24f7c4056db3177e8008edd73d4f3985fd95f55362bc85058bc",
+      "filters": [
+        "atrim=start=0.8:end=2.5",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.098989898989899",
+        "highpass=f=100",
+        "lowpass=f=2300"
+      ],
+      "normalization": 0.7369053602214832
+    },
+    {
+      "id": "SFX22",
+      "asset": "doorOpen_000.ogg",
+      "start": 18.84375,
+      "end": 19.6875,
+      "sourceIn": 0,
+      "fadeIn": 0.08,
+      "fadeOut": 0.25,
+      "gainDb": -11,
+      "pan": [
+        -0.5,
+        0.4
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.53161,
+      "sourceSha256": "5b7e07eccd4413ad9ef3720c2d14f9cc699f4c50111e9b2f48bd60e6f1a164c3",
+      "filters": [
+        "atrim=start=0:end=0.53161",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.6300562962962963",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 2.6829110229959197
+    },
+    {
+      "id": "SFX23",
+      "asset": "impactSoft_medium_003.ogg",
+      "start": 19.6875,
+      "end": 20.15625,
+      "sourceIn": 0,
+      "fadeIn": 0.004,
+      "fadeOut": 0.27,
+      "gainDb": -7,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.140227,
+      "sourceSha256": "5c4a1f35fde7e14046931da7bc3d1b23736541b7190ba107e08a379c4ca43cd6",
+      "filters": [
+        "atrim=start=0:end=0.140227",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.5",
+        "atempo=0.5983018666666666",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 1.3901596226597364
+    },
+    {
+      "id": "SFX24",
+      "asset": "v2-whoosh-particle.wav",
+      "start": 20.4375,
+      "end": 21.5625,
+      "sourceIn": 0,
+      "fadeIn": 0.08,
+      "fadeOut": 0.25,
+      "gainDb": -12,
+      "pan": [
+        -0.3,
+        0.35
+      ],
+      "lowpass": 6500,
+      "sourceOut": 1.45,
+      "intensity": "event envelope",
+      "sourceSha256": "260549f43752421376ec7ab23c902bc941b4c79959013d8fe8ca17825fd0ae50",
+      "filters": [
+        "atrim=start=0:end=1.45",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.2888888888888888",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 1.2597926193073579
+    },
+    {
+      "id": "SFX25",
+      "asset": "v2-whoosh-fast.wav",
+      "start": 22.078125,
+      "end": 22.921875,
+      "sourceIn": 0,
+      "fadeIn": 0.08,
+      "fadeOut": 0.25,
+      "gainDb": -10,
+      "pan": [
+        0.45,
+        -0.4
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 1.076323,
+      "sourceSha256": "901286146ffe5a138152c6bef3c94f8158249fcac01c3f9270cb53808e996363",
+      "filters": [
+        "atrim=start=0:end=1.076323",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.275642074074074",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 1.224476751855008
+    },
+    {
+      "id": "SFX26",
+      "asset": "doorOpen_000.ogg",
+      "start": 22.59375,
+      "end": 23.71875,
+      "sourceIn": 0,
+      "fadeIn": 0.08,
+      "fadeOut": 0.25,
+      "gainDb": -12,
+      "pan": [
+        -0.25,
+        0.3
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.53161,
+      "sourceSha256": "5b7e07eccd4413ad9ef3720c2d14f9cc699f4c50111e9b2f48bd60e6f1a164c3",
+      "filters": [
+        "atrim=start=0:end=0.53161",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.5",
+        "atempo=0.9450844444444445",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 2.6829110229959197
+    },
+    {
+      "id": "SFX27",
+      "asset": "impactGlass_light_002.ogg",
+      "start": 24.140625,
+      "end": 24.375,
+      "sourceIn": 0,
+      "fadeIn": 0.03515625,
+      "fadeOut": 0.09375,
+      "gainDb": -13,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.209592,
+      "sourceSha256": "710db7451bb7857b9140dfe6afe4621ea2188ad65eda3919c569d1bb285b933d",
+      "filters": [
+        "atrim=start=0:end=0.209592",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.8942592",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 0.8343152065648183
+    },
+    {
+      "id": "SFX28",
+      "asset": "v2-whoosh-fast.wav",
+      "start": 24.234375,
+      "end": 24.84375,
+      "sourceIn": 0,
+      "fadeIn": 0.08,
+      "fadeOut": 0.24375000000000002,
+      "gainDb": -11,
+      "pan": [
+        -0.5,
+        0.5
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 1.076323,
+      "sourceSha256": "901286146ffe5a138152c6bef3c94f8158249fcac01c3f9270cb53808e996363",
+      "filters": [
+        "atrim=start=0:end=1.076323",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.766273641025641",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 1.2850133663715915
+    },
+    {
+      "id": "SFX29",
+      "asset": "switch1.wav",
+      "start": 25.359375,
+      "end": 25.640625,
+      "sourceIn": 0,
+      "fadeIn": 0.042187499999999996,
+      "fadeOut": 0.1125,
+      "gainDb": -12,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.38458,
+      "sourceSha256": "43bfa8dde4a8553802b826518aff7246f510037e563009166b93584be626dba2",
+      "filters": [
+        "atrim=start=0:end=0.38458",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.3673955555555555",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 0.9102399883021938
+    },
+    {
+      "id": "SFX30",
+      "asset": "v2-whoosh-particle.wav",
+      "start": 25.875,
+      "end": 26.671875000000004,
+      "sourceIn": 0.1,
+      "fadeIn": 0.08,
+      "fadeOut": 0.25,
+      "gainDb": -11,
+      "pan": [
+        0.4,
+        -0.4
+      ],
+      "lowpass": 6500,
+      "sourceOut": 1.4,
+      "intensity": "event envelope",
+      "sourceSha256": "260549f43752421376ec7ab23c902bc941b4c79959013d8fe8ca17825fd0ae50",
+      "filters": [
+        "atrim=start=0.1:end=1.4",
+        "asetpts=PTS-STARTPTS",
+        "atempo=1.6313725490196003",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 2.3982246051091796
+    },
+    {
+      "id": "SFX31",
+      "asset": "impactSoft_heavy_001.ogg",
+      "start": 28.125,
+      "end": 28.828125,
+      "sourceIn": 0,
+      "fadeIn": 0.08,
+      "fadeOut": 0.5,
+      "gainDb": -6,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 6500,
+      "intensity": "event envelope",
+      "sourceOut": 0.572041,
+      "sourceSha256": "4d0096364ba9e46119d2ff6df493fdc101bd2e1efae061da5e5f77a53b3fdcb6",
+      "filters": [
+        "atrim=start=0:end=0.572041",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.8135694222222223",
+        "highpass=f=100",
+        "lowpass=f=6500"
+      ],
+      "normalization": 1.2449891739026167
+    }
+  ],
+  "subjectiveListening": false
+}

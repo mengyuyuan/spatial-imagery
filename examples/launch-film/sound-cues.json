@@ -1,0 +1,347 @@
+{
+  "sampleRate": 48000,
+  "seconds": 30,
+  "peakBeforeMaster": 0.8190160393714905,
+  "masterGain": 0.9523623012298621,
+  "cues": [
+    {
+      "id": "SFX01",
+      "asset": "doorOpen_000.ogg",
+      "start": 0.45,
+      "end": 2.3,
+      "sourceIn": 0,
+      "fadeIn": 0.2,
+      "fadeOut": 0.5,
+      "gainDb": -22,
+      "pan": [
+        -0.2,
+        0.15
+      ],
+      "lowpass": 2700,
+      "intensity": "constant + fades",
+      "processing": [
+        "atrim=start=0:end=0.53161",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.5",
+        "atempo=0.5747135135135136",
+        "highpass=f=100",
+        "lowpass=f=2700"
+      ],
+      "sourceRms": 0.015932987616080654,
+      "normalization": 7.039570575655546
+    },
+    {
+      "id": "SFX02",
+      "asset": "impactSoft_medium_003.ogg",
+      "start": 2.75,
+      "end": 2.95,
+      "sourceIn": 0,
+      "fadeIn": 0.004,
+      "fadeOut": 0.1,
+      "gainDb": -16,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 8000,
+      "intensity": "constant + fades",
+      "processing": [
+        "atrim=start=0:end=0.140227",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.7011349999999993",
+        "highpass=f=100",
+        "lowpass=f=8000"
+      ],
+      "sourceRms": 0.11850717978069883,
+      "normalization": 1.2657460946887742
+    },
+    {
+      "id": "SFX03",
+      "asset": "engineCircular_001.ogg",
+      "start": 3.5,
+      "end": 11.35,
+      "sourceIn": 0.15,
+      "sourceOut": 4.8,
+      "fadeIn": 0.9,
+      "fadeOut": 1,
+      "gainDb": -20,
+      "pan": [
+        -0.1,
+        0.1
+      ],
+      "lowpass": 2600,
+      "intensity": "SDK subject speed",
+      "processing": [
+        "atrim=start=0.15:end=4.8",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.5923566878980892",
+        "highpass=f=100",
+        "lowpass=f=2600"
+      ],
+      "sourceRms": 0.1580031269473832,
+      "normalization": 0.7305840344869524
+    },
+    {
+      "id": "SFX04",
+      "asset": "forceField_002.ogg",
+      "start": 9.8,
+      "end": 11.7,
+      "sourceIn": 0.04,
+      "fadeIn": 0.6,
+      "fadeOut": 0.45,
+      "gainDb": -24,
+      "pan": [
+        0.1,
+        0
+      ],
+      "lowpass": 2200,
+      "intensity": "constant + fades",
+      "processing": [
+        "atrim=start=0.04:end=0.955079",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.5",
+        "atempo=0.9632410526315797",
+        "highpass=f=100",
+        "lowpass=f=2200"
+      ],
+      "sourceRms": 0.261388271905936,
+      "normalization": 0.5738589528377136
+    },
+    {
+      "id": "SFX05",
+      "asset": "impactSoft_heavy_001.ogg",
+      "start": 11.05,
+      "end": 11.7,
+      "sourceIn": 0,
+      "fadeIn": 0.006,
+      "fadeOut": 0.4,
+      "gainDb": -13,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 7000,
+      "intensity": "constant + fades",
+      "processing": [
+        "atrim=start=0:end=0.572041",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.8800630769230788",
+        "highpass=f=100",
+        "lowpass=f=7000"
+      ],
+      "sourceRms": 0.10026330639037452,
+      "normalization": 1.2878843195310359
+    },
+    {
+      "id": "SFX06",
+      "asset": "doorOpen_000.ogg",
+      "start": 11.6,
+      "end": 13.6,
+      "sourceIn": 0,
+      "fadeIn": 0.18,
+      "fadeOut": 0.6,
+      "gainDb": -19,
+      "pan": [
+        -0.1,
+        0.2
+      ],
+      "lowpass": 3000,
+      "intensity": "constant + fades",
+      "processing": [
+        "atrim=start=0:end=0.53161",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.5",
+        "atempo=0.53161",
+        "highpass=f=100",
+        "lowpass=f=3000"
+      ],
+      "sourceRms": 0.017739363268213765,
+      "normalization": 6.378105375394756
+    },
+    {
+      "id": "SFX07",
+      "asset": "metal1.wav",
+      "start": 13,
+      "end": 13.8,
+      "sourceIn": 0,
+      "fadeIn": 0.01,
+      "fadeOut": 0.5,
+      "gainDb": -24,
+      "pan": [
+        0.2,
+        0.2
+      ],
+      "lowpass": 4000,
+      "intensity": "constant + fades",
+      "processing": [
+        "atrim=start=0:end=0.480583",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.6007287499999995",
+        "highpass=f=100",
+        "lowpass=f=4000"
+      ],
+      "sourceRms": 0.11454946952894932,
+      "normalization": 1.0214838449407708
+    },
+    {
+      "id": "SFX08",
+      "asset": "forceField_002.ogg",
+      "start": 16,
+      "end": 18.15,
+      "sourceIn": 0.03,
+      "fadeIn": 0.3,
+      "fadeOut": 0.6,
+      "gainDb": -22,
+      "pan": [
+        0.15,
+        -0.1
+      ],
+      "lowpass": 2500,
+      "reverse": true,
+      "intensity": "constant + fades",
+      "processing": [
+        "atrim=start=0.03:end=0.955079",
+        "asetpts=PTS-STARTPTS",
+        "areverse",
+        "atempo=0.5",
+        "atempo=0.8605386046511634",
+        "highpass=f=100",
+        "lowpass=f=2500"
+      ],
+      "sourceRms": 0.2571934517349224,
+      "normalization": 0.5832185811425641
+    },
+    {
+      "id": "SFX09",
+      "asset": "impactSoft_heavy_001.ogg",
+      "start": 17.75,
+      "end": 18.5,
+      "sourceIn": 0,
+      "fadeIn": 0.008,
+      "fadeOut": 0.45,
+      "gainDb": -14,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 7000,
+      "intensity": "constant + fades",
+      "processing": [
+        "atrim=start=0:end=0.572041",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.7627213333333334",
+        "highpass=f=100",
+        "lowpass=f=7000"
+      ],
+      "sourceRms": 0.100023144253772,
+      "normalization": 1.2959373804707641
+    },
+    {
+      "id": "SFX10",
+      "asset": "engineCircular_001.ogg",
+      "start": 19.5,
+      "end": 22.8,
+      "sourceIn": 0.5,
+      "sourceOut": 3.5,
+      "fadeIn": 0.5,
+      "fadeOut": 1.2,
+      "gainDb": -27,
+      "pan": [
+        -0.2,
+        0.2
+      ],
+      "lowpass": 1500,
+      "reverse": true,
+      "intensity": "constant + fades",
+      "processing": [
+        "atrim=start=0.5:end=3.5",
+        "asetpts=PTS-STARTPTS",
+        "areverse",
+        "atempo=0.909090909090909",
+        "highpass=f=100",
+        "lowpass=f=1500"
+      ],
+      "sourceRms": 0.1517736486392655,
+      "normalization": 0.7894573922867572
+    },
+    {
+      "id": "SFX11",
+      "asset": "doorOpen_000.ogg",
+      "start": 22.7,
+      "end": 24.9,
+      "sourceIn": 0,
+      "fadeIn": 0.25,
+      "fadeOut": 0.6,
+      "gainDb": -22,
+      "pan": [
+        0.2,
+        0
+      ],
+      "lowpass": 2400,
+      "intensity": "constant + fades",
+      "processing": [
+        "atrim=start=0:end=0.53161",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.5",
+        "atempo=0.5",
+        "atempo=0.9665636363636367",
+        "highpass=f=100",
+        "lowpass=f=2400"
+      ],
+      "sourceRms": 0.014295302230408244,
+      "normalization": 7.8564399113380095
+    },
+    {
+      "id": "SFX12",
+      "asset": "switch1.wav",
+      "start": 25.25,
+      "end": 25.7,
+      "sourceIn": 0,
+      "fadeIn": 0.005,
+      "fadeOut": 0.22,
+      "gainDb": -24,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 4500,
+      "intensity": "constant + fades",
+      "processing": [
+        "atrim=start=0:end=0.38458",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.8546222222222235",
+        "highpass=f=100",
+        "lowpass=f=4500"
+      ],
+      "sourceRms": 0.06169833306777888,
+      "normalization": 1.0210375657827566
+    },
+    {
+      "id": "SFX13",
+      "asset": "impactSoft_medium_003.ogg",
+      "start": 26.3,
+      "end": 26.75,
+      "sourceIn": 0,
+      "fadeIn": 0.008,
+      "fadeOut": 0.3,
+      "gainDb": -20,
+      "pan": [
+        0,
+        0
+      ],
+      "lowpass": 4500,
+      "intensity": "constant + fades",
+      "processing": [
+        "atrim=start=0:end=0.140227",
+        "asetpts=PTS-STARTPTS",
+        "atempo=0.5",
+        "atempo=0.6232311111111121",
+        "highpass=f=100",
+        "lowpass=f=4500"
+      ],
+      "sourceRms": 0.09314284049453737,
+      "normalization": 1.438259803130547
+    }
+  ],
+  "subjectiveListening": false
+}

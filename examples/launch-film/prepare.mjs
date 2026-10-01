@@ -1,0 +1,10 @@
+import {spawnSync} from 'node:child_process';
+import {mkdirSync,copyFileSync,existsSync} from 'node:fs';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+const root=path.dirname(fileURLToPath(import.meta.url));mkdirSync(path.join(root,'public'),{recursive:true});
+for(let i=0;i<600;i++)if(!existsSync(path.join(root,'build/frames',String(i).padStart(4,'0')+'.png')))throw new Error(`Missing rendered frame ${i}`);
+const result=spawnSync('ffmpeg',['-v','error','-framerate','30','-i',path.join(root,'build/frames/%04d.png'),'-vf','format=gbrpf32le,zscale=primariesin=709:transferin=iec61966-2-1:matrixin=gbr:primaries=709:transfer=709:matrix=709:range=limited,format=yuv420p','-c:v','libx264','-preset','fast','-crf','17','-color_primaries','bt709','-color_trc','bt709','-colorspace','bt709','-movflags','+faststart','-y',path.join(root,'public/space.mp4')],{stdio:'inherit'});
+if(result.status!==0)throw new Error('FFmpeg scene encoding failed');
+copyFileSync(path.join(root,'assets/stock/ink.mp4'),path.join(root,'public/ink.mp4'));
+console.log('Prepared renderer media');
