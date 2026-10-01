@@ -1,0 +1,251 @@
+{
+  "version": 1,
+  "title": "空间意象 / Spatial Imagery",
+  "fps": 30,
+  "durationInFrames": 900,
+  "shots": [
+    {
+      "id": "SH01",
+      "to": 120,
+      "state": "full",
+      "keyword": "先有主体 / Start with a subject",
+      "subject": "EL01 marked tile",
+      "initial": "Dispersed design sheets",
+      "action": "Sheets converge; marked subject lifts",
+      "result": "One identifiable subject",
+      "camera": "Establish and approach; same marked mesh",
+      "sound": "Dry slide and soft contact",
+      "assets": [
+        "audio:doorOpen_000.ogg",
+        "audio:impactSoft_medium_003.ogg"
+      ],
+      "readFrames": 24,
+      "from": 0,
+      "handoff": {
+        "to": "SH02",
+        "method": "same mesh",
+        "continuity": "Identity and velocity"
+      }
+    },
+    {
+      "id": "SH02",
+      "to": 330,
+      "state": "full",
+      "keyword": "主体带路 / Follow the subject",
+      "subject": "EL01 marked tile",
+      "initial": "Subject lifted",
+      "action": "Travel through spatial frames",
+      "result": "Depth and destination revealed",
+      "camera": "SDK follow rig blends with authored camera path",
+      "sound": "Velocity-driven long sound body; viewer-relative pan",
+      "assets": [
+        "audio:engineCircular_001.ogg",
+        "audio:forceField_002.ogg"
+      ],
+      "readFrames": 45,
+      "from": 120,
+      "handoff": {
+        "to": "SH03",
+        "method": "same mesh into assembly",
+        "continuity": "Camera continues to destination"
+      }
+    },
+    {
+      "id": "SH03",
+      "to": 600,
+      "state": "full",
+      "keyword": "揭示关系 / Reveal relationships",
+      "subject": "EL02 assembly receives EL01",
+      "initial": "Layers together",
+      "action": "Separate layers then close",
+      "result": "Five parts become one system",
+      "camera": "Pull back and arc around the assembly",
+      "sound": "Material crossfade then contact; quiet reading",
+      "assets": [
+        "audio:impactSoft_heavy_001.ogg",
+        "audio:doorOpen_000.ogg",
+        "audio:metal1.wav",
+        "audio:forceField_002.ogg"
+      ],
+      "readFrames": 45,
+      "from": 330,
+      "handoff": {
+        "to": "SH04",
+        "method": "editorial cut",
+        "continuity": "Meaning: assets become footage"
+      }
+    },
+    {
+      "id": "SH04",
+      "to": 750,
+      "state": "full",
+      "keyword": "真实素材 / Real footage",
+      "subject": "VID01 ink",
+      "initial": "Moving footage fills screen",
+      "action": "Contract into a composition surface",
+      "result": "Footage becomes authored content",
+      "camera": "Intentional cut then screen-space reframe",
+      "sound": "Soft transition; video original muted",
+      "assets": [
+        "video:ink",
+        "audio:engineCircular_001.ogg",
+        "audio:doorOpen_000.ogg"
+      ],
+      "readFrames": 45,
+      "from": 600,
+      "handoff": {
+        "to": "SH05",
+        "method": "dissolve",
+        "continuity": "Surface yields to brand mark"
+      }
+    },
+    {
+      "id": "SH05",
+      "to": 900,
+      "state": "full",
+      "keyword": "空间意象 / Spatial Imagery",
+      "subject": "EL03 brand mark",
+      "initial": "Outgoing footage surface",
+      "action": "Brand and bilingual title settle",
+      "result": "SDK identity readable",
+      "camera": "Stable reading after dissolve",
+      "sound": "Soft contacts, deliberate silence",
+      "assets": [
+        "audio:switch1.wav",
+        "audio:impactSoft_medium_003.ogg"
+      ],
+      "readFrames": 75,
+      "from": 750
+    }
+  ],
+  "assets": [
+    {
+      "id": "audio:engineCircular_001.ogg",
+      "kind": "audio",
+      "title": "engineCircular_001.ogg",
+      "source": "https://kenney.nl/assets/sci-fi-sounds",
+      "license": "CC0-1.0",
+      "tags": [
+        "launch-film",
+        "movement"
+      ],
+      "local": "assets/audio/engineCircular_001.ogg",
+      "sha256": "e1df3a942842a24f7c4056db3177e8008edd73d4f3985fd95f55362bc85058bc",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:forceField_002.ogg",
+      "kind": "audio",
+      "title": "forceField_002.ogg",
+      "source": "https://kenney.nl/assets/sci-fi-sounds",
+      "license": "CC0-1.0",
+      "tags": [
+        "launch-film",
+        "movement"
+      ],
+      "local": "assets/audio/forceField_002.ogg",
+      "sha256": "051b0eafc479695af4ca3607d41fd4be41bae7c21f4f9508d004722b09f1bd63",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:doorOpen_000.ogg",
+      "kind": "audio",
+      "title": "doorOpen_000.ogg",
+      "source": "https://kenney.nl/assets/sci-fi-sounds",
+      "license": "CC0-1.0",
+      "tags": [
+        "launch-film",
+        "movement"
+      ],
+      "local": "assets/audio/doorOpen_000.ogg",
+      "sha256": "5b7e07eccd4413ad9ef3720c2d14f9cc699f4c50111e9b2f48bd60e6f1a164c3",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:impactSoft_medium_003.ogg",
+      "kind": "audio",
+      "title": "impactSoft_medium_003.ogg",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0 1.0",
+      "tags": [
+        "launch-film",
+        "movement"
+      ],
+      "local": "assets/audio/impactSoft_medium_003.ogg",
+      "sha256": "5c4a1f35fde7e14046931da7bc3d1b23736541b7190ba107e08a379c4ca43cd6",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:impactSoft_heavy_001.ogg",
+      "kind": "audio",
+      "title": "impactSoft_heavy_001.ogg",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0 1.0",
+      "tags": [
+        "launch-film",
+        "movement"
+      ],
+      "local": "assets/audio/impactSoft_heavy_001.ogg",
+      "sha256": "4d0096364ba9e46119d2ff6df493fdc101bd2e1efae061da5e5f77a53b3fdcb6",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:switch1.wav",
+      "kind": "audio",
+      "title": "switch1.wav",
+      "source": "https://github.com/code4fukui/sound-cc0",
+      "license": "CC0-1.0 (README audio dedication); software Unlicense",
+      "tags": [
+        "launch-film",
+        "movement"
+      ],
+      "local": "assets/audio/switch1.wav",
+      "sha256": "43bfa8dde4a8553802b826518aff7246f510037e563009166b93584be626dba2",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:metal1.wav",
+      "kind": "audio",
+      "title": "metal1.wav",
+      "source": "https://github.com/code4fukui/sound-cc0",
+      "license": "CC0-1.0 (README audio dedication); software Unlicense",
+      "tags": [
+        "launch-film",
+        "movement"
+      ],
+      "local": "assets/audio/metal1.wav",
+      "sha256": "3d1f75a723cb43f34906f9d88cbe804e0ac1f9e02ac4c79a08efa080f6fcda0c",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "video:ink",
+      "kind": "video",
+      "title": "ink.mp4",
+      "source": "https://mixkit.co/free-stock-video/pink-ink-cloud-entering-water-41992/",
+      "license": "Mixkit Stock Video Free License",
+      "tags": [
+        "launch-film",
+        "movement"
+      ],
+      "local": "assets/stock/ink.mp4",
+      "sha256": "d6a11fa26aa008f5a33f82b68d94d752b56288eb64a0505de4ea3982f8c71739",
+      "availability": "local",
+      "redistribution": "forbidden",
+      "review": "technical"
+    }
+  ]
+}
