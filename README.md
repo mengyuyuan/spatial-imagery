@@ -4,7 +4,7 @@
 
 [简体中文](README.zh-CN.md) · [Workflow](docs/pipeline.md) · [API](docs/api.md) · [Launch-film source](examples/launch-film/README.md)
 
-[![Spatial Imagery launch film](media/poster.png)](media/spatial-imagery-launch.mp4)
+[![Spatial Imagery kinetic launch film](media/kinetic-v2-poster.png)](media/spatial-imagery-kinetic-v2.mp4)
 
 **Status: v0.1.0, early SDK.** The package turns tested production ideas into deterministic functions and explicit records. It does not automatically write a good story, perform transcription/matting/relighting, or render a finished film from a prompt. Those remain production stages described in the workflow.
 

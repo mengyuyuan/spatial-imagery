@@ -4,7 +4,7 @@
 
 [English](README.md) · [完整制作管线](docs/pipeline.zh-CN.md) · [API](docs/api.md) · [宣传片源码](examples/launch-film/README.md)
 
-[![空间意象宣传片](media/poster.png)](media/spatial-imagery-launch.mp4)
+[![空间意象：文字驱动宣传片](media/kinetic-v2-poster.png)](media/spatial-imagery-kinetic-v2.mp4)
 
 **当前为 v0.1.0 早期版本。** 我们把视频返修中形成的方法写成确定性函数和明确记录。SDK 不会自动替你完成审美判断、转录、抠像或真人重打光，也不宣称输入一句话就能得到专业成片；这些仍按制作管线完成。
 

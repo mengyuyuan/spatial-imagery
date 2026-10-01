@@ -1,0 +1,203 @@
+[
+  {
+    "id": "audio:engineCircular_001.ogg",
+    "path": "assets/audio/engineCircular_001.ogg",
+    "source": "https://kenney.nl/assets/sci-fi-sounds",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "e1df3a942842a24f7c4056db3177e8008edd73d4f3985fd95f55362bc85058bc",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "audio:forceField_002.ogg",
+    "path": "assets/audio/forceField_002.ogg",
+    "source": "https://kenney.nl/assets/sci-fi-sounds",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "051b0eafc479695af4ca3607d41fd4be41bae7c21f4f9508d004722b09f1bd63",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "audio:doorOpen_000.ogg",
+    "path": "assets/audio/doorOpen_000.ogg",
+    "source": "https://kenney.nl/assets/sci-fi-sounds",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "5b7e07eccd4413ad9ef3720c2d14f9cc699f4c50111e9b2f48bd60e6f1a164c3",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "audio:impactSoft_medium_003.ogg",
+    "path": "assets/audio/impactSoft_medium_003.ogg",
+    "source": "https://kenney.nl/assets/impact-sounds",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "5c4a1f35fde7e14046931da7bc3d1b23736541b7190ba107e08a379c4ca43cd6",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "audio:impactSoft_heavy_001.ogg",
+    "path": "assets/audio/impactSoft_heavy_001.ogg",
+    "source": "https://kenney.nl/assets/impact-sounds",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "4d0096364ba9e46119d2ff6df493fdc101bd2e1efae061da5e5f77a53b3fdcb6",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "audio:switch1.wav",
+    "path": "assets/audio/switch1.wav",
+    "source": "https://github.com/code4fukui/sound-cc0",
+    "license": "CC0-1.0 (README audio dedication); software Unlicense",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "43bfa8dde4a8553802b826518aff7246f510037e563009166b93584be626dba2",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "audio:metal1.wav",
+    "path": "assets/audio/metal1.wav",
+    "source": "https://github.com/code4fukui/sound-cc0",
+    "license": "CC0-1.0 (README audio dedication); software Unlicense",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "3d1f75a723cb43f34906f9d88cbe804e0ac1f9e02ac4c79a08efa080f6fcda0c",
+    "redistribution": "allowed",
+    "review": "technical"
+  },
+  {
+    "id": "video:ink",
+    "path": "assets/stock/ink.mp4",
+    "source": "https://mixkit.co/free-stock-video/pink-ink-cloud-entering-water-41992/",
+    "download": "https://assets.mixkit.co/videos/41992/41992-720.mp4",
+    "license": "Mixkit Stock Video Free License",
+    "license_url": "https://mixkit.co/license/#videoFree",
+    "sha256": "d6a11fa26aa008f5a33f82b68d94d752b56288eb64a0505de4ea3982f8c71739",
+    "redistribution": "excluded from source package; used within edited film",
+    "review": "decoded and representative frame inspected; normal-speed review not completed",
+    "usageV2": {
+      "visibleGlobalFrames": [
+        490,
+        507
+      ],
+      "sourceSeconds": [
+        5.333333,
+        5.9
+      ],
+      "muted": true
+    }
+  },
+  {
+    "id": "audio:v2-whoosh-fast.wav",
+    "path": "assets/stock/v2-whoosh-fast.wav",
+    "source": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/Sound%20Spark%20LLC%20-%20Whooshes%20Impacts%20and%20Transitions/",
+    "download": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/Sound%20Spark%20LLC%20-%20Whooshes%20Impacts%20and%20Transitions/Whoosh_Fast_02.wav",
+    "license": "Sonniss GDC Bundle 2.0; personal library/project synchronization; no raw redistribution",
+    "license_url": "https://sonniss.com/gdc-bundle-license/",
+    "sha256": "901286146ffe5a138152c6bef3c94f8158249fcac01c3f9270cb53808e996363",
+    "redistribution": "excluded; synchronization in edited film only",
+    "review": "technical; subjective listening not completed"
+  },
+  {
+    "id": "audio:v2-whoosh-particle.wav",
+    "path": "assets/stock/v2-whoosh-particle.wav",
+    "source": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/SoundFxwizard%20-%20PARTICLES%20An%20Organic%20%26%20Granular%20Journey/",
+    "download": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/SoundFxwizard%20-%20PARTICLES%20An%20Organic%20%26%20Granular%20Journey/PARTICLES_WHOOSH_Arrow%2001.wav",
+    "license": "Sonniss GDC Bundle 2.0; personal library/project synchronization; no raw redistribution",
+    "license_url": "https://sonniss.com/gdc-bundle-license/",
+    "sha256": "260549f43752421376ec7ab23c902bc941b4c79959013d8fe8ca17825fd0ae50",
+    "redistribution": "excluded; synchronization in edited film only",
+    "review": "technical; subjective listening not completed"
+  },
+  {
+    "id": "audio:v2-passby.wav",
+    "path": "assets/stock/v2-passby.wav",
+    "source": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/PMSFX%20-Scifi%20Passby%20%5Bdesigner%20Series%5D/",
+    "download": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/PMSFX%20-Scifi%20Passby%20%5Bdesigner%20Series%5D/PM_DSSP_Passby_Designed_Whoosh_Futuristic_Scifi_Airy_Synth_Spaceship_Fast_12.wav",
+    "license": "Sonniss GDC Bundle 2.0; personal library/project synchronization; no raw redistribution",
+    "license_url": "https://sonniss.com/gdc-bundle-license/",
+    "sha256": "1032d40f53b94c89aef5a95f49fd8bbdb7945a7edc7b544352f5841e3424174f",
+    "redistribution": "excluded; synchronization in edited film only",
+    "review": "technical; subjective listening not completed"
+  },
+  {
+    "id": "audio:impactGlass_heavy_000.ogg",
+    "path": "assets/audio/impactGlass_heavy_000.ogg",
+    "source": "https://kenney.nl/assets/impact-sounds",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "b44b39a940e8948e74b9bd3776bff980df43cf220abdaf0d467dc4c43c0244a5",
+    "redistribution": "allowed",
+    "review": "technical; subjective listening not completed",
+    "sourcePackDownload": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip"
+  },
+  {
+    "id": "audio:impactGlass_light_001.ogg",
+    "path": "assets/audio/impactGlass_light_001.ogg",
+    "source": "https://kenney.nl/assets/impact-sounds",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "05e513fbd42829060eb37855f8c3866722ec5c39a8937c9bfde518cc609effa2",
+    "redistribution": "allowed",
+    "review": "technical; subjective listening not completed",
+    "sourcePackDownload": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip"
+  },
+  {
+    "id": "audio:impactGlass_light_002.ogg",
+    "path": "assets/audio/impactGlass_light_002.ogg",
+    "source": "https://kenney.nl/assets/impact-sounds",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "sha256": "710db7451bb7857b9140dfe6afe4621ea2188ad65eda3919c569d1bb285b933d",
+    "redistribution": "allowed",
+    "review": "technical; subjective listening not completed",
+    "sourcePackDownload": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip"
+  },
+  {
+    "id": "music:162",
+    "path": "assets/stock/minimal-techno-162.mp3",
+    "source": "https://mixkit.co/free-stock-music/tech-house/",
+    "download": "https://assets.mixkit.co/music/162/162.mp3",
+    "license": "Mixkit Stock Music Free License",
+    "license_url": "https://mixkit.co/license/#musicFree",
+    "sha256": "ba1c747e0e1ade47d474f3407985c74cac4671bf3e21805c25c2f8545ac74c2a",
+    "redistribution": "excluded; synchronization in edited film only",
+    "review": "beat analysis only; not subjectively auditioned",
+    "usageV2": {
+      "globalFrames": [
+        0,
+        900
+      ],
+      "sourceSeconds": [
+        18.5,
+        48.5
+      ]
+    }
+  },
+  {
+    "id": "video:51884",
+    "path": "assets/stock/bubbles-51884.mp4",
+    "source": "https://mixkit.co/free-stock-video/bubbles-with-an-abstract-blue-background-51884/",
+    "download": "https://assets.mixkit.co/videos/51884/51884-720.mp4",
+    "license": "Mixkit Stock Video Free License",
+    "license_url": "https://mixkit.co/license/#videoFree",
+    "sha256": "b9e551277c97cd8b0645a8a14f60d34e97f534cc07178610a30472dbcc8d0418",
+    "redistribution": "excluded; synchronization in edited film only",
+    "review": "decoded; video representative frame inspected; listening not completed",
+    "usageV2": {
+      "globalFrames": [
+        450,
+        507
+      ],
+      "sourceSeconds": [
+        3,
+        4.9
+      ],
+      "muted": true
+    }
+  }
+]

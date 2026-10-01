@@ -1,0 +1,613 @@
+{
+  "version": 1,
+  "title": "空间意象 / Spatial Imagery — Kinetic v2",
+  "fps": 30,
+  "durationInFrames": 900,
+  "shots": [
+    {
+      "id": "SH01",
+      "from": 0,
+      "to": 57,
+      "state": "full",
+      "keyword": "让想法 / Give ideas room",
+      "subject": "EL01 typography and red point",
+      "initial": "Compressed glyphs",
+      "action": "Expand glyphs with stagger and squeeze",
+      "result": "Ideas fill the surface",
+      "camera": "Fixed editorial wide",
+      "sound": "Text pressure and first contact",
+      "assets": [
+        "music:162",
+        "audio:impactSoft_heavy_001.ogg",
+        "audio:doorOpen_000.ogg",
+        "audio:switch1.wav",
+        "audio:v2-whoosh-fast.wav"
+      ],
+      "readFrames": 20,
+      "handoff": {
+        "to": "SH02",
+        "method": "rhythmic cut or shape continuity; see design-v2.md",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH02",
+      "from": 57,
+      "to": 113,
+      "state": "full",
+      "keyword": "离开平面 / Beyond flat",
+      "subject": "EL02 sliced type",
+      "initial": "Flat word in frame",
+      "action": "Horizontal slices separate at different phases",
+      "result": "A fragmented surface",
+      "camera": "Fixed crop; shape movement",
+      "sound": "Air slide and granular swipe",
+      "assets": [
+        "music:162",
+        "audio:v2-whoosh-fast.wav",
+        "audio:v2-whoosh-particle.wav"
+      ],
+      "readFrames": 20,
+      "handoff": {
+        "to": "SH03",
+        "method": "rhythmic cut or shape continuity; see design-v2.md",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH03",
+      "from": 113,
+      "to": 169,
+      "state": "full",
+      "keyword": "进入空间 / Into space",
+      "subject": "EL03 extruded SPACE word",
+      "initial": "Flat typography",
+      "action": "Depth layers open and turn before rapid approach",
+      "result": "View enters negative space",
+      "camera": "CSS 2.5D rotation and approach, not physical 3D",
+      "sound": "Rising pass-by",
+      "assets": [
+        "music:162",
+        "audio:impactGlass_light_001.ogg",
+        "audio:v2-passby.wav"
+      ],
+      "readFrames": 20,
+      "handoff": {
+        "to": "SH04",
+        "method": "rhythmic cut or shape continuity; see design-v2.md",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH04",
+      "from": 169,
+      "to": 282,
+      "state": "full",
+      "keyword": "跟上想象 / Follow the idea",
+      "subject": "EL04 coral sphere",
+      "initial": "Subject ahead in ring sculpture",
+      "action": "Sphere and true 3D camera travel through depth",
+      "result": "Foreground rings pass the viewer",
+      "camera": "SDK motionPath and followCamera; near/far occlusion",
+      "sound": "Long acceleration envelope; pan follows travel",
+      "assets": [
+        "music:162",
+        "audio:v2-passby.wav"
+      ],
+      "readFrames": 20,
+      "handoff": {
+        "to": "SH05",
+        "method": "subject punch-in / match cut",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH05",
+      "from": 282,
+      "to": 338,
+      "state": "full",
+      "keyword": "改变形态 / Change the form",
+      "subject": "EL05 implicit surface",
+      "initial": "Sphere",
+      "action": "Ray-marched signed-distance volume morphs into ring",
+      "result": "Opening visible inside the same form",
+      "camera": "Animated volume orientation and fixed shader view",
+      "sound": "Material body then taper",
+      "assets": [
+        "music:162",
+        "audio:impactSoft_heavy_001.ogg",
+        "audio:forceField_002.ogg",
+        "audio:v2-whoosh-fast.wav"
+      ],
+      "readFrames": 20,
+      "handoff": {
+        "to": "SH06",
+        "method": "rhythmic cut or shape continuity; see design-v2.md",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH06",
+      "from": 338,
+      "to": 394,
+      "state": "full",
+      "keyword": "打破排列 / Break the grid",
+      "subject": "EL06 rounded tile field",
+      "initial": "Ordered matrix",
+      "action": "Staggered height and rotation wave propagates",
+      "result": "Array becomes spatial",
+      "camera": "3D camera arcs over matrix",
+      "sound": "Short varied glass contacts",
+      "assets": [
+        "music:162",
+        "audio:v2-whoosh-fast.wav",
+        "audio:impactGlass_light_001.ogg",
+        "audio:impactGlass_light_002.ogg"
+      ],
+      "readFrames": 20,
+      "handoff": {
+        "to": "SH07",
+        "method": "rhythmic cut or shape continuity; see design-v2.md",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH07",
+      "from": 394,
+      "to": 450,
+      "state": "full",
+      "keyword": "拆开重组 / Split and reform",
+      "subject": "EL07 four sectors",
+      "initial": "Circle",
+      "action": "Sectors separate, rotate and continuously square off",
+      "result": "Reassembled square",
+      "camera": "Fixed asymmetrical graphic frame",
+      "sound": "Separation body and contact",
+      "assets": [
+        "music:162",
+        "audio:doorOpen_000.ogg",
+        "audio:metal1.wav",
+        "audio:v2-whoosh-particle.wav"
+      ],
+      "readFrames": 20,
+      "handoff": {
+        "to": "SH08",
+        "method": "shape-position match into video aperture",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH08",
+      "from": 450,
+      "to": 507,
+      "state": "full",
+      "keyword": "让材质流动 / Feel the material",
+      "subject": "EL08 video aperture",
+      "initial": "Circle window",
+      "action": "Circle reveals actual bubble footage, ink sweeps across",
+      "result": "Material fills the frame",
+      "camera": "2D aperture and wipe with actual video motion",
+      "sound": "Music foreground; restrained material accent",
+      "assets": [
+        "music:162",
+        "audio:v2-whoosh-particle.wav",
+        "audio:impactGlass_heavy_000.ogg",
+        "audio:v2-whoosh-fast.wav",
+        "video:ink",
+        "video:51884"
+      ],
+      "readFrames": 20,
+      "handoff": {
+        "to": "SH09",
+        "method": "rhythmic cut or shape continuity; see design-v2.md",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH09",
+      "from": 507,
+      "to": 563,
+      "state": "full",
+      "keyword": "声音有惯性 / Sound has momentum",
+      "subject": "EL09 RMS waveform",
+      "initial": "Horizontal bars",
+      "action": "Bars driven by measured music RMS reorganize as a ring",
+      "result": "Circular waveform",
+      "camera": "Graphic regrouping with temporal offsets",
+      "sound": "Continuous body with explicit tail",
+      "assets": [
+        "music:162",
+        "audio:v2-whoosh-fast.wav",
+        "audio:engineCircular_001.ogg"
+      ],
+      "readFrames": 20,
+      "handoff": {
+        "to": "SH10",
+        "method": "rhythmic cut or shape continuity; see design-v2.md",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH10",
+      "from": 563,
+      "to": 619,
+      "state": "full",
+      "keyword": "同一时间 / One timeline",
+      "subject": "EL10 type tracks",
+      "initial": "Three offset lines",
+      "action": "MOTION CAMERA SOUND align on a moving marker",
+      "result": "Tracks share start position",
+      "camera": "Locked viewing reference makes alignment visible",
+      "sound": "Slide then contact on actual alignment",
+      "assets": [
+        "music:162",
+        "audio:doorOpen_000.ogg",
+        "audio:impactSoft_medium_003.ogg",
+        "audio:v2-whoosh-particle.wav"
+      ],
+      "readFrames": 20,
+      "handoff": {
+        "to": "SH11",
+        "method": "rhythmic cut or shape continuity; see design-v2.md",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH11",
+      "from": 619,
+      "to": 675,
+      "state": "full",
+      "keyword": "每种想法都有形状 / More ways to make",
+      "subject": "EL11 contact sheet",
+      "initial": "Separate visual motifs",
+      "action": "Different graphic systems assemble as contact sheet",
+      "result": "One selected cell becomes focus",
+      "camera": "Push toward selected cell",
+      "sound": "Small accents, directional sweep",
+      "assets": [
+        "music:162",
+        "audio:v2-whoosh-particle.wav",
+        "audio:v2-whoosh-fast.wav"
+      ],
+      "readFrames": 20,
+      "handoff": {
+        "to": "SH12",
+        "method": "rhythmic cut or shape continuity; see design-v2.md",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH12",
+      "from": 675,
+      "to": 732,
+      "state": "full",
+      "keyword": "设计动画声音 / Design motion sound",
+      "subject": "EL12 color planes",
+      "initial": "Separated stacked type",
+      "action": "Planes tilt, lift, close and rush toward lens",
+      "result": "Blue fills the frame for next shot",
+      "camera": "CSS 2.5D fold and zoom",
+      "sound": "Layer movement and closure",
+      "assets": [
+        "music:162",
+        "audio:v2-whoosh-fast.wav",
+        "audio:doorOpen_000.ogg",
+        "audio:impactGlass_light_002.ogg"
+      ],
+      "readFrames": 20,
+      "handoff": {
+        "to": "SH13",
+        "method": "color-plane fill into matching blue field",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH13",
+      "from": 732,
+      "to": 788,
+      "state": "full",
+      "keyword": "用代码把它连接 / Create with code",
+      "subject": "EL13 SDK function names",
+      "initial": "Separated braces",
+      "action": "Braces enter and frame the actual exported function names",
+      "result": "Connected toolkit",
+      "camera": "Fixed layout with brace movement",
+      "sound": "Dry switch and exit movement",
+      "assets": [
+        "music:162",
+        "audio:v2-whoosh-fast.wav",
+        "audio:switch1.wav",
+        "audio:v2-whoosh-particle.wav"
+      ],
+      "readFrames": 20,
+      "handoff": {
+        "to": "SH14",
+        "method": "rhythmic cut or shape continuity; see design-v2.md",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH14",
+      "from": 788,
+      "to": 844,
+      "state": "full",
+      "keyword": "想法变化空间意象 / Idea change space imagery",
+      "subject": "EL14 keyword sequence",
+      "initial": "Idea",
+      "action": "Each beat hands to the next word via scale and cut",
+      "result": "Brand meaning complete",
+      "camera": "Four rhythmic graphic cuts; no one-take claim",
+      "sound": "Music carries the four beats",
+      "assets": [
+        "music:162",
+        "audio:v2-whoosh-particle.wav"
+      ],
+      "readFrames": 8,
+      "handoff": {
+        "to": "SH15",
+        "method": "rhythmic cut or shape continuity; see design-v2.md",
+        "continuity": "Shared beat grid and active subject hierarchy"
+      }
+    },
+    {
+      "id": "SH15",
+      "from": 844,
+      "to": 900,
+      "state": "full",
+      "keyword": "空间意象 / Spatial Imagery",
+      "subject": "EL15 brand lockup",
+      "initial": "Separated mark and name",
+      "action": "Mark rotates to alignment and brand type settles",
+      "result": "Brand and project address readable",
+      "camera": "Stable end frame",
+      "sound": "Final contact and music fade",
+      "assets": [
+        "music:162",
+        "audio:impactSoft_heavy_001.ogg"
+      ],
+      "readFrames": 35
+    }
+  ],
+  "assets": [
+    {
+      "id": "audio:engineCircular_001.ogg",
+      "kind": "audio",
+      "title": "audio:engineCircular_001.ogg",
+      "source": "https://kenney.nl/assets/sci-fi-sounds",
+      "license": "CC0-1.0",
+      "tags": [
+        "audio"
+      ],
+      "local": "assets/audio/engineCircular_001.ogg",
+      "sha256": "e1df3a942842a24f7c4056db3177e8008edd73d4f3985fd95f55362bc85058bc",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:forceField_002.ogg",
+      "kind": "audio",
+      "title": "audio:forceField_002.ogg",
+      "source": "https://kenney.nl/assets/sci-fi-sounds",
+      "license": "CC0-1.0",
+      "tags": [
+        "audio"
+      ],
+      "local": "assets/audio/forceField_002.ogg",
+      "sha256": "051b0eafc479695af4ca3607d41fd4be41bae7c21f4f9508d004722b09f1bd63",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:doorOpen_000.ogg",
+      "kind": "audio",
+      "title": "audio:doorOpen_000.ogg",
+      "source": "https://kenney.nl/assets/sci-fi-sounds",
+      "license": "CC0-1.0",
+      "tags": [
+        "audio"
+      ],
+      "local": "assets/audio/doorOpen_000.ogg",
+      "sha256": "5b7e07eccd4413ad9ef3720c2d14f9cc699f4c50111e9b2f48bd60e6f1a164c3",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:impactSoft_medium_003.ogg",
+      "kind": "audio",
+      "title": "audio:impactSoft_medium_003.ogg",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0 1.0",
+      "tags": [
+        "audio"
+      ],
+      "local": "assets/audio/impactSoft_medium_003.ogg",
+      "sha256": "5c4a1f35fde7e14046931da7bc3d1b23736541b7190ba107e08a379c4ca43cd6",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:impactSoft_heavy_001.ogg",
+      "kind": "audio",
+      "title": "audio:impactSoft_heavy_001.ogg",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0 1.0",
+      "tags": [
+        "audio"
+      ],
+      "local": "assets/audio/impactSoft_heavy_001.ogg",
+      "sha256": "4d0096364ba9e46119d2ff6df493fdc101bd2e1efae061da5e5f77a53b3fdcb6",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:switch1.wav",
+      "kind": "audio",
+      "title": "audio:switch1.wav",
+      "source": "https://github.com/code4fukui/sound-cc0",
+      "license": "CC0-1.0 (README audio dedication); software Unlicense",
+      "tags": [
+        "audio"
+      ],
+      "local": "assets/audio/switch1.wav",
+      "sha256": "43bfa8dde4a8553802b826518aff7246f510037e563009166b93584be626dba2",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:metal1.wav",
+      "kind": "audio",
+      "title": "audio:metal1.wav",
+      "source": "https://github.com/code4fukui/sound-cc0",
+      "license": "CC0-1.0 (README audio dedication); software Unlicense",
+      "tags": [
+        "audio"
+      ],
+      "local": "assets/audio/metal1.wav",
+      "sha256": "3d1f75a723cb43f34906f9d88cbe804e0ac1f9e02ac4c79a08efa080f6fcda0c",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "video:ink",
+      "kind": "video",
+      "title": "video:ink",
+      "source": "https://mixkit.co/free-stock-video/pink-ink-cloud-entering-water-41992/",
+      "license": "Mixkit Stock Video Free License",
+      "tags": [
+        "video"
+      ],
+      "local": "assets/stock/ink.mp4",
+      "sha256": "d6a11fa26aa008f5a33f82b68d94d752b56288eb64a0505de4ea3982f8c71739",
+      "availability": "local",
+      "redistribution": "forbidden",
+      "review": "technical"
+    },
+    {
+      "id": "audio:v2-whoosh-fast.wav",
+      "kind": "audio",
+      "title": "audio:v2-whoosh-fast.wav",
+      "source": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/Sound%20Spark%20LLC%20-%20Whooshes%20Impacts%20and%20Transitions/",
+      "license": "Sonniss GDC Bundle 2.0; personal library/project synchronization; no raw redistribution",
+      "tags": [
+        "audio"
+      ],
+      "local": "assets/stock/v2-whoosh-fast.wav",
+      "sha256": "901286146ffe5a138152c6bef3c94f8158249fcac01c3f9270cb53808e996363",
+      "availability": "local",
+      "redistribution": "forbidden",
+      "review": "technical"
+    },
+    {
+      "id": "audio:v2-whoosh-particle.wav",
+      "kind": "audio",
+      "title": "audio:v2-whoosh-particle.wav",
+      "source": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/SoundFxwizard%20-%20PARTICLES%20An%20Organic%20%26%20Granular%20Journey/",
+      "license": "Sonniss GDC Bundle 2.0; personal library/project synchronization; no raw redistribution",
+      "tags": [
+        "audio"
+      ],
+      "local": "assets/stock/v2-whoosh-particle.wav",
+      "sha256": "260549f43752421376ec7ab23c902bc941b4c79959013d8fe8ca17825fd0ae50",
+      "availability": "local",
+      "redistribution": "forbidden",
+      "review": "technical"
+    },
+    {
+      "id": "audio:v2-passby.wav",
+      "kind": "audio",
+      "title": "audio:v2-passby.wav",
+      "source": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/PMSFX%20-Scifi%20Passby%20%5Bdesigner%20Series%5D/",
+      "license": "Sonniss GDC Bundle 2.0; personal library/project synchronization; no raw redistribution",
+      "tags": [
+        "audio"
+      ],
+      "local": "assets/stock/v2-passby.wav",
+      "sha256": "1032d40f53b94c89aef5a95f49fd8bbdb7945a7edc7b544352f5841e3424174f",
+      "availability": "local",
+      "redistribution": "forbidden",
+      "review": "technical"
+    },
+    {
+      "id": "audio:impactGlass_heavy_000.ogg",
+      "kind": "audio",
+      "title": "audio:impactGlass_heavy_000.ogg",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0 1.0",
+      "tags": [
+        "audio"
+      ],
+      "local": "assets/audio/impactGlass_heavy_000.ogg",
+      "sha256": "b44b39a940e8948e74b9bd3776bff980df43cf220abdaf0d467dc4c43c0244a5",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:impactGlass_light_001.ogg",
+      "kind": "audio",
+      "title": "audio:impactGlass_light_001.ogg",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0 1.0",
+      "tags": [
+        "audio"
+      ],
+      "local": "assets/audio/impactGlass_light_001.ogg",
+      "sha256": "05e513fbd42829060eb37855f8c3866722ec5c39a8937c9bfde518cc609effa2",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "audio:impactGlass_light_002.ogg",
+      "kind": "audio",
+      "title": "audio:impactGlass_light_002.ogg",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0 1.0",
+      "tags": [
+        "audio"
+      ],
+      "local": "assets/audio/impactGlass_light_002.ogg",
+      "sha256": "710db7451bb7857b9140dfe6afe4621ea2188ad65eda3919c569d1bb285b933d",
+      "availability": "local",
+      "redistribution": "allowed",
+      "review": "technical"
+    },
+    {
+      "id": "music:162",
+      "kind": "audio",
+      "title": "music:162",
+      "source": "https://mixkit.co/free-stock-music/tech-house/",
+      "license": "Mixkit Stock Music Free License",
+      "tags": [
+        "music"
+      ],
+      "local": "assets/stock/minimal-techno-162.mp3",
+      "sha256": "ba1c747e0e1ade47d474f3407985c74cac4671bf3e21805c25c2f8545ac74c2a",
+      "availability": "local",
+      "redistribution": "forbidden",
+      "review": "technical"
+    },
+    {
+      "id": "video:51884",
+      "kind": "video",
+      "title": "video:51884",
+      "source": "https://mixkit.co/free-stock-video/bubbles-with-an-abstract-blue-background-51884/",
+      "license": "Mixkit Stock Video Free License",
+      "tags": [
+        "video"
+      ],
+      "local": "assets/stock/bubbles-51884.mp4",
+      "sha256": "b9e551277c97cd8b0645a8a14f60d34e97f534cc07178610a30472dbcc8d0418",
+      "availability": "local",
+      "redistribution": "forbidden",
+      "review": "technical"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+import React from 'react';
+import {clamp,smooth,mix} from '../../../../dist/index.js';
+export {clamp,smooth,mix};
+export const B=60/128, FPS=30;
+export const C={paper:'#f3eee5',ink:'#161a20',red:'#ff5132',blue:'#244fff',mint:'#c4e1cb'};
+export const FONT='"Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif';
+export const EN='Arial, sans-serif';
+export const e=(x:number)=>1-Math.pow(1-clamp(x),4);
+export const back=(x:number)=>{x=clamp(x)-1;return 1+2.5*x*x*x+1.5*x*x;};
+export const p=(b:number,start=0,duration=1)=>clamp((b-start)/duration);
+export const range=(n:number)=>Array.from({length:n},(_,i)=>i);
+export const Base=({children,bg=C.paper,fg=C.ink}:{children?:React.ReactNode;bg?:string;fg?:string})=><div style={{position:'absolute',inset:0,overflow:'hidden',background:bg,color:fg,fontFamily:FONT}}>{children}</div>;
+export const Txt=({children,x=80,y=80,size=120,color,style={}}:{children:React.ReactNode;x?:number;y?:number;size?:number;color?:string;style?:React.CSSProperties})=><div style={{position:'absolute',left:x,top:y,fontSize:size,fontWeight:900,lineHeight:1.08,letterSpacing:-4,whiteSpace:'nowrap',color,...style}}>{children}</div>;
+export const Small=({children,x=82,y=80,color,style={}}:{children:React.ReactNode;x?:number;y?:number;color?:string;style?:React.CSSProperties})=><Txt x={x} y={y} size={24} color={color} style={{fontFamily:EN,letterSpacing:2,fontWeight:500,...style}}>{children}</Txt>;
+export const Mark=({size=88,color=C.red,progress=1}:{size?:number;color?:string;progress?:number})=><svg width={size} height={size} viewBox="0 0 120 120"><g transform={`translate(60 60) rotate(${(1-progress)*90}) scale(${.6+.4*progress}) translate(-60 -60)`}><path d="M18 35 60 11 102 35 102 85 60 109 18 85Z" fill="none" stroke={color} strokeWidth="10"/><path d="M18 35 60 60 102 35M60 60V109" fill="none" stroke={color} strokeWidth="10"/></g></svg>;

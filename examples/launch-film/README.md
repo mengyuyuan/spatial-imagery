@@ -1,5 +1,36 @@
 # Launch film / 双语宣传片
 
+## Current: kinetic v2 / 当前：文字驱动版
+
+The 30-second revision follows on-screen text and a 128 BPM music grid: 15 shots, large kinetic type, 3D subject-following travel, an implicit sphere-to-ring morph, a spatial array, geometric recomposition, real video apertures and a measured-audio waveform. No voiceover is used. The v1 film below is retained as a revision case after feedback that it was too sparse and slow.
+
+[Film](../../media/spatial-imagery-kinetic-v2.mp4) · [Design](design-v2.md) · [Storyboard](storyboard-v2.json) · [Sources](assets-v2.json) · [Sound events](sound-v2.json) · [QA](qa-v2.json)
+
+From the repository root:
+
+```sh
+npm ci
+npm run build
+npm ci --prefix examples/launch-film
+node examples/launch-film/fetch-assets.mjs --v2
+node examples/launch-film/mix-kinetic.mjs
+node examples/launch-film/plan-kinetic.mjs
+node examples/launch-film/render-kinetic.mjs --stills
+# Inspect representative frames in examples/launch-film/build/kinetic/.
+node examples/launch-film/render-kinetic.mjs
+node examples/launch-film/qa.mjs --v2
+node examples/launch-film/check-motion.mjs
+node examples/launch-film/render-cover.mjs
+```
+
+The renderer requires WebGL/ANGLE; Chinese system fonts and FFmpeg/ffprobe are needed. Blender is not required for v2. Three.js handles the travel and array meshes; a signed-distance-field shader performs the volume morph without torn polygon topology. Typography depth and folded text planes are explicitly CSS 2.5D. The two are not presented as the same technique.
+
+The music is Mixkit **Minimal Techno 01** by Alejandro Magaña (A. M.), cropped from 18.5 to 48.5 seconds for video synchronization. Mixkit music terms permit web/social video uses but exclude TV/radio, games and CD/DVD. Three Sonniss effects are downloaded separately for synchronization; raw or processed audio is not redistributed as an SDK asset. Ten CC0 source effects are included. Only the finished synchronized film is public alongside code and provenance. See [NOTICE](../../NOTICE.md).
+
+本版按用户返修要求以文字推动快节奏变化。技术检查、关键帧审看与主观听审分别记录；没有把画面变化数量或正常编码等同于审美认可。用户尚未评价这个具体版本。
+
+## v1 / Previous production study
+
 An original 30-second film showing the SDK in use. [Design table](design.md), [sources](asset-manifest.json), [QA](qa.json). Stock source files are excluded from Git. Seven CC0 sound sources are included with provenance. The finished MP4 is in [`media/`](../../media/).
 
 ## Reproduce / 复现
