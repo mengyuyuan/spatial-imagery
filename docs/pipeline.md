@@ -6,7 +6,11 @@ The SDK supplies execution tools. The design table states the creative intent. T
 
 The v0.2 [script-to-video runner](script-to-video.md) connects scripts, configurable model/imported designs, acquired assets, editable animation projects, audio and rendering. It executes applicable stages below; it does not replace footage review or final viewing/listening. Music, narration, procedural-only mode, duration, canvas and style belong to each project rather than becoming universal rules from a previous film.
 
-## Production standard 3.21: transform according to intent
+## Production standard 3.22: derive design from intent
+
+First understand [design principles](design-principles.md): relationships expressed as imagery, recognition cues, attention through composition, dimensional expression, the separate roles of subject and camera, and rhythm/type as carriers of feeling. Important decisions state their principle, contextual reason, expected perception and failure risk. Principle names, technique labels and statements of responsibility do not substitute for that reasoning.
+
+For a new film or substantial visual revision, read [design synthesis](design-synthesis.md) first. The maker proposes and selects imagery paths and camera work, compares meaningful alternatives, and records the choice, visible intermediate states, discovery and reading landing in the existing design table. Do not wait for the user to invent every transition. Choose 2D, 2.5D, 3D, lyrics and footage for expression; lacking source footage does not require fully modeled sets. A requested dimensional conversion needs its own interface, not just camera travel through 3D scenery. This updates the design method; machine gates remain schema 4 and do not judge creative quality automatically.
 
 Determine the intended change in understanding, feeling and attention before choosing shape, function, space, camera or sound. Each shot connects **the actual line/text/action → prior understanding → new understanding → visible change → subject handoff → camera discovery → readable landing**. A real morph still fails when it does not express the current idea. Films without speech use screen text, actions or a creative brief as their cues.
 
@@ -23,6 +27,26 @@ An impressive opening cannot certify the middle or ending. Sync and loudness mea
 **Execution boundary (v0.4):** generated projects include the schema-v4 Python validator, Node gate runner, current-input-bound unverified manifest and [portable guide](../templates/production/PRODUCTION-GATES.md). Formal render enforces G1/G2; `gates delivery` checks G3 against the final encode. Use `--draft` / `render:draft` for diagnosis. These check records, current source/media hashes and coverage; they do not perceive aesthetics or listen for you. Structural checks and review approval remain separate.
 
 Eight independent vetoes now cover design, motion, camera, handoff, color/lighting, matting, denoise and sound effects. Full-film and per-shot design critique must explicitly reject slide-deck packaging; exact fields and evidence rules are in [SPECIALIST-GATES](../templates/production/SPECIALIST-GATES.md).
+
+## Execution SOP: inputs, actions, outputs and repair routes
+
+Principles explain why; this SOP turns decisions into production. Follow the order below; the numbered sections that follow supply topic-specific detail. Keep the same SH/EL/TR/VID/SFX identities rather than maintaining competing records.
+
+| Stage | Input and required action | Output and check; where to return |
+|---|---|---|
+| 1 Scope and sources | Verify the request, source files/script/music, media specifications and current version; record talking-head/general and sample/full-film scope | One-page baseline, source identities and media inspection. Repair missing/incorrect sources; do not create face detection or A/B for films without a presenter |
+| 2 Content and timeline | Verify speech and edit where appropriate; align lyrics to real singing, phrases, accents and sustains; organize motion-only work around music/text/intent | Content/emotion segments, one timeline and source→edited→sample mapping. Record the actual transcription model and uncertainties; do not invent timings or apply speech breath removal to a song |
+| 3 Research and assets | Use preliminary relationships to inspect studies, complete reference films, footage and existing sounds; check ranges, authors and usage conditions | Reference mechanisms/adaptations, VID/SFX candidates, separate verified/selected/rejected states and gaps. Continue searching where needed; stills or GitHub tools do not replace moving footage and actual sound assets |
+| 4 Design reasoning | Apply principles to imagery alternatives, shape bridges, recognition, dimensions, camera, rhythm, lyrics and visual unity | Selected narrative, tradeoffs, viewing script and failure risks. Repair weak ideas here; return to 3 for asset changes instead of adding models to an empty concept |
+| 5 Design table and G1 | Specify SH/EL/TR/VID/SFX, key compositions, intermediate states, actual frame windows, reading and sound envelopes | Executable scope-wide table and G1 checks. Complete fields do not prove design quality; unclear mechanisms return to 4, missing assets to 3 |
+| 6 Critical motion draft | Prototype the most uncertain interface and its context with actual camera behavior, readable text and candidate audio; inspect using stage 7 | Playable low-cost draft and defects. After it works, extend to the entire scope, then refine geometry/material/light, grade/matting and audio; a key passage cannot certify the whole film |
+| 7 Scope-wide review and repair | Watch every SH/TR at normal speed, inspect ordered frames, listen with picture and perform applicable specialist reviews | Current-version evidence and defects. Design faults return to 4/5, implementation to 6, asset/sound selection to 3 with realignment. Include middle, ending and intentional quiet; unverified is not passed |
+| 8 Current preview | Repair known defects before presenting a cached audiovisual preview and scrubbable project; confirm the displayed version | Preview, source snapshot and scope-specific feedback. Existing authorization/approval remains valid; sample scope ends with a sample, without automatic expansion or repeated approval |
+| 9 Formal encode and delivery | After G2, render formally; after final mixing/encoding, repeat shot/full viewing, listening and technical checks, then G3 | Authorized media/cover, source/dependencies, assets, QA and library record. Required failures retain review/revision status rather than a final label |
+
+Order: **1→2→3↔4→5→6↔7→8→9**. Research and design can inform each other. Resolve viewing relationships in drafts before increasing detail. Timeline changes return to 2 and propagate through affected shots, words, footage, people and sound; local visual/audio changes include neighboring interfaces and the encode. Without audio, relative timing design may proceed, but formal synchronization needs the actual source.
+
+G1/G2/G3 govern formal production; clearly labeled diagnostic drafts remain available. A gap blocks dependent formal output, not independent work, and creates no new per-stage user approval. On resumption, record the current stage, verified version, next artifact and gaps in the one-page baseline. Updating this document does not automatically upgrade an old project or reload another running conversation.
 
 ## 1. Establish scope and source truth
 
@@ -48,6 +72,8 @@ Actively search for footage corresponding to the shot, inspect the content and u
 
 The one-page baseline defines meaning, visual language, light, typography, palette, rhythm, sound, gaps and reference versions. Use shared IDs across these records:
 
+Also record content → subject properties → imagery path, the important design tradeoff, and the interface that needs a motion prototype. For mixed dimensions, EL/TR specify starting dimension, conversion medium, preserved anchor, intermediate state and ending dimension. When lyrics are the subject, SH includes entry into type, an accurate readable window, and exit into the next image. Apply these details where relevant; do not prescribe a dimensional ratio, a morph per shot, or a universal petal/cloth sequence.
+
 | Record | Required information |
 |---|---|
 | SH / shot | Global `[from,to)` frames, speech/keyword, A/B for talking-head or full for general films, subject, initial→action→result, camera task, reading window, assets and sound |
@@ -64,7 +90,7 @@ Use integer frames in the table, seconds in motion/audio APIs, samples in audio 
 
 Every shot has a primary subject. It can transform or finish its role and hand over. Avoid clearing the scene every sentence, changing only card text, or forcing one object to express every idea.
 
-Give the camera an observation task: follow, reveal after passing a foreground object, inspect a detail, pull back to explain structure, or establish a larger scale. Motion should cause discovery. Depth comes from foreground/midground/background references, occlusion, parallax and light.
+Give the camera an observation task: follow, reveal after passing a foreground object, inspect a detail, pull back to explain structure, establish a larger scale, or affect intimacy, tension and rhythm through specific framing and timing. Movement needs a perceptible viewing purpose, not necessarily a new fact in every shot. Depth comes from foreground/midground/background references, occlusion, parallax and light.
 
 `motionPath` accepts velocities in world units/second. A shared key tangent provides continuous velocity across segments. Omitted velocity means a pause. Sampling outside the path clamps position and returns zero velocity, so extend the path when movement must continue through the boundary.
 

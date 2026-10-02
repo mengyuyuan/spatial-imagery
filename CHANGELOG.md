@@ -2,6 +2,7 @@
 
 ## 0.4.0
 
+- Bilingual workflow 3.22 adds design principles, imagery/camera reasoning, mixed-dimensional lyric guidance and a nine-stage production SOP with explicit artifacts and repair routes. These guide creative work without claiming automatic aesthetic review or changing schema 4.
 - Schema 4 adds an independent mandatory camera gate covering every shot and handoff; motion/camera/sound each veto formal render and delivery.
 - Intentional silence requires an encoded-media-bound sound review, never N/A.
 - Explicit `videoType`; A/B staging is restricted to talking-head projects. General films keep content-led scenes/cameras with `full` states.

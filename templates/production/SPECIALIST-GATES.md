@@ -20,6 +20,10 @@ G1 requires whole-film and per-SH design critiques, all eight applicability deci
 
 ## Design / 设计门：先淘汰空洞方案
 
+Explain the principles behind important choices: how the relationship becomes visible, which cues preserve recognition, and what camera/rhythm contribute to the viewing experience. Technique or principle names alone are insufficient. Emotional and poetic purposes are valid; each shot need not add a new factual explanation. See the SDK's packaged docs/design-principles.md and docs/design-principles.zh-CN.md for reasoning and failure examples.
+
+For a new film or substantial redesign, derive content/emotion → changeable subject properties → candidate imagery paths → visible intermediate states → discovery and reading landing. The maker compares meaningful alternatives and selects a path in the one-page brief, then records the mechanism and camera task in SH/EL/TR; do not wait for users to invent each transition. Requested mixed dimensions cannot be signed off as an all-3D walkthrough. When lyrics are the subject, inspect their letterform/layout behavior and reading window rather than deleting the text. Prototype the most uncertain interface before detailed production. The SDK's packaged docs/design-synthesis.md and docs/design-synthesis.zh-CN.md explain the method. Record evidence under the existing criteria below; schema remains 4 and the checker does not judge creative quality.
+
 Per-SH criteria: `intent`, `specificity`, `visible_process`, `subject_hierarchy`, `camera_discovery`, `reading_rhythm`, `sound_plan`, `reference_adaptation`, `not_slide_deck`.
 
 - 真实台词/屏幕文字/手势/创作意向 → 观众此前理解 → 此后理解；愿望与顾虑不能被画成已经实现。
