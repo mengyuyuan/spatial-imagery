@@ -18,4 +18,6 @@ Kinetic v2 adds **Mixkit / Minimal Techno 01** by Alejandro Magaña (A. M.), [so
 
 Private source footage, personal paths, paid sound packs, credentials and historical user feedback are not part of this public distribution.
 
+The v0.3 portable installation demo bundles only the three Kenney CC0 sound files listed in `templates/demo/catalog.json` with source pages, license identifiers and hashes. Its procedural design is original MIT code. The portable evidence checker and project wrapper are also original MIT code; gate-guide prose follows the workflow's CC BY 4.0 attribution above. Neither the installation demo nor synthetic gate tests convey user or artistic approval.
+
 The v0.2 script-to-film example incorporates **Mixkit / Stoplight timelapse, item 127**, [source](https://mixkit.co/free-stock-video/stoplight-timelapse-127/), Stock Video Free License, checked 2026-10-01, and the previously credited Minimal Techno 01 music. Its three bundled SFX are Kenney CC0 recordings, with identities in `examples/script-to-film/catalog.json`. The generated project renderer is original code using Remotion; it does not relicense third-party media, models or fonts. Candidate Pexels video records link to their source pages and [Pexels License](https://www.pexels.com/license/); search/decode success is not a licensing review for every intended use.

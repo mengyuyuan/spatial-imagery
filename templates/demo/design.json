@@ -1,0 +1,862 @@
+{
+  "version": 1,
+  "scriptSha256": "90fbf3741765003e006f6fe29ec799687ef53d927f447944fc96f1579d36fc1e",
+  "title": "Give ideas room to move",
+  "width": 640,
+  "height": 360,
+  "fps": 30,
+  "durationInFrames": 180,
+  "background": "#111a23",
+  "direction": "A coral cluster travels as one subject, then its pieces open into a useful structured array. Technical installation sample; creative and listening approval remain unverified.",
+  "shots": [
+    {
+      "id": "SH1",
+      "from": 0,
+      "to": 84,
+      "state": "full",
+      "lines": [
+        "L001"
+      ],
+      "keyword": "Move",
+      "subject": "coral cluster",
+      "initial": "cluster enters",
+      "action": "travels with a following camera",
+      "result": "centered subject",
+      "camera": "follow travel",
+      "sound": "continuous motion with a settling tail",
+      "assets": [
+        "motion",
+        "opening",
+        "contact"
+      ],
+      "readFrames": 18,
+      "handoff": {
+        "to": "SH2",
+        "method": "same persistent pieces",
+        "continuity": "hold position before opening"
+      }
+    },
+    {
+      "id": "SH2",
+      "from": 84,
+      "to": 180,
+      "state": "full",
+      "lines": [
+        "L002"
+      ],
+      "keyword": "Open",
+      "subject": "coral cluster",
+      "initial": "closed cluster",
+      "action": "separate pieces unfold into a rectangular array",
+      "result": "open structure and readable title",
+      "camera": "pull back to reveal the same pieces",
+      "sound": "continuous motion with a settling tail",
+      "assets": [
+        "motion",
+        "opening",
+        "contact"
+      ],
+      "readFrames": 40
+    }
+  ],
+  "camera": {
+    "x": [
+      {
+        "frame": 0,
+        "value": -60
+      },
+      {
+        "frame": 65,
+        "value": 0
+      },
+      {
+        "frame": 180,
+        "value": 0
+      }
+    ],
+    "zoom": [
+      {
+        "frame": 0,
+        "value": 1.12
+      },
+      {
+        "frame": 85,
+        "value": 1.12
+      },
+      {
+        "frame": 145,
+        "value": 1
+      },
+      {
+        "frame": 180,
+        "value": 1
+      }
+    ],
+    "rotateZ": 0
+  },
+  "layers": [
+    {
+      "id": "piece-0",
+      "type": "rect",
+      "from": 0,
+      "to": 180,
+      "x": [
+        {
+          "frame": 0,
+          "value": 116
+        },
+        {
+          "frame": 60,
+          "value": 276
+        },
+        {
+          "frame": 84,
+          "value": 276
+        },
+        {
+          "frame": 128,
+          "value": 237
+        },
+        {
+          "frame": 180,
+          "value": 237
+        }
+      ],
+      "y": [
+        {
+          "frame": 0,
+          "value": 141.0
+        },
+        {
+          "frame": 84,
+          "value": 141.0
+        },
+        {
+          "frame": 128,
+          "value": 116.0
+        },
+        {
+          "frame": 180,
+          "value": 116.0
+        }
+      ],
+      "width": [
+        {
+          "frame": 0,
+          "value": 38
+        },
+        {
+          "frame": 84,
+          "value": 38
+        },
+        {
+          "frame": 128,
+          "value": 68
+        }
+      ],
+      "height": [
+        {
+          "frame": 0,
+          "value": 38
+        },
+        {
+          "frame": 84,
+          "value": 38
+        },
+        {
+          "frame": 128,
+          "value": 58
+        }
+      ],
+      "radius": [
+        {
+          "frame": 0,
+          "value": 19
+        },
+        {
+          "frame": 80,
+          "value": 19
+        },
+        {
+          "frame": 128,
+          "value": 9
+        }
+      ],
+      "rotateY": [
+        {
+          "frame": 0,
+          "value": -28
+        },
+        {
+          "frame": 60,
+          "value": 0
+        },
+        {
+          "frame": 96,
+          "value": 0
+        },
+        {
+          "frame": 114,
+          "value": 40
+        },
+        {
+          "frame": 138,
+          "value": 0
+        }
+      ],
+      "fill": "#ff6745"
+    },
+    {
+      "id": "piece-1",
+      "type": "rect",
+      "from": 0,
+      "to": 180,
+      "x": [
+        {
+          "frame": 0,
+          "value": 160
+        },
+        {
+          "frame": 60,
+          "value": 320
+        },
+        {
+          "frame": 84,
+          "value": 320
+        },
+        {
+          "frame": 128,
+          "value": 320
+        },
+        {
+          "frame": 180,
+          "value": 320
+        }
+      ],
+      "y": [
+        {
+          "frame": 0,
+          "value": 141.0
+        },
+        {
+          "frame": 84,
+          "value": 141.0
+        },
+        {
+          "frame": 128,
+          "value": 116.0
+        },
+        {
+          "frame": 180,
+          "value": 116.0
+        }
+      ],
+      "width": [
+        {
+          "frame": 0,
+          "value": 38
+        },
+        {
+          "frame": 84,
+          "value": 38
+        },
+        {
+          "frame": 128,
+          "value": 68
+        }
+      ],
+      "height": [
+        {
+          "frame": 0,
+          "value": 38
+        },
+        {
+          "frame": 84,
+          "value": 38
+        },
+        {
+          "frame": 128,
+          "value": 58
+        }
+      ],
+      "radius": [
+        {
+          "frame": 0,
+          "value": 19
+        },
+        {
+          "frame": 80,
+          "value": 19
+        },
+        {
+          "frame": 128,
+          "value": 9
+        }
+      ],
+      "rotateY": [
+        {
+          "frame": 0,
+          "value": -28
+        },
+        {
+          "frame": 60,
+          "value": 0
+        },
+        {
+          "frame": 96,
+          "value": 0
+        },
+        {
+          "frame": 114,
+          "value": 40
+        },
+        {
+          "frame": 138,
+          "value": 0
+        }
+      ],
+      "fill": "#e8dac0"
+    },
+    {
+      "id": "piece-2",
+      "type": "rect",
+      "from": 0,
+      "to": 180,
+      "x": [
+        {
+          "frame": 0,
+          "value": 204
+        },
+        {
+          "frame": 60,
+          "value": 364
+        },
+        {
+          "frame": 84,
+          "value": 364
+        },
+        {
+          "frame": 128,
+          "value": 403
+        },
+        {
+          "frame": 180,
+          "value": 403
+        }
+      ],
+      "y": [
+        {
+          "frame": 0,
+          "value": 141.0
+        },
+        {
+          "frame": 84,
+          "value": 141.0
+        },
+        {
+          "frame": 128,
+          "value": 116.0
+        },
+        {
+          "frame": 180,
+          "value": 116.0
+        }
+      ],
+      "width": [
+        {
+          "frame": 0,
+          "value": 38
+        },
+        {
+          "frame": 84,
+          "value": 38
+        },
+        {
+          "frame": 128,
+          "value": 68
+        }
+      ],
+      "height": [
+        {
+          "frame": 0,
+          "value": 38
+        },
+        {
+          "frame": 84,
+          "value": 38
+        },
+        {
+          "frame": 128,
+          "value": 58
+        }
+      ],
+      "radius": [
+        {
+          "frame": 0,
+          "value": 19
+        },
+        {
+          "frame": 80,
+          "value": 19
+        },
+        {
+          "frame": 128,
+          "value": 9
+        }
+      ],
+      "rotateY": [
+        {
+          "frame": 0,
+          "value": -28
+        },
+        {
+          "frame": 60,
+          "value": 0
+        },
+        {
+          "frame": 96,
+          "value": 0
+        },
+        {
+          "frame": 114,
+          "value": 40
+        },
+        {
+          "frame": 138,
+          "value": 0
+        }
+      ],
+      "fill": "#ff6745"
+    },
+    {
+      "id": "piece-3",
+      "type": "rect",
+      "from": 0,
+      "to": 180,
+      "x": [
+        {
+          "frame": 0,
+          "value": 116
+        },
+        {
+          "frame": 60,
+          "value": 276
+        },
+        {
+          "frame": 84,
+          "value": 276
+        },
+        {
+          "frame": 128,
+          "value": 237
+        },
+        {
+          "frame": 180,
+          "value": 237
+        }
+      ],
+      "y": [
+        {
+          "frame": 0,
+          "value": 185.0
+        },
+        {
+          "frame": 84,
+          "value": 185.0
+        },
+        {
+          "frame": 128,
+          "value": 188.0
+        },
+        {
+          "frame": 180,
+          "value": 188.0
+        }
+      ],
+      "width": [
+        {
+          "frame": 0,
+          "value": 38
+        },
+        {
+          "frame": 84,
+          "value": 38
+        },
+        {
+          "frame": 128,
+          "value": 68
+        }
+      ],
+      "height": [
+        {
+          "frame": 0,
+          "value": 38
+        },
+        {
+          "frame": 84,
+          "value": 38
+        },
+        {
+          "frame": 128,
+          "value": 58
+        }
+      ],
+      "radius": [
+        {
+          "frame": 0,
+          "value": 19
+        },
+        {
+          "frame": 80,
+          "value": 19
+        },
+        {
+          "frame": 128,
+          "value": 9
+        }
+      ],
+      "rotateY": [
+        {
+          "frame": 0,
+          "value": -28
+        },
+        {
+          "frame": 60,
+          "value": 0
+        },
+        {
+          "frame": 96,
+          "value": 0
+        },
+        {
+          "frame": 114,
+          "value": 40
+        },
+        {
+          "frame": 138,
+          "value": 0
+        }
+      ],
+      "fill": "#e8dac0"
+    },
+    {
+      "id": "piece-4",
+      "type": "rect",
+      "from": 0,
+      "to": 180,
+      "x": [
+        {
+          "frame": 0,
+          "value": 160
+        },
+        {
+          "frame": 60,
+          "value": 320
+        },
+        {
+          "frame": 84,
+          "value": 320
+        },
+        {
+          "frame": 128,
+          "value": 320
+        },
+        {
+          "frame": 180,
+          "value": 320
+        }
+      ],
+      "y": [
+        {
+          "frame": 0,
+          "value": 185.0
+        },
+        {
+          "frame": 84,
+          "value": 185.0
+        },
+        {
+          "frame": 128,
+          "value": 188.0
+        },
+        {
+          "frame": 180,
+          "value": 188.0
+        }
+      ],
+      "width": [
+        {
+          "frame": 0,
+          "value": 38
+        },
+        {
+          "frame": 84,
+          "value": 38
+        },
+        {
+          "frame": 128,
+          "value": 68
+        }
+      ],
+      "height": [
+        {
+          "frame": 0,
+          "value": 38
+        },
+        {
+          "frame": 84,
+          "value": 38
+        },
+        {
+          "frame": 128,
+          "value": 58
+        }
+      ],
+      "radius": [
+        {
+          "frame": 0,
+          "value": 19
+        },
+        {
+          "frame": 80,
+          "value": 19
+        },
+        {
+          "frame": 128,
+          "value": 9
+        }
+      ],
+      "rotateY": [
+        {
+          "frame": 0,
+          "value": -28
+        },
+        {
+          "frame": 60,
+          "value": 0
+        },
+        {
+          "frame": 96,
+          "value": 0
+        },
+        {
+          "frame": 114,
+          "value": 40
+        },
+        {
+          "frame": 138,
+          "value": 0
+        }
+      ],
+      "fill": "#ff6745"
+    },
+    {
+      "id": "piece-5",
+      "type": "rect",
+      "from": 0,
+      "to": 180,
+      "x": [
+        {
+          "frame": 0,
+          "value": 204
+        },
+        {
+          "frame": 60,
+          "value": 364
+        },
+        {
+          "frame": 84,
+          "value": 364
+        },
+        {
+          "frame": 128,
+          "value": 403
+        },
+        {
+          "frame": 180,
+          "value": 403
+        }
+      ],
+      "y": [
+        {
+          "frame": 0,
+          "value": 185.0
+        },
+        {
+          "frame": 84,
+          "value": 185.0
+        },
+        {
+          "frame": 128,
+          "value": 188.0
+        },
+        {
+          "frame": 180,
+          "value": 188.0
+        }
+      ],
+      "width": [
+        {
+          "frame": 0,
+          "value": 38
+        },
+        {
+          "frame": 84,
+          "value": 38
+        },
+        {
+          "frame": 128,
+          "value": 68
+        }
+      ],
+      "height": [
+        {
+          "frame": 0,
+          "value": 38
+        },
+        {
+          "frame": 84,
+          "value": 38
+        },
+        {
+          "frame": 128,
+          "value": 58
+        }
+      ],
+      "radius": [
+        {
+          "frame": 0,
+          "value": 19
+        },
+        {
+          "frame": 80,
+          "value": 19
+        },
+        {
+          "frame": 128,
+          "value": 9
+        }
+      ],
+      "rotateY": [
+        {
+          "frame": 0,
+          "value": -28
+        },
+        {
+          "frame": 60,
+          "value": 0
+        },
+        {
+          "frame": 96,
+          "value": 0
+        },
+        {
+          "frame": 114,
+          "value": 40
+        },
+        {
+          "frame": 138,
+          "value": 0
+        }
+      ],
+      "fill": "#e8dac0"
+    },
+    {
+      "id": "brand",
+      "type": "text",
+      "from": 0,
+      "to": 180,
+      "space": "screen",
+      "text": "SPATIAL IMAGERY",
+      "x": 320,
+      "y": 285,
+      "width": 580,
+      "height": 48,
+      "fontSize": 30,
+      "fill": "#f5f0e7",
+      "opacity": [
+        {
+          "frame": 0,
+          "value": 0
+        },
+        {
+          "frame": 123,
+          "value": 0
+        },
+        {
+          "frame": 142,
+          "value": 1
+        },
+        {
+          "frame": 180,
+          "value": 1
+        }
+      ]
+    }
+  ],
+  "cues": [
+    {
+      "id": "motion",
+      "asset": "motion",
+      "role": "motion",
+      "start": 0.1,
+      "end": 4.8,
+      "sourceIn": 0,
+      "fadeIn": 0.45,
+      "fadeOut": 0.8,
+      "gainDb": -16,
+      "pan": [
+        -0.45,
+        0.35
+      ],
+      "intensity": [
+        {
+          "frame": 0,
+          "value": 0.15
+        },
+        {
+          "frame": 40,
+          "value": 0.7
+        },
+        {
+          "frame": 80,
+          "value": 0.28
+        },
+        {
+          "frame": 105,
+          "value": 0.8
+        },
+        {
+          "frame": 144,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "open",
+      "asset": "opening",
+      "role": "motion",
+      "start": 2.8,
+      "end": 3.65,
+      "sourceIn": 0,
+      "fadeIn": 0.2,
+      "fadeOut": 0.35,
+      "gainDb": -14,
+      "pan": [
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "id": "settle",
+      "asset": "contact",
+      "role": "contact",
+      "start": 4.15,
+      "end": 4.28,
+      "sourceIn": 0,
+      "fadeIn": 0.015,
+      "fadeOut": 0.07,
+      "gainDb": -15
+    }
+  ]
+}

@@ -31,7 +31,7 @@ export async function auditAssets(plan: Plan, projectRoot: string): Promise<File
 }
 export interface MediaStream {codec_type:string;codec_name?:string;avg_frame_rate?:string;nb_read_frames?:string;duration?:string;width?:number;height?:number;sample_rate?:string;channels?:number}
 export interface MediaProbe {streams:MediaStream[];format:{duration?:string}}
-export async function probeMedia(file:string, ffprobe='ffprobe'):Promise<MediaProbe>{
+export async function probeMedia(file:string, ffprobe=process.env.FFPROBE_BIN??'ffprobe'):Promise<MediaProbe>{
   const {stdout}=await exec(ffprobe,['-v','error','-count_frames','-show_streams','-show_format','-of','json',resolve(file)],{maxBuffer:16*1024*1024});
   const p:MediaProbe=JSON.parse(stdout);
   if(!Array.isArray(p.streams)||!p.format)throw new Error('Malformed ffprobe response');

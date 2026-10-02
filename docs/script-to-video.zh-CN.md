@@ -1,5 +1,7 @@
 # 从台词脚本到视频
 
+v0.3: first renders explicitly use `--draft` → `output/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
+
 v0.2 增加了真实执行入口：脚本 → 模型设计 → 分镜/场景图校验 → 素材获取与核验 → 可编辑 Remotion 工程 → 连续音轨 → MP4 与 QA。原来的运动、相机、声音 SDK 和完整制作方法继续保留。
 
 ## 直接从脚本制作
@@ -7,14 +9,14 @@ v0.2 增加了真实执行入口：脚本 → 模型设计 → 分镜/场景图�
 先在仓库运行 `npm ci`、`npm run build`。复制 `templates/production.config.example.json` 为自己的配置，填写服务商的 **OpenAI 兼容 Chat Completions 基础地址和准确模型 ID**。基础地址一般以 `/v1` 结尾；程序补上 `/chat/completions`。密钥只放在配置指定的环境变量中，不填进 JSON、源码或命令行参数。默认 `SPATIAL_IMAGERY_API_KEY`；支持本地模型服务的 localhost HTTP 地址，远程地址要求 HTTPS。
 
 ```sh
-node dist/cli.js make script.md --config film.config.json --catalog assets.json --out my-film --install --render
+node dist/cli.js make script.md --config film.config.json --catalog assets.json --out my-film --install --render --draft
 ```
 
 脚本使用 UTF-8 纯文本或 Markdown，每个非空内容行得到一个稳定的 `L001` 编号；一级标题只作为标题。多句属于同一表达时可以写在同一行。程序统一 BOM 与换行符，避免 Windows/Linux 检出的相同脚本产生不同设计身份。模型需要覆盖全部内容行，可以按语义合并或拆分镜头。
 
 此命令会把脚本、创作说明和候选素材元数据发送到你指定的模型服务。不会把本机素材路径或 API 密钥放进提示词。连接失败不会静默换模型；JSON 或分镜不合格最多修正一次，再将具体错误写到项目目录。
 
-`--install` 明确安装工程所需渲染依赖；`--render` 继续渲染。省略它们会生成可查看、可编辑的工程。缺模型配置时会提示补配置或使用设计表导入，绝不自动用换字模板冒充内容设计。
+`--install` 明确安装工程所需渲染依赖；`--render --draft` 渲染诊断草样；单独 `--render` 检查正式证据。省略它们会生成可查看、可编辑的工程。缺模型配置时会提示补配置或使用设计表导入，绝不自动用换字模板冒充内容设计。
 
 ## 素材不是链接占位符
 
@@ -47,7 +49,7 @@ Pexels 搜索需要自己的 API key。音效与音乐当前从明确的本地/�
 不必重复调用远程模型。Codex 可以依据 `templates/production/planner.md`、脚本和素材目录生成 `FilmDesign`，审看或修改后交给同一个执行器：
 
 ```sh
-node dist/cli.js make examples/script-to-film/script.md --config examples/script-to-film/config.json --catalog examples/script-to-film/catalog.json --design examples/script-to-film/design.json --out city-rhythm --install --render
+node dist/cli.js make examples/script-to-film/script.md --config examples/script-to-film/config.json --catalog examples/script-to-film/catalog.json --design examples/script-to-film/design.json --out city-rhythm --install --render --draft
 ```
 
 设计表包含语义与执行两部分：每镜台词 ID、主体起始/过程/结果、观察任务和交接；逐层形状、文字/视频、相机、全局关键帧；逐条声音的源内位置、起止、淡化、声像和运动强度。一个主体层可跨多个镜头持续存在。程序不按关键词随机挑动效。
@@ -74,10 +76,10 @@ node dist/cli.js make examples/script-to-film/script.md --config examples/script
 ```sh
 cd my-film
 npm run studio
-npm run render
+npm run render:draft
 # 或从 SDK 仓库运行：node dist/cli.js render /absolute/path/my-film
 ```
 
-修改 `design.json` 或工程源码后重新渲染；修改台词内容则重新设计并建立新版本。每次渲染重新验证设计与素材哈希，输出 `output/final.mp4`、关键帧和 QA，核对解码帧数、音画时长、尺寸、帧率与完整解码。默认 `normalSpeed`、`listening`、`aesthetic` 保持未验证；需要按原管线完成真实审看/听审与返修，再把具体成片身份回库。该入口不会自动声称用户认可，也不会自动发布 GitHub、npm 或视频平台。
+修改 `design.json` 或工程源码后重新渲染；修改台词内容则重新设计并建立新版本。每次渲染重新验证设计与素材哈希；草样输出 `output/draft.mp4`，正式渲染输出 `output/final.mp4`、关键帧和 QA，核对解码帧数、音画时长、尺寸、帧率与完整解码。默认 `normalSpeed`、`listening`、`aesthetic` 保持未验证；需要按原管线完成真实审看/听审与返修，再把具体成片身份回库。该入口不会自动声称用户认可，也不会自动发布 GitHub、npm 或视频平台。
 
 当前仍需外部解决：真人转录/粗剪/抠像/重打光、配音生成、任意网站音效检索、专业审美评价。模型服务的可用性、费用和上下文长度由所选服务决定。运行需要 Node.js 22+、FFmpeg/ffprobe、Chromium、合适字体和独立渲染器依赖；本 SDK 核心仍没有运行时依赖。

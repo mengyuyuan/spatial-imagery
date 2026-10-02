@@ -1,5 +1,5 @@
 {
   "name": "spatial-imagery-film", "private": true, "type": "module",
-  "scripts": {"studio":"remotion studio src/index.tsx", "render":"node render.mjs"},
+  "scripts": {"studio":"remotion studio src/index.tsx", "render":"node render.mjs", "render:draft":"node render.mjs --draft", "browser:install":"remotion browser ensure", "gates":"node gate.mjs"},
   "dependencies": {"@remotion/bundler":"4.0.526", "@remotion/cli":"4.0.526", "@remotion/renderer":"4.0.526", "remotion":"4.0.526", "react":"19.2.8", "react-dom":"19.2.8"}
 }

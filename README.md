@@ -8,12 +8,21 @@ https://github.com/user-attachments/assets/37f98ee4-dff0-4948-8d79-7f060c86b287
 
 **30-second launch film — sound on.** Kinetic type, spatial camera moves, transforming shapes and a shared music beat. [Download the MP4](media/spatial-imagery-kinetic-v2.mp4).
 
-**Status: v0.2.0 — script-to-video runner and SDK.** A configured OpenAI-compatible model can turn a script into an editable timed design, acquire selected media, generate a Remotion project and render an MP4 with sound and QA. You can also import a design from Codex or a designer. Artistic review, speech transcription, person matting and relighting remain separate production work. [Script-to-video guide](docs/script-to-video.md).
+**Status: v0.3.0 — script-to-video runner and SDK.** A configured OpenAI-compatible model can turn a script into an editable timed design, acquire selected media, generate a Remotion project and render an MP4 with sound and QA. You can also import a design from Codex or a designer. Artistic review, speech transcription, person matting and relighting remain separate production work. [Script-to-video guide](docs/script-to-video.md).
+
+**First run: a bundled film with no model key or stock downloads.** [Installation / 安装排错](docs/quickstart.md).
 
 ```sh
-# After npm ci && npm run build; configure your model and key environment variable.
-node dist/cli.js make script.md --config film.config.json --catalog assets.json --out my-film --install --render
+npm ci
+npm run build
+node dist/cli.js doctor
+node dist/cli.js demo --out first-film --install --render
 ```
+
+6s / 640×360 / 30 fps / stereo: `first-film/output/draft.mp4`. [G1/G2/G3 production gates / 正式门禁](templates/production/PRODUCTION-GATES.md).
+
+**Seven independent quality gates:** design, animation, handoffs, color/lighting, matting, denoise and sound. Repeated title cards with fades/moves/zooms do not satisfy the design contract. Every applicable gate needs actual evidence; source-inspected non-applicability is explicit. [Strict criteria](templates/production/SPECIALIST-GATES.md).
+
 
 ## What is implemented
 
@@ -32,7 +41,7 @@ No runtime dependencies in the core. The production runner installs Remotion in 
 
 ## Run locally
 
-Node.js 22+ is required. This initial release is distributed as source/a locally packed tarball; **it is not published to npm yet**.
+Node.js 22+ is required; rendering needs FFmpeg/ffprobe and a prepared browser, production gates need Python 3.11+. This initial release is distributed as source/a locally packed tarball; **it is not published to npm yet**.
 
 ```sh
 git clone https://github.com/mengyuyuan/spatial-imagery.git
@@ -42,7 +51,7 @@ npm test
 node dist/cli.js init ./my-film
 node dist/cli.js check ./my-film/storyboard.json
 npm pack
-# In another project, install the generated spatial-imagery-0.2.0.tgz.
+# In another project, install the generated spatial-imagery-0.3.0.tgz.
 ```
 
 The complete source is on `main`. Never run `npm install spatial-imagery` assuming this repository owns a registry name.

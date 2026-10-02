@@ -36,7 +36,7 @@ The launch example exports SDK states to JSON and Blender consumes them. That ma
 
 ## CLI
 
-v0.2 adds `make <script.md> --out <project> --config <config.json> --catalog <assets.json> [--design <design.json>] [--install] [--render]`, `render <project> [--install]` and `search <query> --out <catalog.json> [--key-env <variable>]`. See [script-to-video](script-to-video.md). `make` creates a new editable project and never overwrites an existing output directory. A configured model designs the film unless an explicit design is imported; no silent template fallback is used.
+v0.3 provides `doctor`, `demo --out <project> [--install] [--render]`, `make <script.md> --out <project> --config <config.json> --catalog <assets.json> [--design <design.json>] [--install] [--render] [--draft]`, `render <project> [--install] [--draft]`, `gates <project> <design|full-render|delivery|refresh|register-draft|register-final>` and `search <query> --out <catalog.json> [--key-env <variable>]`. See [quickstart](quickstart.md) and [script-to-video](script-to-video.md). `make` creates a new editable project and never overwrites an existing output directory. A configured model designs the film unless an explicit design is imported; no silent template fallback is used. Diagnostic `demo` renders are always drafts. Formal rendering checks bundled G1/G2 evidence; delivery checks G3. Python 3.11+ is used for gates, not rendering drafts.
 
 `spatial-imagery init <directory>` creates a starter storyboard and refuses to overwrite an existing one. `check <file>` prints structured issues and exits 1 on errors. `catalog <file> [query]` searches assets in a valid plan. It does not download files or execute instructions embedded in metadata.
 
