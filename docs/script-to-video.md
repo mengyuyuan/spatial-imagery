@@ -1,6 +1,8 @@
 # Script to video
 
-v0.3: first renders explicitly use `--draft` → `output/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
+**v0.4:** motion, camera and sound are independent mandatory production gates, including verified intentional silence. Explicit `videoType` is required; A/B is restricted to `talking-head`, while other films use `general` + `full`. See the [portable production-gate guide](../templates/production/PRODUCTION-GATES.md) for review and migration.
+
+v0.4: first renders explicitly use `--draft` → `output/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
 
 v0.2 adds an executable path: script → model-authored design → validation → acquired media → editable Remotion project → continuous sound mix → MP4 and QA. See the [detailed Chinese guide](script-to-video.zh-CN.md) and [worked example](../examples/script-to-film/README.md).
 
@@ -17,6 +19,16 @@ node dist/cli.js make script.md --design design.json --config film.config.json -
 ```
 
 Every nonblank content line is assigned a stable line ID. Designs must cover all lines, preserve their meaning, identify the subject/change/camera/handoff, and supply actual timed layers and sound cues. UTF-8 BOM and CRLF/LF differences are normalized for script identity. One persistent layer can span several shots. Shapes and motion are composed freely rather than chosen from a fixed title-card menu.
+
+## Design contract and execution boundary
+
+The model's system context is assembled from the packaged planner, design principles, design synthesis and production SOP. `design-instructions.md` saves that context; `planner-context.json` records standard 3.23, individual source hashes and the combined hash. This makes the actual method inspectable without requiring private skill files. Imported designs record `source: imported`; this is not a claim that a model used those instructions.
+
+Model-authored `FilmDesign` must supply `designRationale` (basis, alternatives, choice, perception, risk), `execution` (renderer, reason, requirements), shot meaning/identity/kind/changes/intent/reading, one structured `transitions` entry per adjacent pair, and all eight `gatePlans`. See the shipped [planner contract](../templates/production/planner.md) and exported types. Focus IDs must reference layers active at the relevant shot boundaries and connect across handoffs. Motion, camera and sound plans cannot be disabled. Silence needs an explicit `audioReason`. Design decisions are retained in `production-gates.json`; the runner never accepts model-generated approvals. Legacy `--design` imports remain usable but require manual completion of missing gate decisions.
+
+Requested size, FPS, video type and duration, unsupported execution fields, and shot assets declared without actual overlapping use are checked inside the bounded repair loop. Invalid designs get one correction request with those failures; the second invalid response stops with recorded errors. A camera supports only `x`, `y`, `zoom`, `rotateZ` and `perspective`; invented `z`, `target` or layer shader fields are errors rather than ignored behavior.
+
+Choose `execution.renderer: layers-2.5d` for supported scene graphs. Choose `custom` when the design needs real meshes, spatial camera/lighting or custom deformation. That route returns `custom_implementation_required` and creates an explicit `src/index.tsx` placeholder; a maker must implement the named `Spatial-Imagery` composition, retain the planned timing/assets/audio, then render and review. This routes capability limits honestly; it is not an automatic Three.js/Blender implementation. It cannot fall back to a flat movie while claiming the requested 3D design was executed.
 
 The optional `search: {"provider":"pexels","apiKeyEnv":"PEXELS_API_KEY","perQuery":4}` configuration searches real videos using model-proposed phrases, or explicit `queries`. `research.json` preserves candidates. Music/SFX currently come from a supplied catalog; there is no universal sound-site crawler. Catalog entries carry source, license, usage/redistribution boundary, hash, duration and review status. Selected downloads are acquired, hashed and decoded. References alone do not count as footage; source ranges must fit actual media. Local paths are relative to, and contained by, the catalog directory. Search results are not automatically marked visually reviewed.
 

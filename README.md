@@ -1,5 +1,7 @@
 # Spatial Imagery · 空间意象
 
+**v0.4:** motion, camera and sound are independent mandatory production gates, including verified intentional silence. Explicit `videoType` is required; A/B is restricted to `talking-head`, while other films use `general` + `full`. See the [portable production-gate guide](templates/production/PRODUCTION-GATES.md) for review and migration.
+
 **Give ideas room to move.** A TypeScript SDK for subject-led spatial storytelling: continuous motion, camera handoffs, sound envelopes, and auditable design tables.
 
 [简体中文](README.zh-CN.md) · [Workflow](docs/pipeline.md) · [API](docs/api.md) · [Launch-film source](examples/launch-film/README.md)
@@ -8,7 +10,7 @@ https://github.com/user-attachments/assets/37f98ee4-dff0-4948-8d79-7f060c86b287
 
 **30-second launch film — sound on.** Kinetic type, spatial camera moves, transforming shapes and a shared music beat. [Download the MP4](media/spatial-imagery-kinetic-v2.mp4).
 
-**Status: v0.3.0 — script-to-video runner and SDK.** A configured OpenAI-compatible model can turn a script into an editable timed design, acquire selected media, generate a Remotion project and render an MP4 with sound and QA. You can also import a design from Codex or a designer. Artistic review, speech transcription, person matting and relighting remain separate production work. [Script-to-video guide](docs/script-to-video.md).
+**Status: v0.4.0 — script-to-video runner and SDK.** A configured OpenAI-compatible model can turn a script into an editable timed design, acquire selected media, generate a Remotion project and render an MP4 with sound and QA. You can also import a design from Codex or a designer. Artistic review, speech transcription, person matting and relighting remain separate production work. [Script-to-video guide](docs/script-to-video.md).
 
 **First run: a bundled film with no model key or stock downloads.** [Installation / 安装排错](docs/quickstart.md).
 
@@ -21,7 +23,7 @@ node dist/cli.js demo --out first-film --install --render
 
 6s / 640×360 / 30 fps / stereo: `first-film/output/draft.mp4`. [G1/G2/G3 production gates / 正式门禁](templates/production/PRODUCTION-GATES.md).
 
-**Seven independent quality gates:** design, animation, handoffs, color/lighting, matting, denoise and sound. Repeated title cards with fades/moves/zooms do not satisfy the design contract. Every applicable gate needs actual evidence; source-inspected non-applicability is explicit. [Strict criteria](templates/production/SPECIALIST-GATES.md).
+**Eight independent quality gates:** design, motion, camera, handoffs, color/lighting, matting, denoise and sound. Repeated title cards with fades/moves/zooms do not satisfy the design contract. Every applicable gate needs actual evidence; source-inspected non-applicability is explicit. [Strict criteria](templates/production/SPECIALIST-GATES.md).
 
 
 ## What is implemented
@@ -32,7 +34,7 @@ node dist/cli.js demo --out first-film --install --render
 | Motion | Pure seconds-based scalar tracks and cubic Hermite paths with analytical velocity |
 | Camera | Subject following, look-ahead, perspective projection and screen-space handoff diagnostics |
 | Sound | Audible-anchor alignment, motion intensity, fades, equal-power material crossfades, stereo pan, sample-rate gain envelopes |
-| Design | Typed A/B/full-frame shots, subject state chains, camera task, sound intent, reading windows, handoff records and JSON validation |
+| Design | Typed shots (A/B for talking-head only; full for general films), subject state chains, camera task, sound intent, reading windows, handoff records and JSON validation |
 | Libraries | Separate source assets and immutable sample versions, source/hash/license metadata, scoped approval and search |
 | Audit | Node-only file hashes, project-boundary checks and actual decoded video/audio duration checks via ffprobe |
 | Examples | A bilingual 30-second launch film, original Blender/Remotion sources, and a new 20-second script-runner integration film |
@@ -51,7 +53,7 @@ npm test
 node dist/cli.js init ./my-film
 node dist/cli.js check ./my-film/storyboard.json
 npm pack
-# In another project, install the generated spatial-imagery-0.3.0.tgz.
+# In another project, install the generated spatial-imagery-0.4.0.tgz.
 ```
 
 The complete source is on `main`. Never run `npm install spatial-imagery` assuming this repository owns a registry name.

@@ -10,7 +10,8 @@ export interface Shot {
   camera: string; sound: string; assets: string[]; readFrames: number;
   handoff?: {to: string; method: string; continuity: string};
 }
-export interface Plan {version: 1; title: string; fps: number; durationInFrames: number; shots: Shot[]; assets: Asset[]}
+export type VideoType = 'talking-head'|'general';
+export interface Plan {version: 1; videoType: VideoType; title: string; fps: number; durationInFrames: number; shots: Shot[]; assets: Asset[]}
 export interface Issue {path: string; message: string; severity: 'error'|'warning'}
 const obj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 const text = (v: unknown): v is string => typeof v === 'string' && v.trim().length > 0;
@@ -23,6 +24,7 @@ export function validatePlan(value: unknown): Issue[] {
   const warning=(path:string,message:string)=>issues.push({path,message,severity:'warning'});
   if (!obj(value)) return [{path:'$',message:'Expected an object',severity:'error'}];
   if (value.version!==1) error('version','Supported schema version is 1');
+  if (typeof value.videoType!=='string'||!['talking-head','general'].includes(value.videoType)) error('videoType','Explicit talking-head or general required; only talking-head may use A/B states');
   if (!text(value.title)) error('title','Title is required');
   if (typeof value.fps!=='number'||!Number.isFinite(value.fps)||value.fps<=0||value.fps>240) error('fps','FPS must be > 0 and <= 240');
   if (!integer(value.durationInFrames)||value.durationInFrames<=0) error('durationInFrames','Positive integer required');
@@ -50,7 +52,8 @@ export function validatePlan(value: unknown): Issue[] {
     if(!obj(shot)){error(p,'Expected an object');return;}
     for(const k of ['id','keyword','subject','initial','action','result','camera','sound']) if(!text(shot[k])) error(`${p}.${k}`,'Required nonempty text');
     if(text(shot.id)){if(shots.has(shot.id))error(p+'.id','Duplicate shot ID');shots.set(shot.id,shot);}
-    if(!['A','B','full'].includes(String(shot.state)))error(p+'.state','Expected A, B or full');
+    if(typeof shot.state!=='string'||!['A','B','full'].includes(shot.state))error(p+'.state','Expected A, B or full');
+    if((shot.state==='A'||shot.state==='B')&&value.videoType!=='talking-head')error(p+'.state','A/B states are reserved for talking-head videos; use full for other films');
     if(!integer(shot.from)||!integer(shot.to)||shot.from<0||shot.to<=shot.from)error(p,'Invalid [from,to) frame range');
     else {
       if(shot.from!==cursor)error(p+'.from',`Expected ${cursor}; shots must cover the timeline without gaps/overlaps`);

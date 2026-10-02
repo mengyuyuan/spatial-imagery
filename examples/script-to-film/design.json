@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "videoType": "general",
   "scriptSha256": "b1add23f2642d154046cf941cc2394175919fd26de9347cf1f2055c7aee5557a",
   "title": "城市的节奏 · Script-to-film integration",
   "width": 1280,

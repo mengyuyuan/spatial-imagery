@@ -5,10 +5,10 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {spawnSync} from 'node:child_process';
-import {makeFilm} from '../dist/production-node.js';
+import {makeFilm,renderProject,gateProject} from '../dist/production-node.js';
 import {pythonCommand} from '../dist/environment.js';
 
-test('portable schema-v3 validator passes its synthetic regression suite',()=>{
+test('portable schema-v4 validator passes its synthetic regression suite',()=>{
   const p=pythonCommand(),r=spawnSync(p.bin,[...p.args,'-X','utf8','test/production_gates_test.py'],{encoding:'utf8'});
   assert.equal(r.status,0,r.stderr||r.stdout);
 });
@@ -23,6 +23,10 @@ async function project(fn){
   }finally{await rm(root,{recursive:true,force:true});}
 }
 test('fresh project cannot render production through either SDK or direct npm entry',()=>project(async(root,g)=>{
+  const m=JSON.parse(await readFile(join(root,'production-gates.json'),'utf8'));
+  assert.equal(m.videoType,'general');assert.equal(m.schemaVersion,4);
+  for(const name of ['animation','camera','soundfx'])assert.equal(m.specialistGates[name].applicable,true);
+  assert.deepEqual(m.specialistGates.camera.targets,[...m.shots,...m.transitions].map(s=>s.id));
   const r=await g.checkGates(root,'full-render');assert.equal(r.eligible,false);assert(r.errors.some(e=>e.code==='review_incomplete'));assert(r.errors.some(e=>e.code==='missing_baseline'));
   const direct=spawnSync(process.execPath,[join(root,'render.mjs')],{encoding:'utf8'});
   assert.notEqual(direct.status,0);assert.match(direct.stderr,/gate blocked/);assert.doesNotMatch(direct.stderr,/Cannot find package '@remotion/);
@@ -48,6 +52,21 @@ test('an evidence manifest cannot narrow the current film scope or disable its r
 test('registering missing or edited media cannot create a technical pass',()=>project(async(root,g)=>{
   await assert.rejects(g.runGate(root,'register-draft'),/ENOENT/);
   assert.equal(JSON.parse(await readFile(join(root,'production-gates.json'),'utf8')).technicalReview.status,'unverified');
+}));
+
+test('current SDK refuses old project gate runners before they can approve production',()=>project(async(root)=>{
+  const file=join(root,'production-gates.json'),m=JSON.parse(await readFile(file,'utf8'));m.schemaVersion=3;
+  await writeFile(file,JSON.stringify(m));
+  await writeFile(join(root,'gate.mjs'),"console.log('OLD_RUNNER_MUST_NOT_RUN');");
+  await assert.rejects(renderProject(root),/requires a schema-4 project/);
+  await assert.rejects(gateProject(root,'delivery'),/requires a schema-4 project/);
+}));
+
+test('evidence cannot relabel general design as talking-head to sneak through A/B',()=>project(async(root,g)=>{
+  const file=join(root,'production-gates.json'),m=JSON.parse(await readFile(file,'utf8'));
+  m.videoType='talking-head';m.shots[0].state='A';await writeFile(file,JSON.stringify(m));
+  const codes=(await g.checkGates(root,'design')).errors.map(e=>e.code);
+  assert(codes.includes('project_scope'));assert(codes.includes('project_shots'));
 }));
 test('complete synthetic project contract passes, but changed source and draft-as-final fail',()=>project(async(root,g)=>{
   // Deliberately synthetic byte fixtures. These test record validation, never real film approval.
@@ -75,17 +94,18 @@ test('complete synthetic project contract passes, but changed source and draft-a
   m.media=[{id:'final',role:'final',...await ref('output/final.mp4'),from:0,to:180,qa:'output/qa.json'}];
   m.assetsReview={status:'passed',observed,evidence:await ref('assets-review.fixture')};
   m.technicalReview={status:'passed',method:'technical',media:'final',range:[0,180],observed,evidence:await ref('output/qa.json')};
-  m.soundReview={status:'not_applicable',observed};m.sequenceReview=review([0,180]);
+  m.soundReview={status:'passed',method:'silence_review',media:'final',range:[0,180],observed,evidence:await ref('assets-review.fixture')};m.sequenceReview=review([0,180]);
   const py=pythonCommand();
   const definitions=spawnSync(py.bin,[...py.args,'-B','-c','import json,sys; sys.path.insert(0,sys.argv[1]); from verify_production_gates import SPECIALIST_CHECKS; print(json.dumps(SPECIALIST_CHECKS))',root],{encoding:'utf8'});
   assert.equal(definitions.status,0,definitions.stderr);const criteria=JSON.parse(definitions.stdout);
   m.filmDesignReview={status:'passed',method:'design_review',observed,range:[0,180],evidence:await ref('assets-review.fixture'),checks:Object.fromEntries(['not_slide_deck','content_swap_test','middle_end_coverage','subject_camera_progression','motivated_reading_holds'].map(k=>[k,{status:'passed',observed}]))};
   m.specialistGates={};
   for(const [name,keys] of Object.entries(criteria)){
-    const silent=['denoise','soundfx'].includes(name),rows=name==='handoff'?m.transitions:m.shots;
+    const silent=name==='denoise',rows=name==='handoff'?m.transitions:name==='camera'?[...m.shots,...m.transitions]:m.shots;
+    const requiredKeys=name==='soundfx'?['intentional_silence','no_missing_audio','transition_intent','output_silence']:keys;
     m.specialistGates[name]={applicable:!silent,reason:'Synthetic source decision',plan:'Synthetic production plan',targets:silent?[]:rows.map(r=>r.id),reviews:silent?[{status:'not_applicable',method:'source_inspection',observed,evidence:await ref('assets-review.fixture')}]:await Promise.all(rows.map(async row=>{
-      const extent=name==='handoff'?row.range:[row.from,row.to];
-      return {...review(extent),target:row.id,method:name==='design'?'design_review':'normal_speed',evidence:await ref('assets-review.fixture'),checks:Object.fromEntries(keys.map(k=>[k,{status:'passed',observed}])),comparison:{before:await ref('reference.fixture'),after:await ref('output/final.mp4'),alignment:'Synthetic same-time comparison'}};
+      const extent=row.range??[row.from,row.to];
+      return {...review(extent),target:row.id,method:name==='design'?'design_review':name==='soundfx'?'silence_review':'normal_speed',evidence:await ref('assets-review.fixture'),checks:Object.fromEntries(requiredKeys.map(k=>[k,{status:'passed',observed}])),comparison:{before:await ref('reference.fixture'),after:await ref('output/final.mp4'),alignment:'Synthetic same-time comparison'}};
     }))};
   }
   await writeFile(path,JSON.stringify(m));
@@ -96,6 +116,18 @@ test('complete synthetic project contract passes, but changed source and draft-a
   for(const [name,gate] of Object.entries(m.specialistGates))for(const r of gate.reviews)r.binding=name==='design'||!gate.applicable?result.designBinding:binding;
   await writeFile(path,JSON.stringify(m));
   for(const stage of ['design','full-render','delivery']){const r=await g.checkGates(root,stage);assert.equal(r.eligible,true,JSON.stringify(r.errors));}
+  // An otherwise complete contract must still stop before any expensive renderer loads.
+  for(const name of ['animation','camera','soundfx']){
+    const gate=m.specialistGates[name],saved=structuredClone(gate.reviews);
+    gate.reviews=[];await writeFile(path,JSON.stringify(m));
+    await assert.rejects(g.requireGate(root,'full-render'),/specialist_review_missing/);
+    await assert.rejects(renderProject(root),/Production subprocess exited/);
+    const direct=spawnSync(process.execPath,[join(root,'render.mjs')],{encoding:'utf8'});
+    assert.notEqual(direct.status,0);assert.match(direct.stderr,/specialist_review_missing/);
+    assert.equal((await g.checkGates(root,'delivery')).eligible,false);
+    gate.reviews=saved;
+  }
+  await writeFile(path,JSON.stringify(m));
   await g.runGate(root,'register-final');
   assert.equal((await g.checkGates(root,'design')).eligible,true,'New media must preserve valid unchanged G1 critiques');
   assert.equal((await g.checkGates(root,'delivery')).eligible,false,'New media must clear old playback reviews');

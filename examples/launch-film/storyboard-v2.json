@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "videoType": "general",
   "title": "空间意象 / Spatial Imagery — Kinetic v2",
   "fps": 30,
   "durationInFrames": 900,

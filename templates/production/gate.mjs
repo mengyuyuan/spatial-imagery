@@ -15,7 +15,7 @@ export async function projectInputs(root){
   const inputs=[];
   async function add(role,path){inputs.push({role,path,sha256:await hashFile(join(root,path))});}
   for(const [role,path] of [['design','design.json'],['timeline','design.json'],['sound','design.json'],['assets','assets.json'],['source','script.md'],['source','policy.json'],['source','package.json'],['source','render.mjs'],['source','mix.mjs'],['source','gate.mjs'],['source','verify_production_gates.py']])await add(role,path);
-  try{await stat(join(root,'package-lock.json'));await add('source','package-lock.json');}catch(e){if(e.code!=='ENOENT')throw e;}
+  for(const path of ['package-lock.json','planner-context.json','design-instructions.md'])try{await stat(join(root,path));await add('source',path);}catch(e){if(e.code!=='ENOENT')throw e;}
   async function walk(folder){
     for(const e of (await readdir(join(root,folder),{withFileTypes:true})).sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0)){
       const path=`${folder}/${e.name}`;
@@ -33,17 +33,31 @@ function clearReviews(m){
   m.filmDesignReview={status:'unverified'};
   for(const gate of Object.values(m.specialistGates??{}))gate.reviews=[];
 }
+const shotDecisionKeys=['meaning','identity','kind','changes','reading','intent','holdReason','noReadingReason'];
+const shotCore=s=>({id:s.id,from:s.from,to:s.to,state:s.state,subject:s.subject,initial:s.initial,process:s.action,result:s.result,camera:s.camera});
+const shotEvidenceKeys=['id','from','to','state','subject','initial','process','result','camera',...shotDecisionKeys];
+const transitionDecisionKeys=['id','fromShot','toShot','range','method','reason','identity','motion','handoff'];
+const select=(value,keys)=>Object.fromEntries(keys.filter(k=>value[k]!==undefined).map(k=>[k,structuredClone(value[k])]));
+function applyDesignedDecisions(m,d){
+  for(const [i,s] of d.shots.entries())Object.assign(m.shots[i],select(s,shotDecisionKeys));
+  if(d.transitions)m.transitions=d.transitions.map(t=>({...select(t,transitionDecisionKeys),review:{status:'unverified'}}));
+  for(const [key,g] of Object.entries(d.gatePlans??{}))if(m.specialistGates[key])m.specialistGates[key]={...select(g,['applicable','reason','plan','targets']),reviews:[]};
+  if(d.designRationale)m.designRationale=structuredClone(d.designRationale);
+}
 export async function initializeGates(root){
   const d=await load(root,'design.json'),template=await load(root,'production-gates-template.json');
-  const m={...template,version:'working-1',intentThesis:d.direction,fps:d.fps,scope:[0,d.durationInFrames],audioExpected:d.cues.length>0,inputs:await projectInputs(root)};
-  if(!m.audioExpected)m.audioReason='TODO';
+  const m={...template,version:'working-1',videoType:d.videoType,intentThesis:d.direction,fps:d.fps,scope:[0,d.durationInFrames],audioExpected:d.cues.length>0,inputs:await projectInputs(root)};
+  if(!m.audioExpected)m.audioReason=d.audioReason??'TODO';
   m.shots=d.shots.map(s=>({...structuredClone(template.shots[0]),id:s.id,from:s.from,to:s.to,state:s.state,subject:s.subject,meaning:'TODO',initial:s.initial,process:s.action,result:s.result,camera:s.camera,kind:'demonstration',changes:[],reading:s.readFrames?[s.to-s.readFrames,s.to]:null,identity:'TODO',intent:{sourceKind:'brief',cue:'TODO',cueRange:[s.from,s.to],before:'TODO',after:'TODO',why:'TODO',visualBridge:'TODO',focusBefore:'TODO',focusAfter:'TODO',revealFrame:s.from},implementation:[]}));
   m.transitions=d.shots.slice(1).map((s,i)=>({id:`TR${i+1}`,fromShot:d.shots[i].id,toShot:s.id,range:[Math.max(d.shots[i].from,s.from-2),Math.min(s.to,s.from+2)],method:d.shots[i].handoff?.method??'TODO',reason:'TODO',identity:'TODO',motion:d.shots[i].handoff?.continuity??'TODO',handoff:{kind:'new_subject',outgoing:'TODO',incoming:'TODO',exit:'TODO',entry:'TODO',meaningBridge:'TODO',cue:'TODO',cueRange:[s.from-1,s.from+1],focusFrame:s.from}}));
+  // Preserve designed decisions, never import purported approvals from model JSON.
+  if(d.transitions)m.transitions=d.transitions.map(t=>select(t,transitionDecisionKeys));
   clearReviews(m);
-  for(const key of ['design','animation','color','handoff']){
+  for(const key of ['design','animation','camera','soundfx','color','handoff']){
     const gate=m.specialistGates[key];gate.applicable=key!=='handoff'||m.transitions.length>0;
-    gate.targets=(key==='handoff'?m.transitions:m.shots).map(s=>s.id);
+    gate.targets=(key==='handoff'?m.transitions:key==='camera'?[...m.shots,...m.transitions]:m.shots).map(s=>s.id);
   }
+  applyDesignedDecisions(m,d);
   await writeFile(join(root,'production-gates.json'),JSON.stringify(m,null,2)+'\n',{flag:'wx'});
   return {status:'unverified',manifest:'production-gates.json',note:'Complete design details and actual reviews; no approval was generated.'};
 }
@@ -62,9 +76,12 @@ export async function checkGates(root,stage){
   const key=x=>`${x.role}:${x.path}:${x.sha256}`;
   const actual=new Set((m.inputs??[]).map(key));
   if(inputs.some(x=>!actual.has(key(x))))fail('project_changed','Required current sources/assets/lockfile are missing or stale. Run gates refresh, then review the changed version again.');
-  if(m.fps!==d.fps||JSON.stringify(m.scope)!==JSON.stringify([0,d.durationInFrames])||m.audioExpected!==(d.cues.length>0))fail('project_scope','Evidence FPS, scope and audio policy must match design.json.');
+  if(m.fps!==d.fps||m.videoType!==d.videoType||JSON.stringify(m.scope)!==JSON.stringify([0,d.durationInFrames])||m.audioExpected!==(d.cues.length>0))fail('project_scope','Evidence videoType, FPS, scope and audio policy must match design.json.');
   const shots=x=>x.map(s=>[s.id,s.from,s.to,s.state]);
   if(!Array.isArray(m.shots)||JSON.stringify(shots(m.shots))!==JSON.stringify(shots(d.shots)))fail('project_shots','Evidence shot IDs, ranges and states must match design.json.');
+  for(const [i,s] of d.shots.entries())if(s.intent&&JSON.stringify(select({...s,...shotCore(s)},shotEvidenceKeys))!==JSON.stringify(select(m.shots?.[i]??{},shotEvidenceKeys)))fail('project_decisions',`Shot ${s.id} decisions differ from design.json; edit the source design and refresh.`);
+  if(d.transitions&&JSON.stringify(d.transitions.map(t=>select(t,transitionDecisionKeys)))!==JSON.stringify((m.transitions??[]).map(t=>select(t,transitionDecisionKeys))))fail('project_decisions','TR decisions differ from design.json.');
+  for(const [name,g] of Object.entries(d.gatePlans??{}))if(JSON.stringify(select(g,['applicable','reason','plan','targets']))!==JSON.stringify(select(m.specialistGates?.[name]??{},['applicable','reason','plan','targets'])))fail('project_decisions',`${name} production plan differs from design.json.`);
   if(stage!=='design'){
     for(const item of m.media??[]){
       try{
@@ -86,11 +103,17 @@ export async function requireGate(root,stage){
 export async function runGate(root,action){
   if(action==='init')return initializeGates(root);
   if(action==='refresh'){
-    const m=await load(root,'production-gates.json');
+    const m=await load(root,'production-gates.json'),d=await load(root,'design.json');
+    if(d.shots.every(s=>s.intent)&&d.transitions&&d.gatePlans){
+      m.shots=d.shots.map(s=>({...shotCore(s),implementation:[]}));
+      Object.assign(m,{intentThesis:d.direction,fps:d.fps,videoType:d.videoType,scope:[0,d.durationInFrames],audioExpected:d.cues.length>0});
+      if(!m.audioExpected)m.audioReason=d.audioReason??'TODO';else delete m.audioReason;
+      applyDesignedDecisions(m,d);
+    }
     m.inputs=await projectInputs(root);m.media=[];clearReviews(m);
     await save(root,'production-gates.json',m);
     await save(root,'delivery-status.json',{status:'unverified',reason:'Inputs refreshed; register new media and review it.'});
-    return {status:'unverified',note:'Input hashes refreshed. All media registrations and reviews invalidated; creative fields retained. Fix scope/shot changes manually.'};
+    return {status:'unverified',note:'Input hashes refreshed; media and reviews invalidated. Structured design decisions resynced from design.json; legacy manual records need manual scope/shot maintenance.'};
   }
   if(action==='register-draft'||action==='register-final'){
     const final=action==='register-final',qaPath=final?'output/qa.json':'output/draft-qa.json',file=final?'output/final.mp4':'output/draft.mp4';

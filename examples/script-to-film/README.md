@@ -1,6 +1,6 @@
 # 城市的节奏 / City rhythm
 
-v0.3: first renders explicitly use `--draft` → `output/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
+v0.4: first renders explicitly use `--draft` → `output/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
 
 A new 20-second integration example for the generic script-to-film runner. `script.md` drives a five-shot design: real traffic → a moving subject → deceleration and structure → relay → reading hold. The design was authored by Codex and imported; this example does not claim a live remote model generated it.
 

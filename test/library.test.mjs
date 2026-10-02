@@ -10,3 +10,11 @@ test('scope cannot extend a user quote to unrelated sound approval',()=>{
 test('sample must have a file hash and a range inside that version',()=>{
   assert.throws(()=>validateSample({...s,sha256:''}));assert.throws(()=>validateSample({...s,ranges:[{from:0,to:601,purpose:'all'}]}));
 });
+test('rejected and technical-only samples are retained but never recommended by default',()=>{
+  for(const status of ['rejected','technical_only']){
+    const a={...s,approval:{status,scope:[]}};validateSample(a);
+    assert.equal(searchSamples([a],'').length,0);
+    assert.deepEqual(searchSamples([a],'',{includeUnapproved:true}),[a]);
+  }
+  assert.throws(()=>validateSample({...s,approval:{status:'unknown-value',scope:[]}}),/Unknown sample approval status: unknown-value/);
+});

@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "videoType": "general",
   "scriptSha256": "90fbf3741765003e006f6fe29ec799687ef53d927f447944fc96f1579d36fc1e",
   "title": "Give ideas room to move",
   "width": 640,
@@ -25,9 +26,7 @@
       "camera": "follow travel",
       "sound": "continuous motion with a settling tail",
       "assets": [
-        "motion",
-        "opening",
-        "contact"
+        "motion"
       ],
       "readFrames": 18,
       "handoff": {
