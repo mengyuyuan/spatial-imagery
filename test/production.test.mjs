@@ -10,7 +10,7 @@ import {makeFilm,requestJSON,validateConfig} from '../dist/production-node.js';
 const sha=s=>createHash('sha256').update(s).digest('hex');
 const script='# Film\nMove the idea.\nMake the relationship visible.\n';
 const policy={music:'allowed',narration:'off',footage:'optional'};
-function design(){return {version:1,scriptSha256:sha(script),title:'A relationship',width:640,height:360,fps:30,durationInFrames:120,background:'#101820',direction:'The same object opens to reveal a relationship.',shots:[{id:'SH1',from:0,to:60,state:'full',lines:['L001'],keyword:'Move',subject:'disc',initial:'one point',action:'cross frame',result:'arrives',camera:'follow',sound:'quiet',assets:[],readFrames:15,handoff:{to:'SH2',method:'same subject',continuity:'position'}},{id:'SH2',from:60,to:120,state:'full',lines:['L002'],keyword:'Reveal',subject:'disc',initial:'arrives',action:'opens',result:'relationship shown',camera:'pull back',sound:'quiet',assets:[],readFrames:20}],camera:{zoom:[{frame:0,value:1},{frame:120,value:1.5}]},layers:[{id:'subject',type:'ellipse',from:0,to:120,x:[{frame:0,value:50},{frame:60,value:320}],y:180,width:90,height:90,fill:'#fd6841'}],cues:[]};}
+function design(){return {version:1,videoType:'general',scriptSha256:sha(script),title:'A relationship',width:640,height:360,fps:30,durationInFrames:120,background:'#101820',direction:'The same object opens to reveal a relationship.',shots:[{id:'SH1',from:0,to:60,state:'full',lines:['L001'],keyword:'Move',subject:'disc',initial:'one point',action:'cross frame',result:'arrives',camera:'follow',sound:'quiet',assets:[],readFrames:15,handoff:{to:'SH2',method:'same subject',continuity:'position'}},{id:'SH2',from:60,to:120,state:'full',lines:['L002'],keyword:'Reveal',subject:'disc',initial:'arrives',action:'opens',result:'relationship shown',camera:'pull back',sound:'quiet',assets:[],readFrames:20}],camera:{zoom:[{frame:0,value:1},{frame:120,value:1.5}]},layers:[{id:'subject',type:'ellipse',from:0,to:120,x:[{frame:0,value:50},{frame:60,value:320}],y:180,width:90,height:90,fill:'#fd6841'}],cues:[]};}
 async function workspace(fn){const root=await mkdtemp(join(tmpdir(),'si-production-'));try{await writeFile(join(root,'script.md'),script);await writeFile(join(root,'design.json'),JSON.stringify(design()));await writeFile(join(root,'config.json'),JSON.stringify({policy}));await fn(root);}finally{await rm(root,{recursive:true,force:true});}}
 async function server(handler,fn){const s=createServer(handler);await new Promise(r=>s.listen(0,'127.0.0.1',r));try{await fn(`http://127.0.0.1:${s.address().port}/v1`);}finally{await new Promise(r=>s.close(r));}}
 test('script lines have stable IDs and design must cover every real line',()=>{
@@ -29,6 +29,18 @@ test('audio range and project music restrictions are enforced',()=>{
   const errors=validateFilm(d,scriptLines(script),[a],sha(script),{...policy,music:'off'});assert(errors.some(e=>e.includes('disabled')));assert(errors.some(e=>e.includes('too short')));
 });
 test('required footage cannot silently become a text-only film',()=>{assert(validateFilm(design(),scriptLines(script),[],sha(script)).some(e=>e.includes('Footage required')));});
+
+test('imported A/B designs require a talking-head project, not just a model declaration',()=>workspace(async(root)=>{
+  const d=design();d.videoType='talking-head';d.shots[0].state='A';d.shots[1].state='B';
+  await writeFile(join(root,'design.json'),JSON.stringify(d));
+  const args={script:join(root,'script.md'),design:join(root,'design.json'),config:join(root,'config.json')};
+  await assert.rejects(makeFilm({...args,out:join(root,'wrong-type')}),/videoType does not match/);
+  await writeFile(join(root,'config.json'),JSON.stringify({policy,videoType:'talking-head'}));
+  const out=join(root,'talking-head');await makeFilm({...args,out});
+  const m=JSON.parse(await readFile(join(out,'production-gates.json'),'utf8'));
+  assert.equal(m.videoType,'talking-head');assert.deepEqual(m.shots.map(s=>s.state),['A','B']);
+  assert.throws(()=>validateConfig({videoType:'voiceover'}),/videoType/);
+}));
 test('model endpoint and key stay explicit; missing secrets do not trigger a fallback',async()=>{
   assert.throws(()=>validateConfig({model:{baseUrl:'http://example.com/v1',model:'test',apiKeyEnv:'SI_TEST_KEY'}}),/HTTPS/);
   assert.throws(()=>validateConfig({model:{baseUrl:'https://example.com/v1?key=secret',model:'test',apiKeyEnv:'SI_TEST_KEY'}}),/credentials/);
@@ -49,7 +61,7 @@ test('editable project materializes from script/design and refuses overwrites',a
 }));
 test('bounded model repair receives validation feedback, without local catalog paths',async()=>workspace(async(root)=>{
   process.env.SI_TEST_KEY='fixture-key';let attempts=0;
-  try{await server(async(req,res)=>{let raw='';for await(const b of req)raw+=b;const input=JSON.parse(JSON.parse(raw).messages[1].content);const d=design();if(attempts++===0)d.shots[1].lines=['L777'];else assert(input.validationFeedback.some(e=>e.includes('L002')));res.end(JSON.stringify({choices:[{finish_reason:'stop',message:{content:JSON.stringify(d)}}]}));},async(baseUrl)=>{
+  try{await server(async(req,res)=>{let raw='';for await(const b of req)raw+=b;const input=JSON.parse(JSON.parse(raw).messages[1].content);const d=design();assert.equal(input.videoType,'general');if(attempts++===0){d.shots[1].lines=['L777'];d.videoType='talking-head';}else{assert(input.validationFeedback.some(e=>e.includes('L002')));assert(input.validationFeedback.some(e=>e.includes('videoType')));}res.end(JSON.stringify({choices:[{finish_reason:'stop',message:{content:JSON.stringify(d)}}]}));},async(baseUrl)=>{
     await writeFile(join(root,'config.json'),JSON.stringify({policy,model:{baseUrl,model:'fixture-model',apiKeyEnv:'SI_TEST_KEY'}}));
     await makeFilm({script:join(root,'script.md'),config:join(root,'config.json'),out:join(root,'film')});assert.equal(attempts,2);
     assert(!(await readFile(join(root,'film/project.json'),'utf8')).includes('fixture-key'));

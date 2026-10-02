@@ -35,14 +35,14 @@ function clearReviews(m){
 }
 export async function initializeGates(root){
   const d=await load(root,'design.json'),template=await load(root,'production-gates-template.json');
-  const m={...template,version:'working-1',intentThesis:d.direction,fps:d.fps,scope:[0,d.durationInFrames],audioExpected:d.cues.length>0,inputs:await projectInputs(root)};
+  const m={...template,version:'working-1',videoType:d.videoType,intentThesis:d.direction,fps:d.fps,scope:[0,d.durationInFrames],audioExpected:d.cues.length>0,inputs:await projectInputs(root)};
   if(!m.audioExpected)m.audioReason='TODO';
   m.shots=d.shots.map(s=>({...structuredClone(template.shots[0]),id:s.id,from:s.from,to:s.to,state:s.state,subject:s.subject,meaning:'TODO',initial:s.initial,process:s.action,result:s.result,camera:s.camera,kind:'demonstration',changes:[],reading:s.readFrames?[s.to-s.readFrames,s.to]:null,identity:'TODO',intent:{sourceKind:'brief',cue:'TODO',cueRange:[s.from,s.to],before:'TODO',after:'TODO',why:'TODO',visualBridge:'TODO',focusBefore:'TODO',focusAfter:'TODO',revealFrame:s.from},implementation:[]}));
   m.transitions=d.shots.slice(1).map((s,i)=>({id:`TR${i+1}`,fromShot:d.shots[i].id,toShot:s.id,range:[Math.max(d.shots[i].from,s.from-2),Math.min(s.to,s.from+2)],method:d.shots[i].handoff?.method??'TODO',reason:'TODO',identity:'TODO',motion:d.shots[i].handoff?.continuity??'TODO',handoff:{kind:'new_subject',outgoing:'TODO',incoming:'TODO',exit:'TODO',entry:'TODO',meaningBridge:'TODO',cue:'TODO',cueRange:[s.from-1,s.from+1],focusFrame:s.from}}));
   clearReviews(m);
-  for(const key of ['design','animation','color','handoff']){
+  for(const key of ['design','animation','camera','soundfx','color','handoff']){
     const gate=m.specialistGates[key];gate.applicable=key!=='handoff'||m.transitions.length>0;
-    gate.targets=(key==='handoff'?m.transitions:m.shots).map(s=>s.id);
+    gate.targets=(key==='handoff'?m.transitions:key==='camera'?[...m.shots,...m.transitions]:m.shots).map(s=>s.id);
   }
   await writeFile(join(root,'production-gates.json'),JSON.stringify(m,null,2)+'\n',{flag:'wx'});
   return {status:'unverified',manifest:'production-gates.json',note:'Complete design details and actual reviews; no approval was generated.'};
@@ -62,7 +62,7 @@ export async function checkGates(root,stage){
   const key=x=>`${x.role}:${x.path}:${x.sha256}`;
   const actual=new Set((m.inputs??[]).map(key));
   if(inputs.some(x=>!actual.has(key(x))))fail('project_changed','Required current sources/assets/lockfile are missing or stale. Run gates refresh, then review the changed version again.');
-  if(m.fps!==d.fps||JSON.stringify(m.scope)!==JSON.stringify([0,d.durationInFrames])||m.audioExpected!==(d.cues.length>0))fail('project_scope','Evidence FPS, scope and audio policy must match design.json.');
+  if(m.fps!==d.fps||m.videoType!==d.videoType||JSON.stringify(m.scope)!==JSON.stringify([0,d.durationInFrames])||m.audioExpected!==(d.cues.length>0))fail('project_scope','Evidence videoType, FPS, scope and audio policy must match design.json.');
   const shots=x=>x.map(s=>[s.id,s.from,s.to,s.state]);
   if(!Array.isArray(m.shots)||JSON.stringify(shots(m.shots))!==JSON.stringify(shots(d.shots)))fail('project_shots','Evidence shot IDs, ranges and states must match design.json.');
   if(stage!=='design'){

@@ -1,5 +1,12 @@
 # Changelog / 更新记录
 
+## 0.4.0
+
+- Schema 4 adds an independent mandatory camera gate covering every shot and handoff; motion/camera/sound each veto formal render and delivery.
+- Intentional silence requires an encoded-media-bound sound review, never N/A.
+- Explicit `videoType`; A/B staging is restricted to talking-head projects. General films keep content-led scenes/cameras with `full` states.
+- Historical launch renderers are diagnostic-only and preserve published films/evidence. Existing schema-3 projects need explicit migration and review.
+
 ## 0.3.0
 
 - Portable key-free demo with bundled CC0 sounds and locked renderer dependencies.

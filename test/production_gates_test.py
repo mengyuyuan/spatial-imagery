@@ -9,7 +9,7 @@ from pathlib import Path
 sys.dont_write_bytecode = True
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'templates' / 'production'))
-from verify_production_gates import digest_file, validate, SPECIALIST_CHECKS
+from verify_production_gates import digest_file, validate, SPECIALIST_CHECKS, SILENCE_CHECKS
 
 
 class ProductionGateTests(unittest.TestCase):
@@ -24,7 +24,7 @@ class ProductionGateTests(unittest.TestCase):
             return {"path": name, "sha256": digest_file(path)}
 
         self.data = {
-            "schemaVersion": 3, "version": "synthetic-only", "scope": [0, 180], "fps": 30,
+            "schemaVersion": 4, "videoType": "talking-head", "version": "synthetic-only", "scope": [0, 180], "fps": 30,
             "intentThesis": "Unconnected components gain a shared function through assembly",
             "baselines": [{"id": "synthetic-reference", "role": "primary", "range": [0, 180], "frames": 180, "fps": 30,
                            "mechanism": "A guiding part takes a new functional role", "adaptation": "Use joining components for this assembly brief",
@@ -58,7 +58,7 @@ class ProductionGateTests(unittest.TestCase):
                                                  "meaningBridge": "From joined parts to proof that the joint supports a load",
                                                  "cue": "It can carry this", "cueRange": [88, 96], "focusFrame": 90},
                                      "review": self.review([80, 100], "normal_speed", frames=True)}]
-        self.data["soundReview"] = self.review([0, 180], "listening")
+        self.data["soundReview"] = {**self.review([0, 180], "listening"), "evidence": ref("sound-review.fixture")}
         self.data["technicalReview"] = {**self.review([0, 180], "technical"), "evidence": ref("technical.txt")}
         self.data["sequenceReview"] = self.review([0, 180], "normal_speed")
         evidence = ref("specialist-review.fixture")
@@ -69,11 +69,11 @@ class ProductionGateTests(unittest.TestCase):
                        for k in ("not_slide_deck", "content_swap_test", "middle_end_coverage", "subject_camera_progression", "motivated_reading_holds")}}
         self.data["specialistGates"] = {}
         for name, keys in SPECIALIST_CHECKS.items():
-            rows = self.data["transitions"] if name == "handoff" else self.data["shots"]
+            rows = self.data["transitions"] if name == "handoff" else self.data["shots"] + self.data["transitions"] if name == "camera" else self.data["shots"]
             gate = {"applicable": True, "reason": "Synthetic applicability", "plan": "Synthetic production plan",
                     "targets": [r["id"] for r in rows], "reviews": []}
             for row in rows:
-                extent = row["range"] if name == "handoff" else [row["from"], row["to"]]
+                extent = row["range"] if "range" in row else [row["from"], row["to"]]
                 method = "design_review" if name == "design" else "listening" if name in ("denoise", "soundfx") else "normal_speed"
                 review = {**self.review(extent, method, frames=True), "target": row["id"], "evidence": evidence,
                           "checks": {k: {"status": "passed", "observed": "Synthetic observation of " + k} for k in keys}}
@@ -182,13 +182,86 @@ class ProductionGateTests(unittest.TestCase):
     def test_intentional_silent_film(self):
         self.data["audioExpected"] = False
         self.data["audioReason"] = "User requested a silent loop"
-        self.data["soundReview"] = {"status": "not_applicable", "observed": "Intentional silence per project configuration"}
-        for key in ("denoise", "soundfx"):
+        self.data["soundReview"]["method"] = "silence_review"
+        for review in self.data["specialistGates"]["soundfx"]["reviews"]:
+            review["method"] = "silence_review"
+            review["checks"] = {k: {"status": "passed", "observed": "Synthetic silence verification of " + k} for k in SILENCE_CHECKS}
+        for key in ("denoise",):
             gate = self.data["specialistGates"][key]
             gate.update(applicable=False, targets=[], reviews=[{"status": "not_applicable", "method": "source_inspection",
                         "observed": "Synthetic source inventory contains no audio", "evidence": self.data["assetsReview"]["evidence"]}])
         self.sign()
         self.assertEqual(self.codes(), set())
+
+    def test_motion_camera_sound_cannot_be_waived_at_any_stage(self):
+        for stage in ("design", "full-render", "delivery"):
+            for name in ("animation", "camera", "soundfx"):
+                with self.subTest(stage=stage, gate=name):
+                    self.data["specialistGates"][name]["applicable"] = False
+                    self.assertIn("required_gate_disabled", self.codes(stage))
+                    self.data["specialistGates"][name]["applicable"] = True
+
+    def test_missing_camera_gate_blocks_even_if_animation_passed(self):
+        del self.data["specialistGates"]["camera"]
+        self.assertIn("missing_specialist_gate", self.codes("design"))
+
+    def test_camera_requires_all_shots_and_all_interfaces(self):
+        for target in ("SH2", "TR1"):
+            saved = self.data["specialistGates"]["camera"]["targets"][:]
+            self.data["specialistGates"]["camera"]["targets"].remove(target)
+            self.assertIn("specialist_coverage", self.codes())
+            self.data["specialistGates"]["camera"]["targets"] = saved
+
+    def test_failed_camera_or_sound_blocks_render_and_delivery(self):
+        for name in ("animation", "camera", "soundfx"):
+            review = self.data["specialistGates"][name]["reviews"][0]
+            key = next(iter(review["checks"]))
+            review["checks"][key]["status"] = "failed"
+            for stage in ("full-render", "delivery"):
+                self.assertIn("specialist_criterion", self.codes(stage))
+            review["checks"][key]["status"] = "passed"
+
+    def test_silence_does_not_disable_sound_gate(self):
+        self.data.update(audioExpected=False, audioReason="Intentional silent loop")
+        self.data["specialistGates"]["soundfx"]["applicable"] = False
+        self.assertIn("required_gate_disabled", self.codes("design"))
+
+    def test_silence_na_or_technical_only_review_is_rejected(self):
+        self.data.update(audioExpected=False, audioReason="Intentional silent loop")
+        for method in ("source_inspection", "technical", "listening"):
+            self.data["soundReview"]["method"] = method
+            self.assertIn("wrong_method", self.codes())
+        self.data["soundReview"]["status"] = "not_applicable"
+        self.assertIn("review_incomplete", self.codes())
+
+    def test_non_talking_head_ab_and_unknown_type_are_rejected(self):
+        self.data["videoType"] = "general"
+        self.assertIn("ab_scope", self.codes("design"))
+        for shot in self.data["shots"]:
+            shot["state"] = "full"
+        self.sign()
+        self.assertEqual(self.codes(), set())
+        del self.data["videoType"]
+        self.assertIn("video_type", self.codes("design"))
+
+    def test_video_type_change_invalidates_prior_reviews(self):
+        for shot in self.data["shots"]:
+            shot["state"] = "full"
+        self.sign()
+        self.data["videoType"] = "general"
+        self.assertIn("stale_review", self.codes())
+
+    def test_schema_three_cannot_inherit_new_camera_sound_approval(self):
+        self.data["schemaVersion"] = 3
+        self.assertIn("schema", self.codes("design"))
+
+    def test_camera_stills_or_metrics_do_not_certify_playback(self):
+        self.data["specialistGates"]["camera"]["reviews"][0]["method"] = "technical"
+        self.assertIn("wrong_method", self.codes())
+
+    def test_shot_transition_id_collision_cannot_hide_camera_target(self):
+        self.data["transitions"][0]["id"] = "SH1"
+        self.assertIn("duplicate", self.codes("design"))
 
     def test_cli_exit_code_and_source_overwrite_protection(self):
         self.data["openIssues"] = ["Known defect"]

@@ -28,6 +28,9 @@ try{
   for(const f of ['gate.mjs','verify_production_gates.py','production-gates.json','package-lock.json','PRODUCTION-GATES.md'])assert((await readFile(join(dir,'editable',f))).length>0);
   const blocked=spawnSync(process.execPath,[join(dir,'editable/render.mjs')],{encoding:'utf8'});assert.notEqual(blocked.status,0);assert.match(blocked.stderr,/gate blocked/);
   const m=JSON.parse(await readFile(join(dir,'editable/production-gates.json'),'utf8'));assert.equal(m.shots[0].review.status,'unverified');
+  assert.equal(m.schemaVersion,4);assert.equal(m.videoType,'general');
+  for(const name of ['animation','camera','soundfx'])assert.equal(m.specialistGates[name].applicable,true);
+  assert.deepEqual(m.specialistGates.camera.targets,[...m.shots,...m.transitions].map(s=>s.id));
   if(render){
     console.log('Rendering from clean consumer at '+dir);
     console.log(run(process.execPath,[join(pkg,'dist/cli.js'),'demo','--out','demo','--install']));

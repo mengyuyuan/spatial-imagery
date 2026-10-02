@@ -4,6 +4,7 @@ import {resolve,dirname,join,extname,relative,isAbsolute} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {spawn} from 'node:child_process';
 import {npmEntry} from './environment.js';
+import type {VideoType} from './storyboard.js';
 import {sha256File,probeMedia} from './node.js';
 import {normalizeScript,scriptLines,validateFilm,defaultPolicy,type FilmDesign,type ProductionAsset,type ProductionPolicy} from './production.js';
 
@@ -13,11 +14,13 @@ const digest=(text:string)=>createHash('sha256').update(text).digest('hex');
 const json=(v:unknown)=>JSON.stringify(v,null,2)+'\n';
 export interface ModelConfig {baseUrl:string;model:string;apiKeyEnv:string;jsonMode?:boolean;timeoutMs?:number}
 export interface FilmConfig {
+  videoType?:VideoType;
   model?:ModelConfig; width?:number;height?:number;fps?:number;durationSeconds?:number;brief?:string;
   policy?:Partial<ProductionPolicy>; search?:{provider:'pexels';apiKeyEnv:string;queries?:string[];perQuery?:number};
 }
 export function validateConfig(c:FilmConfig):void {
   if(!c||typeof c!=='object'||Array.isArray(c))throw new Error('Config must be an object');
+  if(c.videoType!==undefined&&!['talking-head','general'].includes(c.videoType))throw new Error('videoType must be talking-head or general');
   for(const k of ['width','height','fps','durationSeconds'] as const)if(c[k]!==undefined&&(!Number.isFinite(c[k])||c[k]!<=0))throw new Error(`Invalid ${k}`);
   const p={...defaultPolicy,...c.policy};
   if(!['allowed','off'].includes(p.music)||!['off','provided'].includes(p.narration)||!['required','optional'].includes(p.footage))throw new Error('Invalid project policy');
@@ -107,14 +110,17 @@ export async function makeFilm(options:MakeOptions):Promise<{project:string;stat
     else {
       const prompt=await readFile(join(templateRoot,'planner.md'),'utf8');let feedback:string[]=[];
       for(let attempt=0;attempt<2;attempt++){
-        try{design=await requestJSON(config.model!,prompt,{scriptSha256:hash,lines,brief:config.brief??'',width:config.width??1280,height:config.height??720,fps:config.fps??30,durationSeconds:config.durationSeconds,policy,assets:candidates,validationFeedback:feedback});}
+        try{design=await requestJSON(config.model!,prompt,{scriptSha256:hash,videoType:config.videoType??'general',lines,brief:config.brief??'',width:config.width??1280,height:config.height??720,fps:config.fps??30,durationSeconds:config.durationSeconds,policy,assets:candidates,validationFeedback:feedback});}
         catch(e){feedback=[e instanceof Error?e.message:'Planner error'];if(!/invalid JSON/.test(feedback[0]!))throw e;continue;}
-        feedback=validateFilm(design,lines,assets,hash,policy);if(!feedback.length)break;
+        feedback=validateFilm(design,lines,assets,hash,policy);
+        if(design&&typeof design==='object'&&'videoType' in design&&design.videoType!==(config.videoType??'general'))feedback.push('videoType must match project config (default: general)');
+        if(!feedback.length)break;
       }
       if(feedback.length){await writeFile(join(root,'design-diagnostics.json'),json({errors:feedback,design}));throw new Error(`Design validation failed: ${feedback.slice(0,8).join('; ')}`);}
     }
     const errors=validateFilm(design,lines,assets,hash,policy);if(errors.length)throw new Error(errors.join('\n'));
     const film=design as FilmDesign;
+    if(film.videoType!==(config.videoType??'general'))throw new Error('Design videoType does not match project config (default: general); A/B requires an explicit talking-head project');
     for(const [key,actual] of [['width',film.width],['height',film.height],['fps',film.fps]] as const)if(config[key]!==undefined&&actual!==config[key])throw new Error(`Design ${key} does not match requested configuration`);
     if(config.durationSeconds!==undefined&&Math.abs(film.durationInFrames/film.fps-config.durationSeconds)>1/film.fps)throw new Error('Design duration does not match the requested duration');
     await writeFile(join(root,'design.json'),json(film));
@@ -172,6 +178,10 @@ export async function installProject(root:string):Promise<void>{
   await run(process.execPath,[npmEntry(),'ci','--no-audit','--no-fund'],resolve(root));
 }
 export async function gateProject(root:string,action='design'):Promise<void>{
+  if(action!=='init'){
+    const manifest=JSON.parse(await readFile(join(resolve(root),'production-gates.json'),'utf8')) as {schemaVersion?:number};
+    if(manifest.schemaVersion!==4)throw new Error('Production gate blocked: SDK 0.4 requires a schema-4 project with independent motion/camera/sound gates. Preserve this old project and generate a current version; no automatic approval migration.');
+  }
   await run(process.execPath,[join(resolve(root),'gate.mjs'),action],resolve(root));
 }
 export async function makeDemo(options:{out:string;install?:boolean;render?:boolean}):Promise<{project:string;status:string}>{

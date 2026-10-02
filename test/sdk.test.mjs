@@ -74,6 +74,15 @@ test('sound rejects negative and overlapping fades, invalid pan',()=>{
 test('valid plan and half-open frame boundaries',()=>{
   assert.deepEqual(sdk.validatePlan(plan),[]);assert.equal(sdk.shotAt(plan,89).id,'SH01');assert.equal(sdk.shotAt(plan,90).id,'SH02');assert.equal(sdk.shotAt(plan,180),undefined);
 });
+
+test('A/B staging is restricted to explicitly typed talking-head plans',()=>{
+  const p=structuredClone(plan);p.shots[0].state='A';p.shots[1].state='B';
+  assert(sdk.validatePlan(p).some(e=>e.path==='shots[0].state'));
+  p.videoType='talking-head';assert.deepEqual(sdk.validatePlan(p),[]);
+  delete p.videoType;assert(sdk.validatePlan(p).some(e=>e.path==='videoType'));
+  p.videoType='voiceover';assert(sdk.validatePlan(p).some(e=>e.path==='videoType'));
+  p.videoType=['general'];p.shots[0].state=['A'];assert(sdk.validatePlan(p).some(e=>e.path==='videoType'));assert(sdk.validatePlan(p).some(e=>e.path==='shots[0].state'));
+});
 test('JSON validation never throws on malformed external values',()=>{
   for(const x of [null,42,[],{}, {...plan,assets:[null],shots:[null]}, {...plan,shots:[{from:'a',to:NaN,handoff:4}]}]){assert.doesNotThrow(()=>sdk.validatePlan(x));assert.ok(sdk.validatePlan(x).length);}
 });

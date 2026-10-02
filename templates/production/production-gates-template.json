@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "version": "待填写",
   "intentThesis": "待填写",
   "baselines": [],
@@ -36,7 +36,7 @@
       "id": "SH01",
       "from": 0,
       "to": 180,
-      "state": "A",
+      "state": "full",
       "subject": "待填写",
       "meaning": "待填写",
       "initial": "待填写",
@@ -51,7 +51,7 @@
         180
       ],
       "intent": {
-        "sourceKind": "speech",
+        "sourceKind": "brief",
         "cue": "待填写",
         "cueRange": [
           90,
@@ -123,7 +123,11 @@
       180
     ],
     "observed": "待验证",
-    "binding": ""
+    "binding": "",
+    "evidence": {
+      "path": "sound-review.json",
+      "sha256": "待填写"
+    }
   },
   "technicalReview": {
     "status": "unverified",
@@ -160,14 +164,14 @@
   },
   "specialistGates": {
     "design": {
-      "applicable": null,
+      "applicable": true,
       "reason": "TODO",
       "plan": "TODO",
       "targets": [],
       "reviews": []
     },
     "animation": {
-      "applicable": null,
+      "applicable": true,
       "reason": "TODO",
       "plan": "TODO",
       "targets": [],
@@ -181,7 +185,7 @@
       "reviews": []
     },
     "color": {
-      "applicable": null,
+      "applicable": true,
       "reason": "TODO",
       "plan": "TODO",
       "targets": [],
@@ -202,11 +206,19 @@
       "reviews": []
     },
     "soundfx": {
-      "applicable": null,
+      "applicable": true,
+      "reason": "TODO",
+      "plan": "TODO",
+      "targets": [],
+      "reviews": []
+    },
+    "camera": {
+      "applicable": true,
       "reason": "TODO",
       "plan": "TODO",
       "targets": [],
       "reviews": []
     }
-  }
+  },
+  "videoType": "general"
 }

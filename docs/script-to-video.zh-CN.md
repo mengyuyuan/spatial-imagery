@@ -1,6 +1,8 @@
 # 从台词脚本到视频
 
-v0.3: first renders explicitly use `--draft` → `output/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
+**v0.4：** 运动、镜头、声音为独立硬门禁，无声也须验证。`videoType` 必填；A/B 仅允许口播 `talking-head`，其他影片使用 `general` + `full`。见[门禁与迁移](../templates/production/PRODUCTION-GATES.md)。
+
+v0.4: first renders explicitly use `--draft` → `output/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
 
 v0.2 增加了真实执行入口：脚本 → 模型设计 → 分镜/场景图校验 → 素材获取与核验 → 可编辑 Remotion 工程 → 连续音轨 → MP4 与 QA。原来的运动、相机、声音 SDK 和完整制作方法继续保留。
 

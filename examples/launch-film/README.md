@@ -1,5 +1,7 @@
 # Launch film / 双语宣传片
 
+**v0.4:** these historical renderers only reproduce diagnostic drafts under `build/diagnostic/` (v1) or `build/kinetic/diagnostic/` (v2). Default production calls are blocked before loading Remotion. Published MP4s and old approval evidence are preserved; they do not acquire schema-4 approval. Port the composition into a current generated project and complete its gates for new formal delivery.
+
 ## Current: kinetic v2 / 当前：文字驱动版
 
 The 30-second revision follows on-screen text and a 128 BPM music grid: 15 shots, large kinetic type, 3D subject-following travel, an implicit sphere-to-ring morph, a spatial array, geometric recomposition, real video apertures and a measured-audio waveform. No voiceover is used. The v1 film below is retained as a revision case after feedback that it was too sparse and slow.
@@ -17,9 +19,9 @@ node examples/launch-film/mix-kinetic.mjs
 node examples/launch-film/plan-kinetic.mjs
 node examples/launch-film/render-kinetic.mjs --stills
 # Inspect representative frames in examples/launch-film/build/kinetic/.
-node examples/launch-film/render-kinetic.mjs
-node examples/launch-film/qa.mjs --v2
-node examples/launch-film/check-motion.mjs
+node examples/launch-film/render-kinetic.mjs --draft
+node examples/launch-film/qa.mjs --v2 --draft
+node examples/launch-film/check-motion.mjs --draft
 node examples/launch-film/render-cover.mjs
 ```
 
@@ -49,13 +51,13 @@ blender -b --python examples/launch-film/scene.py -- --render
 node examples/launch-film/mix.mjs
 node examples/launch-film/prepare.mjs
 npm ci --prefix examples/launch-film
-node examples/launch-film/render.mjs
-node examples/launch-film/qa.mjs
+node examples/launch-film/render.mjs --draft
+node examples/launch-film/qa.mjs --draft
 ```
 
 On Windows, use the installed Blender executable's full path if it is not on PATH. No hard-coded machine-specific path is required by the project. The scene skips existing frame PNGs for resuming a render; after changing the scene or poses, remove only this example's generated `build/frames/` before re-rendering. Do not mix old frames with a new scene.
 
-After dependencies are installed, `node examples/launch-film/reproduce.mjs` runs the production commands in order. Set `BLENDER_BIN` to the executable path when needed. This runner does not install or authenticate third-party tools. Allow roughly 5 GB of working disk space for frame PNGs and rendering caches; the compressed SDK itself is much smaller.
+After dependencies are installed, `node examples/launch-film/reproduce.mjs --draft` runs the production commands in order. Set `BLENDER_BIN` to the executable path when needed. This runner does not install or authenticate third-party tools. Allow roughly 5 GB of working disk space for frame PNGs and rendering caches; the compressed SDK itself is much smaller.
 
 Pipeline stages are represented by `design.md` (research/direction/script/scene plan), `asset-manifest.json` (assets), the explicit composition/cues (edit), rendered media plus `qa.json` (compose), and the repository PR (publish). These are project-native artifacts; this example does not claim OpenMontage's hosted execution or schema-validation service ran.
 

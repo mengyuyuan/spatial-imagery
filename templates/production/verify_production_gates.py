@@ -14,13 +14,17 @@ from pathlib import Path
 # Independent vetoes: no averaging, overall-score substitution or automatic N/A.
 SPECIALIST_CHECKS = {
     "design": ("intent", "specificity", "visible_process", "subject_hierarchy", "camera_discovery", "reading_rhythm", "sound_plan", "reference_adaptation", "not_slide_deck"),
-    "animation": ("initial_process_result", "material_structure", "depth_occlusion", "camera_motion", "tempo_inertia", "readable_landing", "not_slide_motion"),
+    "animation": ("initial_process_result", "material_structure", "depth_occlusion", "tempo_inertia", "readable_landing", "not_slide_motion"),
+    "camera": ("subject_priority", "observation_task", "framing_readability", "spatial_orientation", "trajectory_inertia", "handoff_continuity", "motivated_hold_or_cut"),
     "handoff": ("subject_identity", "attention_bridge", "direction_position_scale", "velocity_continuity", "occlusion_or_cut_reason", "semantic_timing", "sound_bridge", "landing", "no_unmotivated_reset"),
     "color": ("exposure_detail", "white_balance_palette", "skin_or_material", "light_direction", "temporal_consistency", "text_contrast", "color_space"),
     "matting": ("hair_edges", "hands_fingers", "core_integrity", "spill_halo", "alpha_interpretation", "temporal_stability", "occlusion_tracking", "timeline_alignment"),
     "denoise": ("noise_floor", "speech_detail", "no_musical_noise", "no_pumping", "breaths_transients", "sync_level_match"),
     "soundfx": ("source_license", "body_coverage", "attack_release", "inertia_material_handoff", "pan_depth", "dialogue_space", "variety_no_noise_bed", "sync_tail"),
 }
+
+# Silence is a sound decision to verify against the encode, never a waived gate.
+SILENCE_CHECKS = ("intentional_silence", "no_missing_audio", "transition_intent", "output_silence")
 
 
 def digest_file(path):
@@ -85,8 +89,10 @@ def validate(data, base, stage):
 
     if not isinstance(data, dict):
         return {"eligible": False, "errors": [{"code": "invalid_manifest", "path": "$", "message": "Expected an object"}]}
-    if data.get("schemaVersion") != 3:
-        fail("schema", "schemaVersion", "Expected schemaVersion 3 with seven specialist gates; old approvals are not migrated automatically")
+    if data.get("schemaVersion") != 4:
+        fail("schema", "schemaVersion", "Expected schemaVersion 4 with independent motion/camera/sound gates; old approvals are not migrated automatically")
+    if data.get("videoType") not in ("talking-head", "general"):
+        fail("video_type", "videoType", "Explicit talking-head or general required")
     words(data, ["version", "intentThesis"], "$")
     scope, fps = data.get("scope"), data.get("fps")
     if not interval(scope):
@@ -137,7 +143,7 @@ def validate(data, base, stage):
                 if isinstance(entry, dict) else entry for entry in entries]
 
     binding_payload = {"schemaVersion": data.get("schemaVersion"), "version": data.get("version"), "fps": fps, "scope": scope,
-                       "intentThesis": data.get("intentThesis"), "baselines": baselines,
+                       "intentThesis": data.get("intentThesis"), "baselines": baselines, "videoType": data.get("videoType"),
                        "audioExpected": data.get("audioExpected"), "audioReason": data.get("audioReason"),
                        "inputs": inputs, "media": data.get("media", []), "shots": design_records("shots"),
                        "transitions": design_records("transitions")}
@@ -252,6 +258,8 @@ def validate(data, base, stage):
             cursor = extent[1]
         if shot.get("state") not in ("A", "B", "full"):
             fail("shot_state", p, "Expected A, B or full")
+        if shot.get("state") in ("A", "B") and data.get("videoType") != "talking-head":
+            fail("ab_scope", p, "A/B states are only for talking-head videos; other films use full")
         if shot.get("kind") not in ("transformation", "handoff", "demonstration", "hold"):
             fail("shot_kind", p, "Unknown expression kind")
         changes = shot.get("changes")
@@ -294,8 +302,8 @@ def validate(data, base, stage):
         words(tr, ["id", "fromShot", "toShot", "method", "reason", "identity", "motion"], p)
         tid = tr.get("id")
         if isinstance(tid, str):
-            if tid in transition_ids:
-                fail("duplicate", p, "Duplicate TR ID")
+            if tid in transition_ids or tid in ids:
+                fail("duplicate", p, "SH/TR IDs must be distinct so camera evidence has an unambiguous target")
             transition_ids.add(tid)
         pair = (tr.get("fromShot"), tr.get("toShot"))
         if not all(isinstance(v, str) for v in pair):
@@ -348,7 +356,7 @@ def validate(data, base, stage):
             if not isinstance(check, dict) or check.get("status") != "passed" or not present(check.get("observed")):
                 fail("film_design_criterion", "filmDesignReview.checks." + key, "A deck of cards/title swaps cannot pass as intent-led motion; record actual whole-film design evidence")
 
-    # G1 includes actual design critique; G2/G3 add seven separate observed vetoes.
+    # G1 includes design critique; G2/G3 require separate motion, camera and sound vetoes.
     for name, criteria in SPECIALIST_CHECKS.items():
         p = "specialistGates." + name
         gate = specialist.get(name) if isinstance(specialist, dict) else None
@@ -360,14 +368,13 @@ def validate(data, base, stage):
         if type(applicable) is not bool:
             fail("gate_applicability", p, "Explicit applicability is required; unknown never passes")
             continue
-        available = {item.get("id"): item for item in (transitions if name == "handoff" else shots)
+        available = {item.get("id"): item for item in (transitions if name == "handoff" else shots + transitions if name == "camera" else shots)
                      if isinstance(item.get("id"), str)}
-        always = (name in ("design", "animation", "color") or name == "handoff" and bool(transitions)
-                  or name == "soundfx" and data.get("audioExpected") is True)
+        always = (name in ("design", "animation", "camera", "color", "soundfx") or name == "handoff" and bool(transitions))
         if always and not applicable:
-            fail("required_gate_disabled", p, "Design, animation, color, existing handoffs and audible sound cannot be waived")
-        if name in ("denoise", "soundfx") and data.get("audioExpected") is False and applicable:
-            fail("audio_gate_scope", p, "Silent films need an explicit non-applicability decision, not pretend listening")
+            fail("required_gate_disabled", p, "Motion, camera and sound (including silence) are mandatory, as are design, color and existing handoffs")
+        if name == "denoise" and data.get("audioExpected") is False and applicable:
+            fail("audio_gate_scope", p, "A silent film needs an evidenced denoise N/A decision, not pretend listening")
         targets = gate.get("targets")
         if (not isinstance(targets, list) or any(not isinstance(t, str) or t not in available for t in targets)
                 or len(set(t for t in targets if isinstance(t, str))) != len(targets)):
@@ -400,7 +407,7 @@ def validate(data, base, stage):
                 continue
             seen_targets.add(target)
             item = available[target]
-            extent = item.get("range") if name == "handoff" else [item.get("from"), item.get("to")]
+            extent = item.get("range") if target in transition_ids else [item.get("from"), item.get("to")]
             if name == "design":
                 if review.get("status") != "passed" or review.get("method") != "design_review" or review.get("binding") != design_binding:
                     fail("design_critique_missing", q, "G1 requires current per-shot design critique, not just populated fields")
@@ -408,10 +415,12 @@ def validate(data, base, stage):
                 if review.get("range") != extent:
                     fail("design_review_scope", q, "Design critique must cover this exact SH")
             else:
-                playback_review(review, q, extent, "listening" if name in ("denoise", "soundfx") else "normal_speed", visual=name not in ("denoise", "soundfx"))
+                method = "silence_review" if name == "soundfx" and data.get("audioExpected") is False else "listening" if name in ("denoise", "soundfx") else "normal_speed"
+                playback_review(review, q, extent, method, visual=name not in ("denoise", "soundfx"))
             file_ref(review.get("evidence"), q + ".evidence")
             checks = review.get("checks")
-            for key in criteria:
+            required_criteria = SILENCE_CHECKS if name == "soundfx" and data.get("audioExpected") is False else criteria
+            for key in required_criteria:
                 check = checks.get(key) if isinstance(checks, dict) else None
                 if not isinstance(check, dict) or check.get("status") != "passed" or not present(check.get("observed")):
                     fail("specialist_criterion", q + ".checks." + key, "Each criterion needs a passed actual observation; one failure vetoes this gate")
@@ -432,16 +441,12 @@ def validate(data, base, stage):
         asset = data.get("assetsReview")
         if record_review(asset, "assetsReview"):
             file_ref(asset.get("evidence"), "assetsReview.evidence")
-        if data.get("audioExpected") is False:
-            sound = data.get("soundReview")
-            if not isinstance(sound, dict) or sound.get("status") != "not_applicable" or sound.get("binding") != binding or not present(sound.get("observed")):
-                fail("silence_review", "soundReview", "Intentional silence needs an explicit current-scope reason")
-        else:
-            playback_review(data.get("soundReview"), "soundReview", scope, "listening")
+        playback_review(data.get("soundReview"), "soundReview", scope,
+                        "silence_review" if data.get("audioExpected") is False else "listening", evidence=True)
         playback_review(data.get("technicalReview"), "technicalReview", scope, "technical", evidence=True)
     if stage == "delivery":
         playback_review(data.get("sequenceReview"), "sequenceReview", scope, "normal_speed")
-    return {"schemaVersion": 3, "stage": stage, "version": data.get("version"), "binding": binding, "designBinding": design_binding,
+    return {"schemaVersion": 4, "stage": stage, "version": data.get("version"), "binding": binding, "designBinding": design_binding,
             "eligible": not errors, "errors": errors,
             "limits": ["This validates records and hashes, not pixels or audio perception.",
                        "Actual semantic review, listening and source completeness remain the producer's responsibility.",

@@ -6,7 +6,7 @@ The SDK supplies execution tools. The design table states the creative intent. T
 
 The v0.2 [script-to-video runner](script-to-video.md) connects scripts, configurable model/imported designs, acquired assets, editable animation projects, audio and rendering. It executes applicable stages below; it does not replace footage review or final viewing/listening. Music, narration, procedural-only mode, duration, canvas and style belong to each project rather than becoming universal rules from a previous film.
 
-## Production standard 3.20: transform according to intent
+## Production standard 3.21: transform according to intent
 
 Determine the intended change in understanding, feeling and attention before choosing shape, function, space, camera or sound. Each shot connects **the actual line/text/action → prior understanding → new understanding → visible change → subject handoff → camera discovery → readable landing**. A real morph still fails when it does not express the current idea. Films without speech use screen text, actions or a creative brief as their cues.
 
@@ -20,9 +20,9 @@ Two approved production studies establish useful patterns: a meteor leads the ca
 
 An impressive opening cannot certify the middle or ending. Sync and loudness measurements cannot certify listening. Distinguish same-object transformation from a new-subject relay; a subject may exit when its role is complete. Motivated cuts and reading holds remain valid. Relabeled effects and arbitrary scene resets do not establish intent continuity. Changes to intent, code, edits, mixing or media invalidate the affected reviews and neighboring handoffs.
 
-**Execution boundary (v0.3):** generated projects include the schema-v3 Python validator, Node gate runner, current-input-bound unverified manifest and [portable guide](../templates/production/PRODUCTION-GATES.md). Formal render enforces G1/G2; `gates delivery` checks G3 against the final encode. Use `--draft` / `render:draft` for diagnosis. These check records, current source/media hashes and coverage; they do not perceive aesthetics or listen for you. Structural checks and review approval remain separate.
+**Execution boundary (v0.4):** generated projects include the schema-v4 Python validator, Node gate runner, current-input-bound unverified manifest and [portable guide](../templates/production/PRODUCTION-GATES.md). Formal render enforces G1/G2; `gates delivery` checks G3 against the final encode. Use `--draft` / `render:draft` for diagnosis. These check records, current source/media hashes and coverage; they do not perceive aesthetics or listen for you. Structural checks and review approval remain separate.
 
-Seven independent vetoes now cover design, animation, handoff, color/lighting, matting, denoise and sound effects. Full-film and per-shot design critique must explicitly reject slide-deck packaging; exact fields and evidence rules are in [SPECIALIST-GATES](../templates/production/SPECIALIST-GATES.md).
+Eight independent vetoes now cover design, motion, camera, handoff, color/lighting, matting, denoise and sound effects. Full-film and per-shot design critique must explicitly reject slide-deck packaging; exact fields and evidence rules are in [SPECIALIST-GATES](../templates/production/SPECIALIST-GATES.md).
 
 ## 1. Establish scope and source truth
 
@@ -50,7 +50,7 @@ The one-page baseline defines meaning, visual language, light, typography, palet
 
 | Record | Required information |
 |---|---|
-| SH / shot | Global `[from,to)` frames, speech/keyword, A/B/full state, subject, initial→action→result, camera task, reading window, assets and sound |
+| SH / shot | Global `[from,to)` frames, speech/keyword, A/B for talking-head or full for general films, subject, initial→action→result, camera task, reading window, assets and sound |
 | EL / element | Identity, parts, silhouette, structure, relationships and purpose; entry, development, resolution, exit; what stays recognizable |
 | TR / handoff | Old subject's completed job and exit; next subject's arrival; screen position, size, direction, velocity and landing |
 | VID / footage | Source ID, source and project in/out points, crop, speed/freeze handoff, original sound and license |
@@ -70,7 +70,9 @@ Give the camera an observation task: follow, reveal after passing a foreground o
 
 `followCamera` uses a world-space offset and look-ahead in seconds. Design camera movement separately from object movement. Use `project` and `handoffDelta` to inspect screen-space continuity. Check position, size, direction, speed, silhouette and action phase at a continuous match. These diagnostics do not prohibit intentional cuts; record the narrative reason for a cut.
 
-## 5. A/B staging, matting and lighting
+## 5. Talking-head-only A/B staging, matting and lighting
+
+Only `videoType: talking-head` may use A/B. General brand, product, animation and voiceover-only films use `videoType: general` and `state: full`; arrange subjects, scenes and camera shots by content. `full` is not a single fixed camera. Never invent a presenter window to satisfy this workflow.
 
 A: the presenter dominates the frame. Content moves through the space behind a real matte, respecting face, hands and subtitles. Avoid guide-line graphics behind the large presenter and avoid replacing an entire spatial scene with one fixed side card.
 

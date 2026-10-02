@@ -1,22 +1,22 @@
-# Seven independent gates / 七项独立门禁（3.20）
+# Eight independent gates / 八项独立门禁（3.21）
 
-No gate can be averaged away by a good overall score, a strong opening, or a technical pass. Schema version 3 adds seven explicit production plans and reviews to `production-gates.json`, plus a whole-film design critique. Old schema-2 passes are historical evidence, not automatic approvals for this version.
+No gate can be averaged away by a good overall score, a strong opening, or a technical pass. Schema version 4 requires eight explicit production plans and reviews to `production-gates.json`, plus a whole-film design critique. Old schema-2/3 passes are historical evidence, not automatic approvals for this version.
 
 **禁止 PPT 式包装。** 不把台词拆成重复卡片，以换字、淡入、位移、缩放或每页同款入场代替内容演绎。变形、运镜与空间都要改变观众看到的关系和理解；镜头跟随有职责的主体，落稳后可阅读，再有理由地接棒。文字、图表、产品界面可作为叙事对象，但须按实际内容演出关系。为了消除 PPT 感而不停飞、转、震动同样退回；必要阅读、真人情绪和有理由的切镜仍可保留。
 
 ## Evidence format / 证据格式
 
-Every `specialistGates.<name>` contains `applicable` (explicit boolean), concrete `reason`, `plan`, `targets` and `reviews`. Targets use real SH IDs; `handoff` uses TR IDs. Design/animation/color cover every SH; handoff covers every TR; a film with sound must review soundfx across all SH, including intentional quiet windows. Matting/denoise cover the actual affected SH and must explain that scope. No reviewer may omit affected shots to obtain a pass.
+Every `specialistGates.<name>` contains `applicable` (explicit boolean), concrete `reason`, `plan`, `targets` and `reviews`. Targets use real SH IDs; `handoff` uses every TR; `camera` uses every SH and every TR. SH/TR IDs must be globally distinct. Design/animation/color/soundfx cover every SH, including intentional silence. Motion, camera and sound are separate mandatory vetoes for all video types. Matting/denoise cover the actual affected SH and must explain that scope. No reviewer may omit affected shots to obtain a pass.
 
 An applicable gate needs one review per target. Each review contains `target`, `status`, `method`, `media` where applicable, `range`, `observed`, `binding`, a hashed `evidence: {path, sha256}` file, and `checks: {criterion: {status, observed}}`. Every listed criterion is required and each must pass. Describe the actual object, frame/time and defect decision; copying the plan or writing “looks fine” is not an observation. Human or capable agent reviewers must really inspect the work.
 
-Design reviews use `method: design_review`, the exact SH range, and **`designBinding`** printed by `gates design`. Dynamic visual reviews use `normal_speed` plus ordered before/middle/after `frames`. Denoise and soundfx reviews use `listening`, including picture where synchronization matters. Playback reviews use **`binding`**, which also includes registered media. The design binding excludes media so registering an encode does not invalidate an unchanged design critique; source/design/scope/applicability changes invalidate both.
+Design reviews use `method: design_review`, the exact SH range, and **`designBinding`** printed by `gates design`. Dynamic visual reviews use `normal_speed` plus ordered before/middle/after `frames`. Denoise and audible soundfx reviews use `listening`, including picture where synchronization matters. Entirely silent films must keep soundfx applicable and use `silence_review` with the dedicated criteria below. Playback reviews use **`binding`**, which also includes registered media. The design binding excludes media so registering an encode does not invalidate an unchanged design critique; source/design/scope/applicability changes invalidate both.
 
 Color, matting and denoise also require `comparison: {before: {path, sha256}, after: {path, sha256}, alignment: "..."}`. Color/matting compare the same frame and crop, or a documented reference target against the output. Denoise compares time-aligned, level-matched source and processed audio. `alignment` must state the mapping and viewing/listening conditions. Reports and media are real local files, not nonexistent paths or screenshots of a success log.
 
-Non-applicability is not a blank checkbox. It requires empty targets and exactly one review with `status: not_applicable`, `method: source_inspection`, concrete observation, `designBinding`, and hashed source-inspection evidence. It is allowed for absent matting, unnecessary denoising after listening, silent sound, or a single shot with no interfaces. Design, animation, color, existing handoffs and an audible film's sound review cannot be disabled. Do not add denoising to clean audio or fabricate a person just to exercise a gate.
+Non-applicability is not a blank checkbox. It requires empty targets and exactly one review with `status: not_applicable`, `method: source_inspection`, concrete observation, `designBinding`, and hashed source-inspection evidence. It is allowed for absent matting, unnecessary denoising after listening, or a single shot with no interfaces. Design, motion, camera, color, existing handoffs and sound (even silence) cannot be disabled. Do not add denoising to clean audio or fabricate a person just to exercise a gate.
 
-G1 requires whole-film and per-SH design critiques, all seven applicability decisions and concrete plans. G2 additionally requires actual SH/TR playback, specialist review and listening. G3 repeats applicable playback/listening checks on the final encoded media; draft evidence cannot sign the final file. A `failed`, `unverified`, missing criterion, stale hash or missing target blocks its stage.
+G1 requires whole-film and per-SH design critiques, all eight applicability decisions and concrete plans. G2 additionally requires actual SH/TR playback, specialist review and listening. G3 repeats applicable playback/listening checks on the final encoded media; draft evidence cannot sign the final file. A `failed`, `unverified`, missing criterion, stale hash or missing target blocks its stage.
 
 ## Design / 设计门：先淘汰空洞方案
 
@@ -30,11 +30,19 @@ Per-SH criteria: `intent`, `specificity`, `visible_process`, `subject_hierarchy`
 
 Top-level `filmDesignReview` requires status, `method: design_review`, entire scope as `range`, observation, evidence, design binding and five checks: `not_slide_deck`, `content_swap_test`, `middle_end_coverage`, `subject_camera_progression`, `motivated_reading_holds`. Inspect the beginning, middle, ending and whole attention chain together. A beautiful opening cannot excuse a card deck afterward.
 
-## Animation / 动画门：看动作真实发生
+## Motion / 运动与动画门：看动作真实发生
 
-Criteria: `initial_process_result`, `material_structure`, `depth_occlusion`, `camera_motion`, `tempo_inertia`, `readable_landing`, `not_slide_motion`.
+Criteria: `initial_process_result`, `material_structure`, `depth_occlusion`, `tempo_inertia`, `readable_landing`, `not_slide_motion`.
 
 正常速度看完整动作，再看前中后；核对结构/关系/用途是否实际改变、材质和部件是否保持身份、纵深遮挡是否正确、相机是否揭示内容、速度与减速是否有惯性、结果是否读得懂。连续播放日志和整幅帧差不能替代。只有平移淡化的标题卡不能通过“真实动画”签字。有意保持写清正在读什么，不把缺失动作改名留白。
+
+## Camera / 镜头门：独立于物体运动
+
+Criteria: `subject_priority`, `observation_task`, `framing_readability`, `spatial_orientation`, `trajectory_inertia`, `handoff_continuity`, `motivated_hold_or_cut`.
+
+逐 SH 与 TR 正常速度审看，再核对前中后：镜头此刻跟谁、为什么改变观察点、掠过/推近/拉开之后发现什么，主体尺寸、读字尺度、遮挡与空间朝向是否成立；起势/跟随/减速/落稳是否有惯性。跨镜检查方向、位置、尺度、速度与注意力交接；有意切镜写清意义。固定机位也必须说明它让观众看清什么，不能标 N/A；不强求一直飞或转。物体动画通过不能替镜头签字，屏幕坐标/速度计算及静帧也不能替代连续观看。
+
+A/B 只用于口播：`videoType: talking-head`。其他影片 `general` 使用 `full`，按主体、场景与机位组织；有旁白不自动等于口播出镜。两类影片都执行独立运动、镜头、声音门。
 
 ## Handoff / 衔接变化门：检查接棒而非翻页
 
@@ -60,10 +68,12 @@ Criteria: `noise_floor`, `speech_detail`, `no_musical_noise`, `no_pumping`, `bre
 
 先听原音的室内底噪、电流、风噪及停顿，再按问题处理。源/处理后等响度AB试听，保留辅音、齿音、呼吸、音色与瞬态，检查水下感、金属/音乐噪声、抽吸、门限截字和剪口跳变。核对起中末与剪点同步，不因响度变大就认为更清楚。干净录音可不做降噪，但必须有真实源试听与不处理的证据；“没运行降噪”本身不是不适用理由。
 
-## Sound effects / 音效门
+## Sound / 声音与音效门（不可关闭）
 
 Criteria: `source_license`, `body_coverage`, `attack_release`, `inertia_material_handoff`, `pan_depth`, `dialogue_space`, `variety_no_noise_bed`, `sync_tail`.
 
 先按对象、材质、动作和有效主体时长取得真实候选，记来源/许可/哈希、源内裁段和淘汰理由。合画面听起势—动作主体—接触—落稳—尾声：包络覆盖变化，淡入淡出自然，转材质交叉淡化继承动势，声像与空间一致。不能每个词重复短点击、只在开始打点，或用持续沙沙声铺满过程。不同动作需要适配音色；不设强制音效数量。人声清楚、运动声可辨、不削波，剪点/接口尾声不突断。纯人声或留白段要说明声音意图并检查收声；技术响度和同步通过不能代替听感。
+
+For an entirely silent film, sound remains applicable. Set `audioExpected: false` with `audioReason`; each SH uses `method: silence_review` and checks `intentional_silence`, `no_missing_audio`, `transition_intent`, `output_silence`. Review the creative brief/cues against actual encoded playback and audio-stream/decode evidence, record why silence is deliberate and how the transition lands without missing intended sound. Include hashed evidence and current media/range/binding. The whole-film `soundReview` must also pass with the same method/evidence. Neither N/A nor a technical-only record is enough. Silent windows within audible films remain part of listening review. No fake audition of absent audio and no compulsory noise bed.
 
 These are record-and-identity gates, not an automatic visual taste or audio perception model. The package cannot prove a dishonest reviewer watched a file; never fabricate observations to turn reports green. Defects stay open and block formal production. Diagnostic drafts remain available without additional user permission.

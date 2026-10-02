@@ -1,5 +1,7 @@
 # 空间意象 · Spatial Imagery
 
+**v0.4 硬门禁：** 运动、镜头、声音各自独立，缺证据/失败阻止正式渲染与交付；无声也须验证。`videoType` 必填，只有 `talking-head` 可用 A/B，其他影片用 `general` + `full`。详见 [门禁与迁移](templates/production/PRODUCTION-GATES.md)。
+
 **让想法成为空间。** 面向主体驱动叙事的 TypeScript SDK：连续运动、空间镜头接力、声音包络，以及可追溯的设计表。
 
 [English](README.md) · [完整制作管线](docs/pipeline.zh-CN.md) · [API](docs/api.md) · [宣传片源码](examples/launch-film/README.md)
@@ -8,7 +10,7 @@ https://github.com/user-attachments/assets/37f98ee4-dff0-4948-8d79-7f060c86b287
 
 **30 秒宣传片，建议打开声音。** 文字驱动、空间镜头、元素变形，与音乐节拍共同推进。[下载 MP4](media/spatial-imagery-kinetic-v2.mp4)。
 
-**当前为 v0.3.0，包含脚本出片执行器与底层 SDK。** 配置 OpenAI 兼容模型后，可从脚本生成可编辑设计表，获取选用素材，生成动画工程、混合声音并渲染 MP4；也能使用 Codex 或人工审定的设计表。审美复核、口播转录、真人抠像与重打光仍是独立制作环节。[脚本出片详细说明](docs/script-to-video.zh-CN.md)。
+**当前为 v0.4.0，包含脚本出片执行器与底层 SDK。** 配置 OpenAI 兼容模型后，可从脚本生成可编辑设计表，获取选用素材，生成动画工程、混合声音并渲染 MP4；也能使用 Codex 或人工审定的设计表。审美复核、口播转录、真人抠像与重打光仍是独立制作环节。[脚本出片详细说明](docs/script-to-video.zh-CN.md)。
 
 **首次运行：随包样片，无需模型密钥、私人素材或素材下载。** [Installation / 安装排错](docs/quickstart.md).
 
@@ -21,7 +23,7 @@ node dist/cli.js demo --out first-film --install --render
 
 6s / 640×360 / 30 fps / stereo: `first-film/output/draft.mp4`. [G1/G2/G3 production gates / 正式门禁](templates/production/PRODUCTION-GATES.md).
 
-**七项独立门禁：** 设计、动画、衔接变化、调色/打光、抠像、降噪、音效。**禁止 PPT 式包装**：重复卡片换字、淡入、位移与缩放不能代替内容演绎。各项须有真实证据，不适用须经源检查。[完整退回条件](templates/production/SPECIALIST-GATES.md)。
+**八项独立门禁：** 设计、运动、镜头、衔接变化、调色/打光、抠像、降噪、音效。**禁止 PPT 式包装**：重复卡片换字、淡入、位移与缩放不能代替内容演绎。各项须有真实证据，不适用须经源检查。[完整退回条件](templates/production/SPECIALIST-GATES.md)。
 
 
 ## 已封装的能力
@@ -32,7 +34,7 @@ node dist/cli.js demo --out first-film --install --render
 | 运动 | 按绝对秒采样的数值轨道、三次 Hermite 空间轨迹与解析速度 |
 | 镜头 | 跟随主体、前视、透视投影、切点屏幕位置/速度/尺度诊断 |
 | 声音 | 可闻锚点对齐、运动力度、淡入淡出、材质等功率交叉淡化、声像、音频采样级增益 |
-| 设计表 | A/B/全屏状态、主体状态链、镜头任务、声音意图、阅读窗口、交接记录与 JSON 校验 |
+| 设计表 | 口播专用 A/B；其他影片全屏场景、主体状态链、镜头任务、声音意图、阅读窗口、交接记录与 JSON 校验 |
 | 素材与样片库 | 原素材与样片版本分开检索，来源/哈希/许可记录，认可绑定具体版本与范围 |
 | 检查 | 独立 Node 入口验证文件哈希、项目路径边界、实际解码帧数及音视频时长 |
 | 样片 | 30 秒中英双语宣传片、Blender/Remotion 源码，以及新的 20 秒脚本出片集成测试片 |
@@ -53,7 +55,7 @@ node dist/cli.js check ./my-film/storyboard.json
 npm pack
 ```
 
-完整源码保存在 `main`。生成的 `spatial-imagery-0.3.0.tgz` 可安装到其他项目；不要直接假定 npm 同名包属于本仓库。
+完整源码保存在 `main`。生成的 `spatial-imagery-0.4.0.tgz` 可安装到其他项目；不要直接假定 npm 同名包属于本仓库。
 
 ```ts
 import {motionPath, followCamera, sampleCue} from 'spatial-imagery';
