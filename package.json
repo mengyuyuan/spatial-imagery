@@ -1,25 +1,64 @@
 {
   "name": "spatial-imagery",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "空间意象 — subject-led spatial storytelling, camera choreography and sound continuity SDK",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": {".": {"types": "./dist/index.d.ts", "import": "./dist/index.js"}, "./node": {"types": "./dist/node.d.ts", "import": "./dist/node.js"}, "./production": {"types":"./dist/production-node.d.ts", "import":"./dist/production-node.js"}},
-  "bin": {"spatial-imagery": "./dist/cli.js"},
-  "files": ["dist", "templates", "docs", "LICENSE", "NOTICE.md", "README.md", "README.zh-CN.md"],
-  "engines": {"node": ">=22"},
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "import": "./dist/node.js"
+    },
+    "./production": {
+      "types": "./dist/production-node.d.ts",
+      "import": "./dist/production-node.js"
+    }
+  },
+  "bin": {
+    "spatial-imagery": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "docs",
+    "LICENSE",
+    "NOTICE.md",
+    "README.md",
+    "README.zh-CN.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "tsc",
     "test": "npm run build && node --test test/*.test.mjs",
     "test:package": "npm pack && node test/package-smoke.mjs",
     "check": "npm test && node dist/cli.js check templates/storyboard.json",
     "demo:poses": "npm run build && node examples/launch-film/poses.mjs",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "test:render": "npm pack && node test/package-smoke.mjs --render"
   },
-  "devDependencies": {"typescript": "6.0.3", "@types/node": "24.10.1"},
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "@types/node": "24.10.1"
+  },
   "license": "MIT",
   "author": "mengyuyuan",
-  "repository": {"type": "git", "url": "https://github.com/mengyuyuan/spatial-imagery.git"},
-  "keywords": ["motion-design", "storyboard", "spatial-storytelling", "remotion", "blender", "sound-design"]
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mengyuyuan/spatial-imagery.git"
+  },
+  "keywords": [
+    "motion-design",
+    "storyboard",
+    "spatial-storytelling",
+    "remotion",
+    "blender",
+    "sound-design"
+  ]
 }

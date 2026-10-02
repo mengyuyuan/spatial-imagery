@@ -1,0 +1,12 @@
+{
+  "width": 640,
+  "height": 360,
+  "fps": 30,
+  "durationSeconds": 6,
+  "policy": {
+    "music": "off",
+    "narration": "off",
+    "footage": "optional"
+  },
+  "brief": "Procedural-only installation test; no model, stock downloads or creative approval required."
+}

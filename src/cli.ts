@@ -5,19 +5,30 @@ import {fileURLToPath} from 'node:url';
 import {parseArgs} from 'node:util';
 import {validatePlan, searchAssets, type Plan} from './index.js';
 import {auditAssets,auditMedia,probeMedia} from './node.js';
-import {makeFilm,renderProject,installProject,searchPexels} from './production-node.js';
+import {makeFilm,makeDemo,renderProject,installProject,searchPexels,gateProject} from './production-node.js';
+import {doctor} from './environment.js';
 const [command, ...args] = process.argv.slice(2);
-const usage = '空间意象 / Spatial Imagery\n  spatial-imagery make <script.md> --out <project> [--config config.json] [--catalog assets.json] [--design design.json] [--install] [--render]\n  spatial-imagery render <project> [--install]\n  spatial-imagery search <query> --out <catalog.json> [--key-env PEXELS_API_KEY]\n  spatial-imagery init <directory>\n  spatial-imagery check <storyboard.json>\n  spatial-imagery catalog <storyboard.json> [query]\n  spatial-imagery audit <storyboard.json>\n  spatial-imagery media <video> <fps> <frames>\n';
+const usage = '空间意象 / Spatial Imagery\n  spatial-imagery doctor\n  spatial-imagery demo --out <project> [--install] [--render]\n  spatial-imagery gates <project> <design|full-render|delivery|refresh|register-draft|register-final>\n  spatial-imagery make <script.md> --out <project> [--config config.json] [--catalog assets.json] [--design design.json] [--install] [--render] [--draft]\n  spatial-imagery render <project> [--install] [--draft]\n  spatial-imagery search <query> --out <catalog.json> [--key-env PEXELS_API_KEY]\n  spatial-imagery init <directory>\n  spatial-imagery check <storyboard.json>\n  spatial-imagery catalog <storyboard.json> [query]\n  spatial-imagery audit <storyboard.json>\n  spatial-imagery media <video> <fps> <frames>\n';
 try {
-  if(command==='make'){
-    const {values,positionals}=parseArgs({args,allowPositionals:true,options:{out:{type:'string'},config:{type:'string'},catalog:{type:'string'},design:{type:'string'},render:{type:'boolean'},install:{type:'boolean'}}});
+  if(command==='doctor'){
+    if(args.length)throw Error(usage);
+    const report=doctor();console.log(JSON.stringify(report,null,2));if(!report.ready)process.exitCode=1;
+  }else if(command==='demo'){
+    const {values,positionals}=parseArgs({args,allowPositionals:true,options:{out:{type:'string'},install:{type:'boolean'},render:{type:'boolean'}}});
+    if(positionals.length||!values.out)throw Error(usage);
+    console.log(JSON.stringify(await makeDemo({out:values.out,...values}),null,2));
+  }else if(command==='gates'){
+    if(args.length!==2)throw Error(usage);
+    await gateProject(args[0]!,args[1]!);
+  }else if(command==='make'){
+    const {values,positionals}=parseArgs({args,allowPositionals:true,options:{out:{type:'string'},config:{type:'string'},catalog:{type:'string'},design:{type:'string'},render:{type:'boolean'},install:{type:'boolean'},draft:{type:'boolean'}}});
     if(positionals.length!==1||!values.out)throw new Error(usage);
     console.log(JSON.stringify(await makeFilm({script:positionals[0]!,out:values.out,...values}),null,2));
   }else if(command==='render'){
-    const {values,positionals}=parseArgs({args,allowPositionals:true,options:{install:{type:'boolean'}}});
+    const {values,positionals}=parseArgs({args,allowPositionals:true,options:{install:{type:'boolean'},draft:{type:'boolean'}}});
     if(positionals.length!==1)throw new Error(usage);
     if(values.install)await installProject(positionals[0]!);
-    await renderProject(positionals[0]!);
+    await renderProject(positionals[0]!,{draft:values.draft});
   }else if(command==='search'){
     const {values,positionals}=parseArgs({args,allowPositionals:true,options:{out:{type:'string'},'key-env':{type:'string',default:'PEXELS_API_KEY'}}});
     if(positionals.length!==1||!values.out)throw new Error(usage);

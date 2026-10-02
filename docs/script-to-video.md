@@ -1,17 +1,19 @@
 # Script to video
 
+v0.3: first renders explicitly use `--draft` → `output/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
+
 v0.2 adds an executable path: script → model-authored design → validation → acquired media → editable Remotion project → continuous sound mix → MP4 and QA. See the [detailed Chinese guide](script-to-video.zh-CN.md) and [worked example](../examples/script-to-film/README.md).
 
 Build the SDK with `npm ci && npm run build`. Copy `templates/production.config.example.json`, select an explicit model ID and your provider's OpenAI-compatible Chat Completions base URL. Set the key in the named environment variable; never write the key into project files. `jsonMode: false` supports providers without JSON response mode. HTTPS is required except for local model servers.
 
 ```sh
-node dist/cli.js make script.md --config film.config.json --catalog assets.json --out my-film --install --render
+node dist/cli.js make script.md --config film.config.json --catalog assets.json --out my-film --install --render --draft
 ```
 
 The script and candidate metadata are sent to the configured model; local media paths and credentials are not sent in the prompt. There is one bounded repair attempt for malformed JSON/designs. The runner does not select another model or silently fall back to arbitrary templates. Without model configuration, import a design from your agent or designer:
 
 ```sh
-node dist/cli.js make script.md --design design.json --config film.config.json --catalog assets.json --out my-film --install --render
+node dist/cli.js make script.md --design design.json --config film.config.json --catalog assets.json --out my-film --install --render --draft
 ```
 
 Every nonblank content line is assigned a stable line ID. Designs must cover all lines, preserve their meaning, identify the subject/change/camera/handoff, and supply actual timed layers and sound cues. UTF-8 BOM and CRLF/LF differences are normalized for script identity. One persistent layer can span several shots. Shapes and motion are composed freely rather than chosen from a fixed title-card menu.
@@ -22,12 +24,12 @@ Project policy is explicit: `music: allowed|off`, `narration: off|provided`, `fo
 
 The generated renderer supports text, rectangles, ellipses, SVG paths, images and video in a 2D/CSS 2.5D scene graph with global-frame channels and a camera. It is not a full 3D geometry/lighting engine. Edit `src/index.tsx` to add bespoke Three.js scenes or another renderer. Audio uses acquired recordings, sample-rate motion envelopes, entry/tail fades, source trims, equal-power movement panning and smooth narration ducking. Stereo music/narration are preserved. Whole-film two-pass normalization defaults to -16 LUFS and a -1.5 dBTP ceiling, configurable through design.mix.lufs / truePeakDb. The current offline audio bus has a 512 MiB memory budget; longer films need segment rendering, never silent truncation.
 
-`--install` installs pinned renderer dependencies; `--render` continues to media output. Omitting those flags leaves an editable project. Existing output directories are never overwritten by `make`.
+`--install` runs npm ci with the bundled renderer lockfile; `--render --draft` produces diagnostic media; `--render` alone requires production evidence. Omitting those flags leaves an editable project. Existing output directories are never overwritten by `make`.
 
 ```sh
 cd my-film
 npm run studio
-npm run render
+npm run render:draft
 ```
 
 Outputs include source script, machine/readable designs, acquired asset identities, project policy, editable source, a render, representative frames and QA. Full decode, frame count, dimensions, FPS and audio/video duration are checked. Technical checks never mark normal-speed viewing, listening or aesthetic approval as passed. Preserve accepted versions and review the actual film before publication. This command does not publish anything externally.

@@ -1,6 +1,6 @@
 # Contributing / 参与贡献
 
-Node.js 22+: `npm ci && npm test`. Public API is in `src/`; tests execute built ESM from `dist/`. Run `npm pack` and smoke-test the tarball before changing distribution behavior.
+Node.js 22+ and Python 3.11+: `npm ci` then `npm run check`. Public API is in `src/`; tests execute built ESM from `dist/`. `npm run test:package` installs a real tarball into a fresh consumer and generates an independent editable project. `npm run test:render` additionally needs FFmpeg/ffprobe and network access for renderer/browser installation, and checks a six-second MP4 with sound. Set `SI_KEEP_SMOKE=1` to retain that invocation's artifacts. The synthetic gate tests never stand for actual film approval.
 
 Add tests for observable behavior: time boundaries, random-access determinism, tangent continuity, malformed JSON and audio energy. Do not add tests that simply restate a constant or compare a implementation to itself.
 

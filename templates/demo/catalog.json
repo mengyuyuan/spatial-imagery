@@ -1,0 +1,53 @@
+[
+  {
+    "id": "motion",
+    "kind": "audio",
+    "title": "engineCircular_001.ogg",
+    "source": "https://kenney.nl/assets/sci-fi-sounds",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "tags": [
+      "motion"
+    ],
+    "local": "assets/engineCircular_001.ogg",
+    "sha256": "e1df3a942842a24f7c4056db3177e8008edd73d4f3985fd95f55362bc85058bc",
+    "availability": "local",
+    "redistribution": "allowed",
+    "review": "technical",
+    "duration": 5.0
+  },
+  {
+    "id": "contact",
+    "kind": "audio",
+    "title": "impactSoft_medium_003.ogg",
+    "source": "https://kenney.nl/assets/impact-sounds",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "tags": [
+      "contact"
+    ],
+    "local": "assets/impactSoft_medium_003.ogg",
+    "sha256": "5c4a1f35fde7e14046931da7bc3d1b23736541b7190ba107e08a379c4ca43cd6",
+    "availability": "local",
+    "redistribution": "allowed",
+    "review": "technical",
+    "duration": 0.140227
+  },
+  {
+    "id": "opening",
+    "kind": "audio",
+    "title": "forceField_002.ogg",
+    "source": "https://kenney.nl/assets/sci-fi-sounds",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "tags": [
+      "opening"
+    ],
+    "local": "assets/forceField_002.ogg",
+    "sha256": "051b0eafc479695af4ca3607d41fd4be41bae7c21f4f9508d004722b09f1bd63",
+    "availability": "local",
+    "redistribution": "allowed",
+    "review": "technical",
+    "duration": 0.955079
+  }
+]

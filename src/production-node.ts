@@ -3,6 +3,7 @@ import {createHash} from 'node:crypto';
 import {resolve,dirname,join,extname,relative,isAbsolute} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {spawn} from 'node:child_process';
+import {npmEntry} from './environment.js';
 import {sha256File,probeMedia} from './node.js';
 import {normalizeScript,scriptLines,validateFilm,defaultPolicy,type FilmDesign,type ProductionAsset,type ProductionPolicy} from './production.js';
 
@@ -70,7 +71,7 @@ async function loadCatalog(file?:string):Promise<ProductionAsset[]>{
   }
   return value as ProductionAsset[];
 }
-export interface MakeOptions {script:string;out:string;config?:string;catalog?:string;design?:string;render?:boolean;install?:boolean}
+export interface MakeOptions {script:string;out:string;config?:string;catalog?:string;design?:string;render?:boolean;install?:boolean;draft?:boolean}
 /** Creates a fresh project; existing directories are never silently overwritten. */
 export async function makeFilm(options:MakeOptions):Promise<{project:string;status:string}>{
   const root=resolve(options.out),rawScript=await readFile(options.script,'utf8'),script=normalizeScript(rawScript),lines=scriptLines(script),hash=digest(script);
@@ -117,7 +118,7 @@ export async function makeFilm(options:MakeOptions):Promise<{project:string;stat
     for(const [key,actual] of [['width',film.width],['height',film.height],['fps',film.fps]] as const)if(config[key]!==undefined&&actual!==config[key])throw new Error(`Design ${key} does not match requested configuration`);
     if(config.durationSeconds!==undefined&&Math.abs(film.durationInFrames/film.fps-config.durationSeconds)>1/film.fps)throw new Error('Design duration does not match the requested duration');
     await writeFile(join(root,'design.json'),json(film));
-    await mark('design','passed',{source:options.design?'imported':'model',model:options.design?undefined:config.model?.model,shots:film.shots.length});
+    await mark('design','structure_validated',{source:options.design?'imported':'model',model:options.design?undefined:config.model?.model,shots:film.shots.length,artisticReview:'unverified; complete G1 design critique separately'});
     const used=new Set([...film.layers.flatMap(l=>l.asset?[l.asset]:[]),...film.cues.map(c=>c.asset)]);
     const acquired:ProductionAsset[]=[];
     await mkdir(join(root,'public/assets'),{recursive:true});
@@ -151,15 +152,16 @@ export async function makeFilm(options:MakeOptions):Promise<{project:string;stat
     await writeFile(join(root,'design-table.md'),`# ${film.title}\n\n${film.direction}\n\n| Shot | Frames | Script | Subject / change | Camera | Sound |\n|---|---|---|---|---|---|\n`+film.shots.map(s=>`| ${s.id} | ${s.from}–${s.to} | ${escape(s.lines.map(id=>lines.find(l=>l.id===id)?.text).join(' / '))} | ${escape(`${s.subject}: ${s.initial} → ${s.action} → ${s.result}`)} | ${escape(s.camera)} | ${escape(s.sound)} |`).join('\n')+'\n');
     await mark('assets','passed',{count:acquired.length,hashes:acquired.map(a=>({id:a.id,sha256:a.sha256})),visualReview:'Inspect acquired video content; decoding alone does not establish suitability.'});
     await mkdir(join(root,'src/sdk'),{recursive:true});
-    for(const name of ['index.tsx','render.mjs','mix.mjs','package.json','README.md'])await copyFile(join(templateRoot,name),join(root,name==='index.tsx'?'src/index.tsx':name));
-    for(const name of ['motion.js','audio.js','production.js','storyboard.js'])await copyFile(join(packageRoot,'dist',name),join(root,'src/sdk',name));
+    for(const name of ['index.tsx','render.mjs','mix.mjs','package.json','package-lock.json','README.md','gate.mjs','verify_production_gates.py','production-gates-template.json','PRODUCTION-GATES.md','SPECIALIST-GATES.md'])await copyFile(join(templateRoot,name),join(root,name==='index.tsx'?'src/index.tsx':name));
+    for(const name of ['motion.js','audio.js','production.js','storyboard.js','environment.js'])await copyFile(join(packageRoot,'dist',name),join(root,'src/sdk',name));
     await copyFile(join(packageRoot,'LICENSE'),join(root,'src/sdk/LICENSE'));
     await writeFile(join(root,'.gitignore'),'node_modules/\npublic/assets/\nbuild/\noutput/\n.env*\n');
     await writeFile(join(root,'project.json'),json({version:1,scriptSha256:hash,designSha256:await sha256File(join(root,'design.json')),policy,renderer:'Remotion',space:'2D/CSS 2.5D; replace editable composition for true 3D',model:options.design?null:{baseUrl:config.model!.baseUrl,model:config.model!.model},sdkSources:{motion:await sha256File(join(root,'src/sdk/motion.js')),audio:await sha256File(join(root,'src/sdk/audio.js'))}}));
     await mark('project','passed');
+    await gateProject(root,'init');
     if(options.install)await installProject(root);
-    if(options.render){await renderProject(root);await mark('render','passed',{qa:'output/qa.json'});}
-    return {project:root,status:options.render?'rendered_review_pending':'editable_project_ready'};
+    if(options.render){await renderProject(root,{draft:options.draft});await mark('render','passed',{qa:options.draft?'output/draft-qa.json':'output/qa.json',mode:options.draft?'draft':'production'});}
+    return {project:root,status:options.render?(options.draft?'draft_rendered_review_pending':'rendered_review_pending'):'editable_project_ready'};
   }catch(e){await mark('pipeline','failed',{message:e instanceof Error?e.message:'Unknown error'});throw e;}
 }
 function run(command:string,args:string[],cwd:string):Promise<void>{
@@ -167,12 +169,20 @@ function run(command:string,args:string[],cwd:string):Promise<void>{
 }
 export async function installProject(root:string):Promise<void>{
   // Resolve npm's JS entry to avoid shell command interpolation and npm.cmd issues on Windows.
-  const npm=process.env.npm_execpath??join(dirname(process.execPath),'node_modules/npm/bin/npm-cli.js');
-  await stat(npm);await run(process.execPath,[npm,'install','--no-audit','--no-fund'],resolve(root));
+  await run(process.execPath,[npmEntry(),'ci','--no-audit','--no-fund'],resolve(root));
 }
-export async function renderProject(root:string):Promise<void>{
+export async function gateProject(root:string,action='design'):Promise<void>{
+  await run(process.execPath,[join(resolve(root),'gate.mjs'),action],resolve(root));
+}
+export async function makeDemo(options:{out:string;install?:boolean;render?:boolean}):Promise<{project:string;status:string}>{
+  const demo=join(packageRoot,'templates/demo');
+  return makeFilm({...options,script:join(demo,'script.md'),design:join(demo,'design.json'),config:join(demo,'config.json'),catalog:join(demo,'catalog.json'),draft:true});
+}
+export async function renderProject(root:string,options:{draft?:boolean}={}):Promise<void>{
   const dir=resolve(root);await stat(join(dir,'project.json'));
+  try{await stat(join(dir,'gate.mjs'));}catch{throw new Error('This project predates portable evidence gates. Generate a new version with make/demo using SDK 0.3+, preserving the old project and its media.');}
+  if(!options.draft)await gateProject(dir,'full-render');
   await writeFile(join(dir,'render-status.json'),json({status:'running'}));
-  try{await run(process.execPath,[join(dir,'render.mjs')],dir);await writeFile(join(dir,'render-status.json'),json({status:'completed',qa:'output/qa.json'}));}
+  try{await run(process.execPath,[join(dir,'render.mjs'),...(options.draft?['--draft']:[])],dir);await writeFile(join(dir,'render-status.json'),json({status:options.draft?'draft_rendered_review_pending':'rendered_review_pending',qa:options.draft?'output/draft-qa.json':'output/qa.json'}));}
   catch(e){await writeFile(join(dir,'render-status.json'),json({status:'failed',message:e instanceof Error?e.message:'Render failed'}));throw e;}
 }

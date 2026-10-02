@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 3,
+  "version": "待填写",
+  "intentThesis": "待填写",
+  "baselines": [],
+  "fps": 30,
+  "scope": [
+    0,
+    180
+  ],
+  "audioExpected": true,
+  "inputs": [
+    {
+      "role": "design",
+      "path": "design.md",
+      "sha256": "待填写"
+    },
+    {
+      "role": "timeline",
+      "path": "edit.json",
+      "sha256": "待填写"
+    },
+    {
+      "role": "assets",
+      "path": "assets.json",
+      "sha256": "待填写"
+    },
+    {
+      "role": "sound",
+      "path": "sound-events.json",
+      "sha256": "待填写"
+    }
+  ],
+  "shots": [
+    {
+      "id": "SH01",
+      "from": 0,
+      "to": 180,
+      "state": "A",
+      "subject": "待填写",
+      "meaning": "待填写",
+      "initial": "待填写",
+      "process": "待填写",
+      "result": "待填写",
+      "identity": "待填写",
+      "camera": "待填写",
+      "kind": "transformation",
+      "changes": [],
+      "reading": [
+        150,
+        180
+      ],
+      "intent": {
+        "sourceKind": "speech",
+        "cue": "待填写",
+        "cueRange": [
+          90,
+          120
+        ],
+        "before": "待填写",
+        "after": "待填写",
+        "why": "待填写",
+        "visualBridge": "待填写",
+        "focusBefore": "EL01",
+        "focusAfter": "EL01",
+        "revealFrame": 100,
+        "timingReason": ""
+      },
+      "implementation": [],
+      "review": {
+        "status": "unverified",
+        "method": "normal_speed",
+        "media": "draft-01",
+        "range": [
+          0,
+          180
+        ],
+        "frames": [],
+        "observed": "待验证",
+        "binding": "",
+        "intentChecks": {
+          "meaning": {
+            "status": "unverified",
+            "observed": "待验证"
+          },
+          "specificity": {
+            "status": "unverified",
+            "observed": "待验证"
+          },
+          "subject": {
+            "status": "unverified",
+            "observed": "待验证"
+          },
+          "timing": {
+            "status": "unverified",
+            "observed": "待验证"
+          },
+          "landing": {
+            "status": "unverified",
+            "observed": "待验证"
+          }
+        }
+      }
+    }
+  ],
+  "transitions": [],
+  "media": [],
+  "assetsReview": {
+    "status": "unverified",
+    "observed": "待验证",
+    "binding": "",
+    "evidence": {
+      "path": "assets-review.json",
+      "sha256": "待填写"
+    }
+  },
+  "soundReview": {
+    "status": "unverified",
+    "method": "listening",
+    "media": "draft-01",
+    "range": [
+      0,
+      180
+    ],
+    "observed": "待验证",
+    "binding": ""
+  },
+  "technicalReview": {
+    "status": "unverified",
+    "method": "technical",
+    "media": "draft-01",
+    "range": [
+      0,
+      180
+    ],
+    "observed": "待验证",
+    "binding": "",
+    "evidence": {
+      "path": "qa.json",
+      "sha256": "待填写"
+    }
+  },
+  "sequenceReview": {
+    "status": "unverified",
+    "method": "normal_speed",
+    "media": "final",
+    "range": [
+      0,
+      180
+    ],
+    "observed": "待验证",
+    "binding": ""
+  },
+  "finalMedia": "final",
+  "openIssues": [
+    "待完成基准选取、意向设计、实现、逐项动态检查和声音试听；该模板不能作为已通过记录。"
+  ],
+  "filmDesignReview": {
+    "status": "unverified"
+  },
+  "specialistGates": {
+    "design": {
+      "applicable": null,
+      "reason": "TODO",
+      "plan": "TODO",
+      "targets": [],
+      "reviews": []
+    },
+    "animation": {
+      "applicable": null,
+      "reason": "TODO",
+      "plan": "TODO",
+      "targets": [],
+      "reviews": []
+    },
+    "handoff": {
+      "applicable": null,
+      "reason": "TODO",
+      "plan": "TODO",
+      "targets": [],
+      "reviews": []
+    },
+    "color": {
+      "applicable": null,
+      "reason": "TODO",
+      "plan": "TODO",
+      "targets": [],
+      "reviews": []
+    },
+    "matting": {
+      "applicable": null,
+      "reason": "TODO",
+      "plan": "TODO",
+      "targets": [],
+      "reviews": []
+    },
+    "denoise": {
+      "applicable": null,
+      "reason": "TODO",
+      "plan": "TODO",
+      "targets": [],
+      "reviews": []
+    },
+    "soundfx": {
+      "applicable": null,
+      "reason": "TODO",
+      "plan": "TODO",
+      "targets": [],
+      "reviews": []
+    }
+  }
+}
