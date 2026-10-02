@@ -179,6 +179,57 @@ class ProductionGateTests(unittest.TestCase):
         self.data["shots"][0]["review"]["frames"] = [0, 1, 2]
         self.assertIn("missing_states", self.codes())
 
+    def short_shot(self, length, context=True):
+        first, second = self.data["shots"]
+        first.update(to=length, reading=[0, length])
+        first["intent"].update(cueRange=[0, length], revealFrame=length-1)
+        second["from"] = length
+        tr = self.data["transitions"][0]
+        tr["range"] = [0, length+2]
+        tr["handoff"].update(cueRange=[0, length+2], focusFrame=length)
+        items = {item["id"]: item for item in self.data["shots"] + self.data["transitions"]}
+
+        def adjust(review, item, design=False):
+            extent = item.get("range", [item.get("from"), item.get("to")])
+            review["range"] = extent[:]
+            review["frames"] = list(range(*extent)) if extent[1]-extent[0] < 3 else [extent[0], sum(extent)//2, extent[1]-1]
+            if item is first and not design and context:
+                review.update(range=[0, length+2], contextRange=[0, length+2],
+                              contextFrames=[0, (length+2)//2, length+1],
+                              contextObserved="Synthetic flash and its following subject are reviewed together")
+        for item in items.values():
+            adjust(item["review"], item)
+        for name, gate in self.data["specialistGates"].items():
+            for review in gate["reviews"]:
+                adjust(review, items[review["target"]], design=name == "design")
+        self.sign()
+
+    def test_two_frame_shot_uses_all_actual_frames_and_neighbour_context(self):
+        self.short_shot(2)
+        self.assertEqual(self.codes("design"), set())
+        self.assertEqual(self.codes("full-render"), set())
+        self.assertEqual(self.codes(), set())
+
+    def test_one_frame_shot_does_not_require_invented_internal_frames(self):
+        self.short_shot(1)
+        self.assertEqual(self.codes(), set())
+
+    def test_short_shot_cannot_waive_neighbour_playback(self):
+        self.short_shot(2, context=False)
+        self.assertIn("short_context", self.codes())
+
+    def test_short_context_cannot_escape_reviewed_media_or_omit_observation(self):
+        self.short_shot(2)
+        review = self.data["shots"][0]["review"]
+        review["contextRange"] = [0, 181]
+        self.assertIn("short_context", self.codes())
+        review["contextRange"] = [0, 4]
+        review["contextFrames"] = [0, 1]
+        self.assertIn("short_context_frames", self.codes())
+        review["contextFrames"] = [0, 2, 3]
+        del review["contextObserved"]
+        self.assertIn("missing_detail", self.codes())
+
     def test_intentional_silent_film(self):
         self.data["audioExpected"] = False
         self.data["audioReason"] = "User requested a silent loop"

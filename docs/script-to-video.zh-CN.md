@@ -48,7 +48,7 @@ Pexels 搜索需要自己的 API key。音效与音乐当前从明确的本地/�
 
 ## 使用 Codex 或人工审定的设计表
 
-不必重复调用远程模型。Codex 可以依据 `templates/production/planner.md`、脚本和素材目录生成 `FilmDesign`，审看或修改后交给同一个执行器：
+不必重复调用远程模型。Codex 可以依据随包的规划合同、设计原理、设计推导、SOP、脚本和素材目录生成 `FilmDesign`，审看或修改后交给同一个执行器：
 
 ```sh
 node dist/cli.js make examples/script-to-film/script.md --config examples/script-to-film/config.json --catalog examples/script-to-film/catalog.json --design examples/script-to-film/design.json --out city-rhythm --install --render --draft
@@ -57,6 +57,16 @@ node dist/cli.js make examples/script-to-film/script.md --config examples/script
 设计表包含语义与执行两部分：每镜台词 ID、主体起始/过程/结果、观察任务和交接；逐层形状、文字/视频、相机、全局关键帧；逐条声音的源内位置、起止、淡化、声像和运动强度。一个主体层可跨多个镜头持续存在。程序不按关键词随机挑动效。
 
 默认执行器可组合文字、矩形、椭圆、SVG 路径、图片和真实视频，以二维/CSS 2.5D 场景图表现关系。它不是完整三维物理引擎。工程源码完全可编辑；真 3D 网格、物理打光、复杂形变应在 `src/index.tsx` 中接入 Three.js/其他渲染实现，沿用同一分镜与声音轴。不能把默认执行器的能力说成覆盖太阳系、人体重打光等所有复杂画面。
+
+## 设计合同与执行边界
+
+规划器的实际系统上下文由包内 `planner.md`、`design-principles.md`、`design-synthesis.md`、`pipeline.md` 组装。工程的 `design-instructions.md` 保存完整指令，`planner-context.json` 保存标准 3.23、各文件和整体哈希；不依赖作者本机技能。导入设计标为 `source: imported`，只记录可用的方法版本，不冒称曾调用模型。
+
+模型必须交付 `designRationale`（依据、替代方案、选择、感知、风险）、`execution`（引擎、理由、能力需求）、逐 SH 的意义/身份/变化/意向/阅读区间、每对相邻 SH 的 `transitions`，以及八项 `gatePlans`。字段见[规划合同](../templates/production/planner.md)与导出的类型。焦点 ID 必须对应镜头边界时实际存在的图层，TR 必须接上两侧焦点；运动、镜头和声音计划不可关闭。有意无声写 `audioReason`。这些决策进入 `production-gates.json`，审核仍全部未验证，模型不能生成通过记录。旧版 `--design` 可继续导入，但缺少的门禁设计内容须人工补齐。
+
+指定画幅、帧率、视频类型、时长、未知执行字段，以及“声明素材但没有在该镜实际使用”的问题，都进入同一个有界修复流程：最多带具体错误重试一次，仍失败则保存错误并停止。默认相机仅支持 `x/y/zoom/rotateZ/perspective`；`z/target` 和未知图层 shader 等字段直接报错，避免写了却未执行。
+
+支持的图层场景选 `execution.renderer: layers-2.5d`；需要真实网格、空间相机/光照、特殊形变时选 `custom`，记录能力需求。后者返回 `custom_implementation_required` 并生成明确的 `src/index.tsx` 待实现入口，制作者实现 `Spatial-Imagery` 合成、保留计划中的时轴/素材/声音，再渲染审看。这个分支负责明确能力边界，尚不自动写完 Three.js/Blender 场景，也不能把平面替代片当作已实现的三维设计。
 
 ## 每个项目有自己的规则
 

@@ -11,6 +11,7 @@ const root=dirname(fileURLToPath(import.meta.url));
 if(process.argv.slice(2).some(a=>a!=='--draft'))throw Error('Only --draft is supported; omit it for gated production rendering.');
 const draft=process.argv.includes('--draft');
 if(!draft)await requireGate(root,'full-render');
+if((await readFile(join(root,'src/index.tsx'),'utf8')).includes('SPATIAL_IMAGERY_CUSTOM_IMPLEMENTATION_REQUIRED'))throw Error('Custom renderer implementation required; complete src/index.tsx before rendering. No 3D-to-2.5D fallback was applied.');
 const {bundle}=await import('@remotion/bundler');
 const {selectComposition,renderMedia,renderStill}=await import('@remotion/renderer');
 const load=async f=>JSON.parse(await readFile(join(root,f),'utf8'));

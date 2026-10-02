@@ -12,6 +12,13 @@ const packageRoot=fileURLToPath(new URL('../',import.meta.url));
 const templateRoot=join(packageRoot,'templates/production');
 const digest=(text:string)=>createHash('sha256').update(text).digest('hex');
 const json=(v:unknown)=>JSON.stringify(v,null,2)+'\n';
+/** Load the actual shipped method, not a second hand-maintained summary. */
+export async function loadPlannerContext(){
+  const files=['templates/production/planner.md','docs/design-principles.md','docs/design-synthesis.md','docs/pipeline.md'];
+  const sources=await Promise.all(files.map(async path=>{const content=await readFile(join(packageRoot,path),'utf8');return {path,sha256:digest(content),content};}));
+  const prompt=sources.map(s=>`\n<!-- source: ${s.path} -->\n${s.content}`).join('\n')+'\nReturn only the FilmDesign JSON contract specified in planner.md. The appended production method guides decisions; do not invent completed reviews or execute later SOP stages in your response.';
+  return {prompt,provenance:{standard:'3.23.0',systemSha256:digest(prompt),sources:sources.map(({content,...s})=>s)}};
+}
 export interface ModelConfig {baseUrl:string;model:string;apiKeyEnv:string;jsonMode?:boolean;timeoutMs?:number}
 export interface FilmConfig {
   videoType?:VideoType;
@@ -75,6 +82,14 @@ async function loadCatalog(file?:string):Promise<ProductionAsset[]>{
   return value as ProductionAsset[];
 }
 export interface MakeOptions {script:string;out:string;config?:string;catalog?:string;design?:string;render?:boolean;install?:boolean;draft?:boolean}
+function requestedDesignErrors(value:unknown,config:FilmConfig):string[]{
+  if(!value||typeof value!=='object')return [];
+  const d=value as FilmDesign,errors:string[]=[];
+  if(d.videoType!==(config.videoType??'general'))errors.push('Design videoType does not match project config (default: general); A/B requires an explicit talking-head project');
+  for(const k of ['width','height','fps'] as const)if(config[k]!==undefined&&d[k]!==config[k])errors.push(`Design ${k} does not match requested configuration: expected ${config[k]}`);
+  if(config.durationSeconds!==undefined&&Math.abs(d.durationInFrames/d.fps-config.durationSeconds)>1/d.fps)errors.push('Design duration does not match the requested duration');
+  return errors;
+}
 /** Creates a fresh project; existing directories are never silently overwritten. */
 export async function makeFilm(options:MakeOptions):Promise<{project:string;status:string}>{
   const root=resolve(options.out),rawScript=await readFile(options.script,'utf8'),script=normalizeScript(rawScript),lines=scriptLines(script),hash=digest(script);
@@ -105,24 +120,24 @@ export async function makeFilm(options:MakeOptions):Promise<{project:string;stat
     }else await mark('research','catalog_only',{note:'No external search was run by this command; sourcing evidence belongs to the supplied catalog.',candidates:assets.length});
     // The model sees identities and terms, never host paths, authentication data or executable providers.
     const candidates=assets.map(({local,download,sha256,...a})=>a);
+    const context=await loadPlannerContext();
+    await writeFile(join(root,'design-instructions.md'),context.prompt);
+    await writeFile(join(root,'planner-context.json'),json({...context.provenance,source:options.design?'imported':'model'}));
+    const validate=(d:unknown)=>[...validateFilm(d,lines,assets,hash,policy,{requireDesignContract:!options.design}),...requestedDesignErrors(d,config)];
     let design:unknown;
     if(options.design)design=JSON.parse(await readFile(options.design,'utf8'));
     else {
-      const prompt=await readFile(join(templateRoot,'planner.md'),'utf8');let feedback:string[]=[];
+      const prompt=context.prompt;let feedback:string[]=[];
       for(let attempt=0;attempt<2;attempt++){
         try{design=await requestJSON(config.model!,prompt,{scriptSha256:hash,videoType:config.videoType??'general',lines,brief:config.brief??'',width:config.width??1280,height:config.height??720,fps:config.fps??30,durationSeconds:config.durationSeconds,policy,assets:candidates,validationFeedback:feedback});}
         catch(e){feedback=[e instanceof Error?e.message:'Planner error'];if(!/invalid JSON/.test(feedback[0]!))throw e;continue;}
-        feedback=validateFilm(design,lines,assets,hash,policy);
-        if(design&&typeof design==='object'&&'videoType' in design&&design.videoType!==(config.videoType??'general'))feedback.push('videoType must match project config (default: general)');
+        feedback=validate(design);
         if(!feedback.length)break;
       }
       if(feedback.length){await writeFile(join(root,'design-diagnostics.json'),json({errors:feedback,design}));throw new Error(`Design validation failed: ${feedback.slice(0,8).join('; ')}`);}
     }
-    const errors=validateFilm(design,lines,assets,hash,policy);if(errors.length)throw new Error(errors.join('\n'));
+    const errors=validate(design);if(errors.length)throw new Error(errors.join('\n'));
     const film=design as FilmDesign;
-    if(film.videoType!==(config.videoType??'general'))throw new Error('Design videoType does not match project config (default: general); A/B requires an explicit talking-head project');
-    for(const [key,actual] of [['width',film.width],['height',film.height],['fps',film.fps]] as const)if(config[key]!==undefined&&actual!==config[key])throw new Error(`Design ${key} does not match requested configuration`);
-    if(config.durationSeconds!==undefined&&Math.abs(film.durationInFrames/film.fps-config.durationSeconds)>1/film.fps)throw new Error('Design duration does not match the requested duration');
     await writeFile(join(root,'design.json'),json(film));
     await mark('design','structure_validated',{source:options.design?'imported':'model',model:options.design?undefined:config.model?.model,shots:film.shots.length,artisticReview:'unverified; complete G1 design critique separately'});
     const used=new Set([...film.layers.flatMap(l=>l.asset?[l.asset]:[]),...film.cues.map(c=>c.asset)]);
@@ -159,15 +174,16 @@ export async function makeFilm(options:MakeOptions):Promise<{project:string;stat
     await mark('assets','passed',{count:acquired.length,hashes:acquired.map(a=>({id:a.id,sha256:a.sha256})),visualReview:'Inspect acquired video content; decoding alone does not establish suitability.'});
     await mkdir(join(root,'src/sdk'),{recursive:true});
     for(const name of ['index.tsx','render.mjs','mix.mjs','package.json','package-lock.json','README.md','gate.mjs','verify_production_gates.py','production-gates-template.json','PRODUCTION-GATES.md','SPECIALIST-GATES.md'])await copyFile(join(templateRoot,name),join(root,name==='index.tsx'?'src/index.tsx':name));
-    for(const name of ['motion.js','audio.js','production.js','storyboard.js','environment.js'])await copyFile(join(packageRoot,'dist',name),join(root,'src/sdk',name));
+    for(const name of ['motion.js','audio.js','production.js','design-contract.js','storyboard.js','environment.js'])await copyFile(join(packageRoot,'dist',name),join(root,'src/sdk',name));
+    if(film.execution?.renderer==='custom')await writeFile(join(root,'src/index.tsx'),`// SPATIAL_IMAGERY_CUSTOM_IMPLEMENTATION_REQUIRED\n// Implement the required renderer against design.json, keeping Composition id Spatial-Imagery,\n// the same frame timeline, assets, audio and evidence gates. See design-instructions.md.\nthrow new Error('Custom renderer implementation required. The requested 3D/material behavior was not downgraded to CSS layers.');\n`);
     await copyFile(join(packageRoot,'LICENSE'),join(root,'src/sdk/LICENSE'));
     await writeFile(join(root,'.gitignore'),'node_modules/\npublic/assets/\nbuild/\noutput/\n.env*\n');
-    await writeFile(join(root,'project.json'),json({version:1,scriptSha256:hash,designSha256:await sha256File(join(root,'design.json')),policy,renderer:'Remotion',space:'2D/CSS 2.5D; replace editable composition for true 3D',model:options.design?null:{baseUrl:config.model!.baseUrl,model:config.model!.model},sdkSources:{motion:await sha256File(join(root,'src/sdk/motion.js')),audio:await sha256File(join(root,'src/sdk/audio.js'))}}));
+    await writeFile(join(root,'project.json'),json({version:1,scriptSha256:hash,designSha256:await sha256File(join(root,'design.json')),policy,renderer:'Remotion',execution:film.execution??{renderer:'layers-2.5d'},space:'2D/CSS 2.5D by default; custom implementation required for true 3D',planner:context.provenance,model:options.design?null:{baseUrl:config.model!.baseUrl,model:config.model!.model},sdkSources:{motion:await sha256File(join(root,'src/sdk/motion.js')),audio:await sha256File(join(root,'src/sdk/audio.js'))}}));
     await mark('project','passed');
     await gateProject(root,'init');
     if(options.install)await installProject(root);
     if(options.render){await renderProject(root,{draft:options.draft});await mark('render','passed',{qa:options.draft?'output/draft-qa.json':'output/qa.json',mode:options.draft?'draft':'production'});}
-    return {project:root,status:options.render?(options.draft?'draft_rendered_review_pending':'rendered_review_pending'):'editable_project_ready'};
+    return {project:root,status:options.render?(options.draft?'draft_rendered_review_pending':'rendered_review_pending'):film.execution?.renderer==='custom'?'custom_implementation_required':'editable_project_ready'};
   }catch(e){await mark('pipeline','failed',{message:e instanceof Error?e.message:'Unknown error'});throw e;}
 }
 function run(command:string,args:string[],cwd:string):Promise<void>{

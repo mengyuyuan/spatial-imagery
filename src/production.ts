@@ -1,5 +1,7 @@
-import {validatePlan, type Plan, type Shot, type Asset} from './storyboard.js';
+import {validatePlan, type Plan, type Asset} from './storyboard.js';
 import {validateCue, type SoundCue} from './audio.js';
+import {validateDesignContract,rejectUnknown,type DesignedShot,type DesignedTransition,type GateName,type GatePlan,type DesignRationale,type ExecutionPlan} from './design-contract.js';
+export type {DesignedShot,DesignedTransition,GateName,GatePlan,DesignRationale,ExecutionPlan,Intent} from './design-contract.js';
 
 export interface ScriptLine {id:string; text:string}
 /** Line-ending normalization keeps designs portable between Windows and Unix checkouts. */
@@ -23,7 +25,9 @@ export interface ProductionCue extends Omit<SoundCue,'intensity'> {
 }
 export interface FilmDesign extends Omit<Plan,'assets'|'shots'> {
   scriptSha256:string; width:number; height:number; background:string;
-  direction:string; shots:(Shot & {lines:string[]})[];
+  direction:string; shots:DesignedShot[];
+  designRationale?:DesignRationale; execution?:ExecutionPlan; transitions?:DesignedTransition[];
+  gatePlans?:Record<GateName,GatePlan>; audioReason?:string;
   mix?:{lufs?:number;truePeakDb?:number};
   camera?:{x?:Channel;y?:Channel;zoom?:Channel;rotateZ?:Channel;perspective?:number};
   layers:Layer[]; cues:ProductionCue[];
@@ -46,13 +50,15 @@ function checkChannel(v:unknown,frames:number,path:string,errors:string[],range?
     if(!object(k)||!Number.isSafeInteger(k.frame)||Number(k.frame)<0||Number(k.frame)>frames||Number(k.frame)<=previous||!check(k.value)||k.easing!==undefined&&!['smooth','linear'].includes(String(k.easing))) {
       errors.push(`${path}: finite, ordered global frame keys required`);return;
     }
+    rejectUnknown(k,['frame','value','easing'],path,errors);
     previous=Number(k.frame);
   }
 }
 /** Checks generated JSON before it becomes a project. No model-produced code is executed. */
-export function validateFilm(value:unknown,lines:readonly ScriptLine[],assets:readonly ProductionAsset[],hash:string,policy:ProductionPolicy=defaultPolicy):string[] {
+export function validateFilm(value:unknown,lines:readonly ScriptLine[],assets:readonly ProductionAsset[],hash:string,policy:ProductionPolicy=defaultPolicy,options:{requireDesignContract?:boolean}={}):string[] {
   if(!object(value))return ['Design must be a JSON object'];
   const errors:string[]=[];
+  errors.push(...validateDesignContract(value,options.requireDesignContract));
   if(value.scriptSha256!==hash)errors.push('scriptSha256: design belongs to another script; regenerate it');
   for(const key of ['width','height'])if(!Number.isSafeInteger(value[key])||Number(value[key])<16||Number(value[key])%2!==0)errors.push(`${key}: positive even size >=16 required`);
   if(typeof value.background!=='string'||!/^#[0-9a-f]{6}$/i.test(value.background))errors.push('background: use a six-digit hex color');
@@ -75,13 +81,17 @@ export function validateFilm(value:unknown,lines:readonly ScriptLine[],assets:re
   else for(const [i,l] of value.layers.entries()){
     const p=`layers[${i}]`;
     if(!object(l)){errors.push(`${p}: expected object`);continue;}
+    rejectUnknown(l,['id','type','from','to','space','text','asset','sourceIn','path','fill','stroke','fontFamily','fontSize','fontWeight','align','fit','strokeWidth',...channels],p,errors);
     if(typeof l.id!=='string'||!/^[\w-]+$/.test(l.id)||seen.has(l.id))errors.push(`${p}: unique safe ID required`);
     seen.add(String(l.id));
     if(!['text','rect','ellipse','path','image','video'].includes(String(l.type)))errors.push(`${p}: unsupported layer type`);
     if(!Number.isSafeInteger(l.from)||!Number.isSafeInteger(l.to)||Number(l.from)<0||Number(l.to)<=Number(l.from)||Number(l.to)>frames)errors.push(`${p}: invalid frame interval`);
     if(l.space!==undefined&&!['world','screen'].includes(String(l.space)))errors.push(`${p}: invalid space`);
+    if(l.align!==undefined&&!['left','center','right'].includes(String(l.align)))errors.push(`${p}: unsupported text alignment`);
+    if(l.fit!==undefined&&!['cover','contain'].includes(String(l.fit)))errors.push(`${p}: unsupported media fit`);
     if(l.type==='text'&&(typeof l.text!=='string'||!l.text.trim()))errors.push(`${p}: text is required`);
     if(l.type==='path'&&(typeof l.path!=='string'||!l.path.trim()))errors.push(`${p}: SVG path data is required`);
+    if(l.asset!==undefined&&l.type!=='video'&&l.type!=='image')errors.push(`${p}.asset: only media layers execute asset references`);
     for(const key of ['fill','stroke'])if(l[key]!==undefined&&(typeof l[key]!=='string'||!/^#[0-9a-f]{6}$/i.test(String(l[key]))&&l[key]!=='none'))errors.push(`${p}.${key}: use hex color or none`);
     for(const key of ['fontSize','fontWeight','strokeWidth'])if(l[key]!==undefined&&(typeof l[key]!=='number'||!Number.isFinite(l[key])||Number(l[key])<=0))errors.push(`${p}.${key}: positive number required`);
     for(const key of channels)if(l[key]!==undefined)checkChannel(l[key],frames,`${p}.${key}`,errors,['opacity','reveal'].includes(key)?[0,1]:['width','height','scale','radius'].includes(key)?[0,Infinity]:undefined);
@@ -91,6 +101,7 @@ export function validateFilm(value:unknown,lines:readonly ScriptLine[],assets:re
     }
   }
   if(object(value.camera)){
+    rejectUnknown(value.camera,['x','y','zoom','rotateZ','perspective'],'camera',errors);
     for(const key of ['x','y','zoom','rotateZ'])if(value.camera[key]!==undefined)checkChannel(value.camera[key],frames,`camera.${key}`,errors,key==='zoom'?[.01,Infinity]:undefined);
     if(value.camera.perspective!==undefined&&(!(typeof value.camera.perspective==='number')||!Number.isFinite(value.camera.perspective)||value.camera.perspective<1))errors.push('camera.perspective: positive number required');
   }else if(value.camera!==undefined)errors.push('camera: expected object');
@@ -113,6 +124,11 @@ export function validateFilm(value:unknown,lines:readonly ScriptLine[],assets:re
   if(policy.footage==='required'&&(!Array.isArray(value.layers)||!value.layers.some(l=>object(l)&&l.type==='video')))errors.push('Footage required: select and use an appropriate acquired video');
   if(Array.isArray(value.shots)&&Array.isArray(value.layers))for(const s of value.shots){
     if(object(s)&&!value.layers.some(l=>object(l)&&Number(l.from)<=Number(s.from)&&Number(l.to)>=Number(s.to)))errors.push(`Shot ${String(s.id)} has no layer covering its whole duration`);
+    if(object(s)&&Array.isArray(s.assets))for(const id of s.assets){
+      const shown=value.layers.some(l=>object(l)&&(l.type==='image'||l.type==='video')&&l.asset===id&&Number(l.from)<Number(s.to)&&Number(s.from)<Number(l.to));
+      const heard=Array.isArray(value.cues)&&value.cues.some(c=>object(c)&&c.asset===id&&Number(c.start)*fps<Number(s.to)&&Number(s.from)<Number(c.end)*fps);
+      if(!shown&&!heard)errors.push(`Shot ${String(s.id)} asset ${String(id)}: must actually be used during this shot by a layer or cue`);
+    }
   }
   for(const id of used){const a=refs.get(id)!;if(a.license==='unknown'||a.redistribution==='unknown')errors.push(`${id}: license/use conditions must be recorded before rendering`);if(!a.local&&!a.download)errors.push(`${id}: reference link is not acquired media`);}
   return errors;

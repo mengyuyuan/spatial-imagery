@@ -6,7 +6,11 @@ The SDK supplies execution tools. The design table states the creative intent. T
 
 The v0.2 [script-to-video runner](script-to-video.md) connects scripts, configurable model/imported designs, acquired assets, editable animation projects, audio and rendering. It executes applicable stages below; it does not replace footage review or final viewing/listening. Music, narration, procedural-only mode, duration, canvas and style belong to each project rather than becoming universal rules from a previous film.
 
-## Production standard 3.22: derive design from intent
+## Production standard 3.23: derive design from intent
+
+The executable planner now receives the shipped design principles, synthesis method and this SOP together with its JSON contract. The generated project saves those instructions and their source hashes. Design rationale, intent chains, handoffs and specialist plans survive into production records; observation and approval remain separate. The default engine implements layers in 2D/CSS 2.5D. Designs needing physical 3D, cloth or other bespoke behavior declare a custom implementation requirement and cannot silently render a simplified substitute. See [the executable contract](script-to-video.md#design-contract-and-execution-boundary).
+
+Shared requirements cover intent, motion, camera, sound, evidence and source identity. Presenter A/B staging, matting and relighting belong to talking-head projects when applicable. They do not impose a presenter, floating cards, progress bars, room backdrop or fixed chapter count on lyric, brand or other general films.
 
 First understand [design principles](design-principles.md): relationships expressed as imagery, recognition cues, attention through composition, dimensional expression, the separate roles of subject and camera, and rhythm/type as carriers of feeling. Important decisions state their principle, contextual reason, expected perception and failure risk. Principle names, technique labels and statements of responsibility do not substitute for that reasoning.
 

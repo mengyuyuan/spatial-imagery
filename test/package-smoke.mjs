@@ -2,6 +2,7 @@
 import {mkdtemp,writeFile,readFile,rm} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import {tmpdir} from 'node:os';import {join,resolve,dirname} from 'node:path';import {spawnSync} from 'node:child_process';
+import {withContract} from './fixtures/design-contract.mjs';
 const npmCli=process.env.npm_execpath??join(dirname(process.execPath),'node_modules/npm/bin/npm-cli.js');
 const version=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version;
 const render=process.argv.includes('--render');
@@ -23,11 +24,14 @@ try{
   // Generate using only packed files, without a checkout, model, FFmpeg or private skill.
   const pkg=join(dir,'node_modules/spatial-imagery');
   const d=JSON.parse(await readFile(join(pkg,'templates/demo/design.json'),'utf8'));d.cues=[];for(const s of d.shots)s.assets=[];
-  await writeFile(join(dir,'design.json'),JSON.stringify(d));
+  await writeFile(join(dir,'design.json'),JSON.stringify(withContract(d)));
   console.log(run(process.execPath,[join(pkg,'dist/cli.js'),'make',join(pkg,'templates/demo/script.md'),'--design','design.json','--config',join(pkg,'templates/demo/config.json'),'--out','editable']));
-  for(const f of ['gate.mjs','verify_production_gates.py','production-gates.json','package-lock.json','PRODUCTION-GATES.md'])assert((await readFile(join(dir,'editable',f))).length>0);
+  for(const f of ['gate.mjs','verify_production_gates.py','production-gates.json','package-lock.json','PRODUCTION-GATES.md','design-instructions.md','planner-context.json','src/sdk/design-contract.js'])assert((await readFile(join(dir,'editable',f))).length>0);
+  const context=JSON.parse(await readFile(join(dir,'editable/planner-context.json'),'utf8'));
+  assert.equal(context.standard,'3.23.0');assert.equal(context.source,'imported');assert.equal(context.sources.length,4);
   const blocked=spawnSync(process.execPath,[join(dir,'editable/render.mjs')],{encoding:'utf8'});assert.notEqual(blocked.status,0);assert.match(blocked.stderr,/gate blocked/);
   const m=JSON.parse(await readFile(join(dir,'editable/production-gates.json'),'utf8'));assert.equal(m.shots[0].review.status,'unverified');
+  assert.deepEqual(m.shots[0].intent,withContract(d).shots[0].intent);
   assert.equal(m.schemaVersion,4);assert.equal(m.videoType,'general');
   for(const name of ['animation','camera','soundfx'])assert.equal(m.specialistGates[name].applicable,true);
   assert.deepEqual(m.specialistGates.camera.targets,[...m.shots,...m.transitions].map(s=>s.id));

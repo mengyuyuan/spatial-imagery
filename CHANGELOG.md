@@ -2,6 +2,9 @@
 
 ## 0.4.0
 
+- Production standard 3.23 connects shipped design methods to the actual planner, persists instruction provenance and carries structured intent/handoff/specialist plans into unreviewed evidence. Refresh resynchronizes complete designs and invalidates prior reviews.
+- Reject unsupported camera/layer/keyframe fields; requested dimensions and declared-but-unused shot assets participate in bounded model repair. Custom renderer requirements stop at an explicit implementation boundary instead of a planar fallback.
+- Short (1–2 frame) shots/interfaces require all real frames plus neighbouring playback context. Silence documentation now matches the mandatory encoded-media review. Library states include rejected references without treating them as approved.
 - Bilingual workflow 3.22 adds design principles, imagery/camera reasoning, mixed-dimensional lyric guidance and a nine-stage production SOP with explicit artifacts and repair routes. These guide creative work without claiming automatic aesthetic review or changing schema 4.
 - Schema 4 adds an independent mandatory camera gate covering every shot and handoff; motion/camera/sound each veto formal render and delivery.
 - Intentional silence requires an encoded-media-bound sound review, never N/A.

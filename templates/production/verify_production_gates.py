@@ -204,12 +204,29 @@ def validate(data, base, stage):
             fail("review_coverage", p, "Review/media range does not cover this entire required interval")
         if visual:
             frames = review.get("frames")
-            if not (isinstance(frames, list) and len(frames) >= 3
+            short = interval(needed) and needed[1] - needed[0] < 3
+            if not (isinstance(frames, list) and len(frames) >= (needed[1] - needed[0] if short else 3)
                     and all(type(n) is int for n in frames)
                     and frames == sorted(set(frames)) and interval(needed)
                     and all(needed[0] <= n < needed[1] for n in frames)
                     and frames[0] == needed[0] and frames[-1] == needed[1] - 1):
-                fail("missing_states", p, "Record ordered distinct before/middle/after frames within the interval")
+                fail("missing_states", p, "Record distinct before/middle/after frames, or every existing frame for a 1–2 frame interval")
+            if short:
+                context, context_frames = review.get("contextRange"), review.get("contextFrames")
+                # Short flashes have no third internal frame. Inspect their real neighbours instead.
+                valid_context = (contains(scope, context) and contains(reviewed, context) and contains(context, needed)
+                                 and context[1] - context[0] >= min(3, scope[1] - scope[0])
+                                 and (needed[0] == scope[0] or context[0] < needed[0])
+                                 and (needed[1] == scope[1] or context[1] > needed[1]))
+                if not valid_context:
+                    fail("short_context", p, "Short SH/TR needs reviewed context on both available sides within the media/scope")
+                elif not (isinstance(context_frames, list) and all(type(n) is int for n in context_frames)
+                          and context_frames == sorted(set(context_frames))
+                          and len(context_frames) >= min(3, context[1] - context[0])
+                          and all(context[0] <= n < context[1] for n in context_frames)
+                          and context_frames[0] == context[0] and context_frames[-1] == context[1] - 1):
+                    fail("short_context_frames", p, "Record actual ordered context frames including its first and last frame")
+                words(review, ["contextObserved"], p)
         if evidence:
             file_ref(review.get("evidence"), p + ".evidence")
 
