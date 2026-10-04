@@ -25,6 +25,12 @@ SPECIALIST_CHECKS = {
 
 # Silence is a sound decision to verify against the encode, never a waived gate.
 SILENCE_CHECKS = ("intentional_silence", "no_missing_audio", "transition_intent", "output_silence")
+AB_CHECKS = {
+    "design": ("ab_scene_role", "ab_background_distinction", "information_clearance"),
+    "animation": ("ab_content_priority", "ab_background_distinction", "information_clearance"),
+    "camera": ("ab_view_change", "ab_background_distinction", "information_clearance"),
+    "handoff": ("ab_takeover", "ab_background_distinction", "information_clearance"),
+}
 
 
 def digest_file(path):
@@ -277,6 +283,30 @@ def validate(data, base, stage):
             fail("shot_state", p, "Expected A, B or full")
         if shot.get("state") in ("A", "B") and data.get("videoType") != "talking-head":
             fail("ab_scope", p, "A/B states are only for talking-head videos; other films use full")
+        if shot.get("state") in ("A", "B"):
+            staging = shot.get("staging")
+            if not isinstance(staging, dict):
+                fail("ab_staging", p, "A/B needs presenter/content/environment roles, landing and protected information")
+            else:
+                words(staging, ["scene", "purpose", "framing"], p + ".staging")
+                if not contains(extent, staging.get("landing")):
+                    fail("ab_landing", p, "Staging landing must fit the shot")
+                for key in ("presenterLayers", "contentLayers", "environmentLayers", "protectedLayers"):
+                    vals = staging.get(key)
+                    if not isinstance(vals, list) or any(not present(v) for v in vals) or len(set(v for v in vals if isinstance(v, str))) != len(vals):
+                        fail("ab_roles", p + ".staging." + key, "Unique concrete layer IDs required")
+                people, content, environment, protected = [staging.get(k) for k in ("presenterLayers", "contentLayers", "environmentLayers", "protectedLayers")]
+                if all(isinstance(v, list) and all(isinstance(x, str) for x in v) for v in (people, content, environment, protected)):
+                    if not people or not environment or set(people) & (set(content) | set(environment)) or set(content) & set(environment):
+                        fail("ab_roles", p, "Presenter/content/environment must be distinct actual roles")
+                    if set(protected) & (set(people) | set(environment)):
+                        fail("ab_protection", p, "Protect content, not the presenter or background")
+                    if shot.get("state") == "B" and not content or not set(content).issubset(protected):
+                        fail("ab_protection", p, "A/B information content must be protected; B must have content")
+                    intent = shot.get("intent")
+                    primary = people if shot.get("state") == "A" else content
+                    if not isinstance(intent, dict) or intent.get("focusAfter") not in primary:
+                        fail("ab_focus", p, "A lands on the presenter; B lands on its content")
         if shot.get("kind") not in ("transformation", "handoff", "demonstration", "hold"):
             fail("shot_kind", p, "Unknown expression kind")
         changes = shot.get("changes")
@@ -353,6 +383,39 @@ def validate(data, base, stage):
             if not isinstance(old_intent, dict) or not isinstance(new_intent, dict) or old != old_intent.get("focusAfter") or new != new_intent.get("focusBefore"):
                 fail("broken_focus_chain", p, "Handoff subjects must match the outgoing/incoming SH attention states")
             cue_timing(handoff, extent, "focusFrame", p + ".handoff")
+        if previous and following and previous.get("state") in ("A", "B") and following.get("state") in ("A", "B") and previous["state"] != following["state"]:
+            takeover = tr.get("takeover")
+            if not isinstance(takeover, dict):
+                fail("ab_takeover", p, "A/B needs a designed content takeover and return, not presenter scaling alone")
+            else:
+                words(takeover, ["reason", "reveal", "bridge"], p + ".takeover")
+                if takeover.get("environment") not in ("transformed", "replaced"):
+                    fail("ab_environment", p, "A/B must change background scenes, not retain the same backdrop")
+                end = takeover.get("completionFrame")
+                window = tr.get("range")
+                if not interval(window) or type(end) is not int or not window[0] <= end < window[1]:
+                    fail("ab_takeover_timing", p, "Takeover completion must be inside its reviewed transition")
+                landing = following.get("staging", {}).get("landing") if isinstance(following.get("staging"), dict) else None
+                if type(end) is not int or not following["from"] <= end < following["to"] or interval(landing) and end > landing[0]:
+                    fail("ab_takeover_timing", p, "Takeover must complete before the destination landing")
+                proofs = takeover.get("proofLayers")
+                stages = [s.get("staging") for s in (previous, following)]
+                if all(isinstance(s, dict) for s in stages):
+                    if stages[0].get("scene") == stages[1].get("scene"):
+                        fail("ab_environment", p, "A/B background scenes must be distinct")
+                    environment_proof = takeover.get("environmentProofLayers")
+                    environments = [s.get("environmentLayers", []) for s in stages]
+                    if not isinstance(environment_proof, list) or not environment_proof or any(not present(v) for v in environment_proof):
+                        fail("ab_environment_proof", p, "Identify the actual background changes")
+                    elif all(isinstance(v, list) for v in environments) and any(v not in environments[0] + environments[1] for v in environment_proof):
+                        fail("ab_environment_proof", p, "Background proof must reference environment roles")
+                if not isinstance(proofs, list) or not proofs or any(not present(v) for v in proofs):
+                    fail("ab_proof", p, "Name non-presenter content that actually changes")
+                elif all(isinstance(s, dict) and isinstance(s.get("contentLayers"), list) and isinstance(s.get("presenterLayers"), list) for s in stages):
+                    content = stages[0]["contentLayers"] + stages[1]["contentLayers"]
+                    people = stages[0]["presenterLayers"] + stages[1]["presenterLayers"]
+                    if any(v not in content or v in people for v in proofs):
+                        fail("ab_proof", p, "Presenter-only motion cannot prove content takeover")
         if stage != "design":
             playback_review(tr.get("review"), p + ".review", extent, "normal_speed", visual=True)
             intent_review(tr.get("review"), p + ".review.intentChecks")
@@ -437,6 +500,12 @@ def validate(data, base, stage):
             file_ref(review.get("evidence"), q + ".evidence")
             checks = review.get("checks")
             required_criteria = SILENCE_CHECKS if name == "soundfx" and data.get("audioExpected") is False else criteria
+            ab_target = item.get("state") in ("A", "B")
+            if target in transition_ids:
+                pair = [shot_map.get(item.get(k), {}) for k in ("fromShot", "toShot")]
+                ab_target = all(s.get("state") in ("A", "B") for s in pair) and pair[0].get("state") != pair[1].get("state")
+            if ab_target:
+                required_criteria = (*required_criteria, *AB_CHECKS.get(name, ()))
             for key in required_criteria:
                 check = checks.get(key) if isinstance(checks, dict) else None
                 if not isinstance(check, dict) or check.get("status") != "passed" or not present(check.get("observed")):

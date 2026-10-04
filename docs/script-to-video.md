@@ -22,7 +22,7 @@ Every nonblank content line is assigned a stable line ID. Designs must cover all
 
 ## Design contract and execution boundary
 
-The model's system context is assembled from the packaged planner, design principles, design synthesis and production SOP. `design-instructions.md` saves that context; `planner-context.json` records standard 3.23, individual source hashes and the combined hash. This makes the actual method inspectable without requiring private skill files. Imported designs record `source: imported`; this is not a claim that a model used those instructions.
+The model's system context is assembled from the packaged planner, design principles, design synthesis and production SOP. `design-instructions.md` saves that context; `planner-context.json` records standard 3.24, individual source hashes and the combined hash. This makes the actual method inspectable without requiring private skill files. Imported designs record `source: imported`; this is not a claim that a model used those instructions.
 
 Model-authored `FilmDesign` must supply `designRationale` (basis, alternatives, choice, perception, risk), `execution` (renderer, reason, requirements), shot meaning/identity/kind/changes/intent/reading, one structured `transitions` entry per adjacent pair, and all eight `gatePlans`. See the shipped [planner contract](../templates/production/planner.md) and exported types. Focus IDs must reference layers active at the relevant shot boundaries and connect across handoffs. Motion, camera and sound plans cannot be disabled. Silence needs an explicit `audioReason`. Design decisions are retained in `production-gates.json`; the runner never accepts model-generated approvals. Legacy `--design` imports remain usable but require manual completion of missing gate decisions.
 
@@ -49,3 +49,7 @@ Outputs include source script, machine/readable designs, acquired asset identiti
 Still external: speech transcription/editing, person matting/relighting, voice generation, arbitrary sound-library search and artistic review. Node.js 22+, FFmpeg/ffprobe, Chromium, suitable fonts and renderer dependencies are required. The chosen model provider controls availability, cost and context limits. No key or model-specific integration was embedded in the package.
 
 Protocol references: [Chat Completions](https://developers.openai.com/api/reference/resources/chat), [Pexels API](https://www.pexels.com/api/documentation/), [Remotion rendering](https://www.remotion.dev/docs/renderer/render-media).
+
+## 3.24: A/B executable contract and migration
+
+See [A/B executable contract and migration](presenter-staging.md). A/B requires shot staging roles, protected information, landing windows and transition takeover records. A/B must use distinct background scenes with an authored transition; the same backdrop is rejected even when content scales up. Every transition frame must keep required information clear. General/full films remain outside A/B.

@@ -9,7 +9,7 @@ from pathlib import Path
 sys.dont_write_bytecode = True
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'templates' / 'production'))
-from verify_production_gates import digest_file, validate, SPECIALIST_CHECKS, SILENCE_CHECKS
+from verify_production_gates import digest_file, validate, SPECIALIST_CHECKS, SILENCE_CHECKS, AB_CHECKS
 
 
 class ProductionGateTests(unittest.TestCase):
@@ -38,7 +38,7 @@ class ProductionGateTests(unittest.TestCase):
             "finalMedia": "final", "openIssues": [],
         }
         for i, (start, end) in enumerate(((0, 90), (90, 180))):
-            shot = {"id": f"SH{i+1}", "from": start, "to": end, "state": "A" if i == 0 else "B",
+            shot = {"id": f"SH{i+1}", "from": start, "to": end, "state": "full",
                     "kind": "transformation", "changes": ["structure"], "reading": [end - 15, end],
                     "subject": "one modular object", "meaning": "parts form a usable assembly",
                     "initial": "separate components", "process": "components lock into matching joints",
@@ -106,6 +106,69 @@ class ProductionGateTests(unittest.TestCase):
 
     def codes(self, stage="delivery"):
         return {error["code"] for error in validate(self.data, self.root, stage)["errors"]}
+
+    def add_ab(self):
+        for index, shot in enumerate(self.data["shots"]):
+            shot["state"] = "A" if index == 0 else "B"
+            shot["staging"] = {"scene": "presenter-room" if index == 0 else "process-world", "purpose": "Presenter introduces evidence" if index == 0 else "Content demonstrates the joint",
+                               "framing": "Presenter large" if index == 0 else "Joint detail with small presenter",
+                               "presenterLayers": ["person"], "contentLayers": ["EL01"], "environmentLayers": ["room", "process-world"],
+                               "protectedLayers": ["EL01"], "landing": [shot["to"] - 15, shot["to"]]}
+            shot["intent"]["focusBefore"] = shot["intent"]["focusAfter"] = "person" if index == 0 else "EL01"
+        tr = self.data["transitions"][0]
+        tr["handoff"].update(kind="new_subject", outgoing="person", incoming="EL01")
+        tr["takeover"] = {"environment": "replaced", "reason": "Transform the room into a process scene",
+                          "reveal": "Joint opens into the inspection view", "bridge": "Presenter passes attention to the joint",
+                          "completionFrame": 95, "proofLayers": ["EL01"], "environmentProofLayers": ["room", "process-world"]}
+        for name, keys in AB_CHECKS.items():
+            for review in self.data["specialistGates"][name]["reviews"]:
+                review["checks"].update({k: {"status": "passed", "observed": "Synthetic AB criterion: " + k} for k in keys})
+        self.sign()
+
+    def test_ab_contract_and_conditioned_reviews(self):
+        self.add_ab()
+        for stage in ("design", "full-render", "delivery"):
+            self.assertEqual(self.codes(stage), set())
+
+    def test_ab_missing_staging_takeover_and_protection_fail(self):
+        self.add_ab()
+        del self.data["shots"][0]["staging"]
+        del self.data["transitions"][0]["takeover"]
+        self.data["shots"][1]["staging"]["protectedLayers"] = []
+        codes = self.codes("design")
+        self.assertIn("ab_staging", codes)
+        self.assertIn("ab_takeover", codes)
+        self.assertIn("ab_protection", codes)
+
+    def test_same_ab_background_and_missing_proof_are_blocked(self):
+        self.add_ab()
+        self.data["shots"][1]["staging"]["scene"] = self.data["shots"][0]["staging"]["scene"]
+        self.data["transitions"][0]["takeover"]["environment"] = "retained"
+        del self.data["transitions"][0]["takeover"]["environmentProofLayers"]
+        self.assertIn("ab_environment", self.codes("design"))
+        self.assertIn("ab_environment_proof", self.codes("design"))
+
+    def test_ab_protection_changes_invalidate_review_binding(self):
+        self.add_ab()
+        self.data["shots"][0]["staging"]["protectedLayers"].append("caption")
+        self.assertIn("stale_review", self.codes())
+
+    def test_ab_cannot_reuse_generic_review_checklists(self):
+        self.add_ab()
+        for name, keys in AB_CHECKS.items():
+            with self.subTest(gate=name):
+                review = self.data["specialistGates"][name]["reviews"][0]
+                saved = review["checks"].pop(keys[0])
+                self.assertTrue(self.codes("design" if name == "design" else "full-render"))
+                review["checks"][keys[0]] = saved
+        self.assertEqual(self.codes(), set())
+
+    def test_ab_only_presenter_proof_and_bad_completion_fail(self):
+        self.add_ab()
+        self.data["transitions"][0]["takeover"].update(proofLayers=["person"], completionFrame=179)
+        codes = self.codes("design")
+        self.assertIn("ab_proof", codes)
+        self.assertIn("ab_takeover_timing", codes)
 
     def test_complete_record_contract(self):
         for stage in ("design", "full-render", "delivery"):
@@ -286,6 +349,7 @@ class ProductionGateTests(unittest.TestCase):
         self.assertIn("review_incomplete", self.codes())
 
     def test_non_talking_head_ab_and_unknown_type_are_rejected(self):
+        self.data["shots"][0]["state"] = "A"
         self.data["videoType"] = "general"
         self.assertIn("ab_scope", self.codes("design"))
         for shot in self.data["shots"]:

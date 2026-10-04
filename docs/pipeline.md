@@ -6,7 +6,7 @@ The SDK supplies execution tools. The design table states the creative intent. T
 
 The v0.2 [script-to-video runner](script-to-video.md) connects scripts, configurable model/imported designs, acquired assets, editable animation projects, audio and rendering. It executes applicable stages below; it does not replace footage review or final viewing/listening. Music, narration, procedural-only mode, duration, canvas and style belong to each project rather than becoming universal rules from a previous film.
 
-## Production standard 3.23: derive design from intent
+## Production standard 3.24: derive design from intent
 
 The executable planner now receives the shipped design principles, synthesis method and this SOP together with its JSON contract. The generated project saves those instructions and their source hashes. Design rationale, intent chains, handoffs and specialist plans survive into production records; observation and approval remain separate. The default engine implements layers in 2D/CSS 2.5D. Designs needing physical 3D, cloth or other bespoke behavior declare a custom implementation requirement and cannot silently render a simplified substitute. See [the executable contract](script-to-video.md#design-contract-and-execution-boundary).
 
@@ -149,3 +149,7 @@ Check actual video frame count, PTS/DTS, FPS, audio/video durations, color conve
 Deliver the playable film, design table, source/dependency locks, source usage manifest, processing settings and QA. Record technical checks, playback, listening and unresolved defects independently. Never assert listening or approval that did not occur.
 
 Archive the actual SHA256, version, specifications, meaningful ranges, asset references and feedback. Add new records for revisions, preserve old ones. Keep external links as references. Publish only redistributable assets; provide retrieval instructions and identity for excluded dependencies.
+
+## 3.24: A/B staging, content takeover and information clearance
+
+See [A/B staging, content takeover and information clearance](presenter-staging.md). A/B requires shot staging roles, protected information, landing windows and transition takeover records. A/B must use distinct background scenes with an authored transition; the same backdrop is rejected even when content scales up. Every transition frame must keep required information clear. General/full films remain outside A/B.

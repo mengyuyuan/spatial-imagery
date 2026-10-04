@@ -1,5 +1,7 @@
 import {validatePlan, type Plan, type Asset} from './storyboard.js';
 import {validateCue, type SoundCue} from './audio.js';
+import {validateStaging} from './staging.js';
+export {validateStaging,layerBounds,channelValue,type Staging,type Takeover} from './staging.js';
 import {validateDesignContract,rejectUnknown,type DesignedShot,type DesignedTransition,type GateName,type GatePlan,type DesignRationale,type ExecutionPlan} from './design-contract.js';
 export type {DesignedShot,DesignedTransition,GateName,GatePlan,DesignRationale,ExecutionPlan,Intent} from './design-contract.js';
 
@@ -13,7 +15,7 @@ export function scriptLines(script:string):ScriptLine[] {
 export type Channel = number | {frame:number; value:number; easing?:'smooth'|'linear'}[];
 export interface Layer {
   id:string; type:'text'|'rect'|'ellipse'|'path'|'image'|'video'; from:number; to:number;
-  space?:'world'|'screen'; text?:string; asset?:string; sourceIn?:number; path?:string;
+  space?:'world'|'screen'; text?:string; asset?:string; sourceIn?:number; path?:string; transparent?:boolean;
   fill?:string; stroke?:string; fontFamily?:string; fontSize?:number; fontWeight?:number;
   align?:'left'|'center'|'right'; fit?:'cover'|'contain';
   x?:Channel; y?:Channel; z?:Channel; width?:Channel; height?:Channel; opacity?:Channel;
@@ -81,7 +83,8 @@ export function validateFilm(value:unknown,lines:readonly ScriptLine[],assets:re
   else for(const [i,l] of value.layers.entries()){
     const p=`layers[${i}]`;
     if(!object(l)){errors.push(`${p}: expected object`);continue;}
-    rejectUnknown(l,['id','type','from','to','space','text','asset','sourceIn','path','fill','stroke','fontFamily','fontSize','fontWeight','align','fit','strokeWidth',...channels],p,errors);
+    rejectUnknown(l,['id','type','from','to','space','text','asset','sourceIn','transparent','path','fill','stroke','fontFamily','fontSize','fontWeight','align','fit','strokeWidth',...channels],p,errors);
+    if(l.transparent!==undefined&&(l.type!=='video'||typeof l.transparent!=='boolean'))errors.push(`${p}.transparent: only video accepts a boolean alpha-decode flag`);
     if(typeof l.id!=='string'||!/^[\w-]+$/.test(l.id)||seen.has(l.id))errors.push(`${p}: unique safe ID required`);
     seen.add(String(l.id));
     if(!['text','rect','ellipse','path','image','video'].includes(String(l.type)))errors.push(`${p}: unsupported layer type`);
@@ -131,5 +134,6 @@ export function validateFilm(value:unknown,lines:readonly ScriptLine[],assets:re
     }
   }
   for(const id of used){const a=refs.get(id)!;if(a.license==='unknown'||a.redistribution==='unknown')errors.push(`${id}: license/use conditions must be recorded before rendering`);if(!a.local&&!a.download)errors.push(`${id}: reference link is not acquired media`);}
+  if(!errors.length)errors.push(...validateStaging(value,assets));
   return errors;
 }

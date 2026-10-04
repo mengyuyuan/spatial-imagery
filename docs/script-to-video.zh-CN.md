@@ -60,7 +60,7 @@ node dist/cli.js make examples/script-to-film/script.md --config examples/script
 
 ## 设计合同与执行边界
 
-规划器的实际系统上下文由包内 `planner.md`、`design-principles.md`、`design-synthesis.md`、`pipeline.md` 组装。工程的 `design-instructions.md` 保存完整指令，`planner-context.json` 保存标准 3.23、各文件和整体哈希；不依赖作者本机技能。导入设计标为 `source: imported`，只记录可用的方法版本，不冒称曾调用模型。
+规划器的实际系统上下文由包内 `planner.md`、`design-principles.md`、`design-synthesis.md`、`pipeline.md` 组装。工程的 `design-instructions.md` 保存完整指令，`planner-context.json` 保存标准 3.24、各文件和整体哈希；不依赖作者本机技能。导入设计标为 `source: imported`，只记录可用的方法版本，不冒称曾调用模型。
 
 模型必须交付 `designRationale`（依据、替代方案、选择、感知、风险）、`execution`（引擎、理由、能力需求）、逐 SH 的意义/身份/变化/意向/阅读区间、每对相邻 SH 的 `transitions`，以及八项 `gatePlans`。字段见[规划合同](../templates/production/planner.md)与导出的类型。焦点 ID 必须对应镜头边界时实际存在的图层，TR 必须接上两侧焦点；运动、镜头和声音计划不可关闭。有意无声写 `audioReason`。这些决策进入 `production-gates.json`，审核仍全部未验证，模型不能生成通过记录。旧版 `--design` 可继续导入，但缺少的门禁设计内容须人工补齐。
 
@@ -95,3 +95,7 @@ npm run render:draft
 修改 `design.json` 或工程源码后重新渲染；修改台词内容则重新设计并建立新版本。每次渲染重新验证设计与素材哈希；草样输出 `output/draft.mp4`，正式渲染输出 `output/final.mp4`、关键帧和 QA，核对解码帧数、音画时长、尺寸、帧率与完整解码。默认 `normalSpeed`、`listening`、`aesthetic` 保持未验证；需要按原管线完成真实审看/听审与返修，再把具体成片身份回库。该入口不会自动声称用户认可，也不会自动发布 GitHub、npm 或视频平台。
 
 当前仍需外部解决：真人转录/粗剪/抠像/重打光、配音生成、任意网站音效检索、专业审美评价。模型服务的可用性、费用和上下文长度由所选服务决定。运行需要 Node.js 22+、FFmpeg/ffprobe、Chromium、合适字体和独立渲染器依赖；本 SDK 核心仍没有运行时依赖。
+
+## 3.24: A/B 可执行契约与旧工程迁移
+
+参见 [A/B 主次交接与人物避让](presenter-staging.zh-CN.md)。每镜必须记录人物、内容、环境、信息保护区和落稳区间，每个 A/B 接口必须设计内容接管。A/B 背景场景必须不同并设计换场，不能保留同背景只调整人物或内容大小；转场全程须让必要信息可见。非口播 full 不强加 A/B。

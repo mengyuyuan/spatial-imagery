@@ -1,4 +1,5 @@
 import type {Shot} from './storyboard.js';
+import type {Staging,Takeover} from './staging.js';
 
 export const gateNames=['design','animation','camera','handoff','color','matting','denoise','soundfx'] as const;
 export type GateName=typeof gateNames[number];
@@ -11,10 +12,12 @@ export interface DesignedShot extends Shot {
   lines:string[]; meaning?:string; identity?:string;
   kind?:'transformation'|'handoff'|'demonstration'|'hold'; changes?:string[];
   intent?:Intent; reading?:[number,number]|null; holdReason?:string; noReadingReason?:string;
+  staging?:Staging;
 }
 export interface DesignedTransition {
   id:string; fromShot:string; toShot:string; range:[number,number];
   method:string; reason:string; identity:string; motion:string;
+  takeover?:Takeover;
   handoff:{kind:'same_subject'|'new_subject'|'intentional_cut'; outgoing:string; incoming:string;
     exit:string; entry:string; meaningBridge:string; cue:string; cueRange:[number,number]; focusFrame:number; timingReason?:string};
 }

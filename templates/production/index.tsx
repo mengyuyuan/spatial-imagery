@@ -2,18 +2,10 @@ import React from 'react';
 import {AbsoluteFill,Audio,Composition,Img,OffthreadVideo,Sequence,registerRoot,staticFile,useCurrentFrame} from 'remotion';
 import design from '../design.json';
 import assets from '../assets.json';
-import {track,linear,smooth} from './sdk/motion.js';
+import {channelValue as value} from './sdk/staging.js';
 
 // This is an editable scene graph, not a choice of fixed title-card templates.
 // All channels use global frames. A layer can persist through multiple shots.
-const samplers=new WeakMap<object,(frame:number)=>number>();
-const value=(channel:any,frame:number,fallback:number):number=>{
-  if(channel===undefined)return fallback;
-  if(typeof channel==='number')return channel;
-  let sampler=samplers.get(channel);
-  if(!sampler){sampler=track(channel.map((k:any)=>({time:k.frame,value:k.value,easing:k.easing==='linear'?linear:smooth})));samplers.set(channel,sampler);}
-  return sampler!(frame);
-};
 const media=(id:string)=>staticFile(assets.find((a:any)=>a.id===id)!.local);
 const Layer:React.FC<{layer:any;frame:number}>=({layer:l,frame:f})=>{
   const w=value(l.width,f,design.width),h=value(l.height,f,design.height);
@@ -24,7 +16,7 @@ const Layer:React.FC<{layer:any;frame:number}>=({layer:l,frame:f})=>{
     clipPath:`inset(0 ${100*(1-value(l.reveal,f,1))}% 0 0)`};
   if(l.type==='text')return <div style={{...style,color:l.fill??'#f5f0e7',fontFamily:l.fontFamily??'"Noto Sans CJK SC", "Microsoft YaHei", sans-serif',fontSize:l.fontSize??72,fontWeight:l.fontWeight??700,lineHeight:1.12,whiteSpace:'pre-wrap',display:'flex',alignItems:'center',justifyContent:l.align==='left'?'flex-start':l.align==='right'?'flex-end':'center',textAlign:l.align??'center'}}>{l.text}</div>;
   if(l.type==='image')return <div style={style}><Img src={media(l.asset)} style={{width:'100%',height:'100%',objectFit:l.fit??'cover'}}/></div>;
-  if(l.type==='video')return <div style={style}><Sequence from={l.from} durationInFrames={l.to-l.from} layout="none"><OffthreadVideo src={media(l.asset)} startFrom={Math.round((l.sourceIn??0)*design.fps)} muted style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:l.fit??'cover'}}/></Sequence></div>;
+  if(l.type==='video')return <div style={style}><Sequence from={l.from} durationInFrames={l.to-l.from} layout="none"><OffthreadVideo src={media(l.asset)} startFrom={Math.round((l.sourceIn??0)*design.fps)} transparent={l.transparent??false} muted style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:l.fit??'cover'}}/></Sequence></div>;
   if(l.type==='path')return <svg style={style} viewBox={`0 0 ${w} ${h}`}><path d={l.path} fill={l.fill??'none'} stroke={l.stroke??'#f5f0e7'} strokeWidth={l.strokeWidth??3} strokeLinecap="round"/></svg>;
   return <div style={{...style,background:l.fill??'#f5f0e7',border:l.stroke?`${l.strokeWidth??2}px solid ${l.stroke}`:undefined,boxSizing:'border-box'}}/>;
 };
