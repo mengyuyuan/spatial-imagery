@@ -52,4 +52,4 @@ Protocol references: [Chat Completions](https://developers.openai.com/api/refere
 
 ## 3.24: A/B executable contract and migration
 
-See [A/B executable contract and migration](presenter-staging.md). A/B requires shot staging roles, protected information, landing windows and transition takeover records. Same environment is allowed; presenter-only resizing is insufficient. Every transition frame must keep required information clear. General/full films remain outside A/B.
+See [A/B executable contract and migration](presenter-staging.md). A/B requires shot staging roles, protected information, landing windows and transition takeover records. A/B must use distinct background scenes with an authored transition; the same backdrop is rejected even when content scales up. Every transition frame must keep required information clear. General/full films remain outside A/B.

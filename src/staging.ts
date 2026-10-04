@@ -8,9 +8,9 @@ export interface Staging {
   protectedLayers:string[];
 }
 export interface Takeover {
-  environment:'retained'|'reframed'|'transformed'|'replaced';
+  environment:'transformed'|'replaced';
   reason:string; reveal:string; bridge:string; completionFrame:number;
-  proofLayers:string[];
+  proofLayers:string[]; environmentProofLayers:string[];
 }
 type Row=Record<string,any>;
 const object=(v:unknown):v is Row=>!!v&&typeof v==='object'&&!Array.isArray(v);
@@ -75,10 +75,11 @@ export function layerBounds(l:Row,f:number,d:Row):Bounds|null {
   return area(box)>0?box:null;
 }
 
-export function validateStaging(value:unknown):string[]{
+export function validateStaging(value:unknown,assets:readonly {id:string;sha256?:string}[]=[]):string[]{
   if(!object(value)||!Array.isArray(value.shots)||!Array.isArray(value.layers))return [];
   const d=value,shots=d.shots.filter(object),layers=d.layers.filter(object),byId=new Map<string,Row>(layers.map((l:Row)=>[l.id,l]));
   const errors:string[]=[],valid=new Set<string>();
+  const assetIdentity=new Map(assets.map(a=>[a.id,a.sha256??a.id]));
   const fail=(p:string,m:string)=>errors.push(`${p}: ${m}`);
   for(const shot of shots){
     if(!['A','B'].includes(shot.state))continue;
@@ -93,6 +94,7 @@ export function validateStaging(value:unknown):string[]{
     if(!range(s.landing)||s.landing[0]<shot.from||s.landing[1]>shot.to)fail(p,'landing must fit the shot');
     if(errors.length!==count)continue;
     if(!s.presenterLayers.length||s.presenterLayers.some((id:string)=>byId.get(id)!.type!=='video'))fail(p,'presenterLayers must reference actual moving presenter video, not an image/shape');
+    if(!s.environmentLayers.length)fail(p,'A/B requires an explicit background scene, not the shared fallback color');
     const roles=[...s.presenterLayers,...s.contentLayers,...s.environmentLayers];
     if(new Set(roles).size!==roles.length)fail(p,'presenter, content and environment roles must be disjoint');
     if(s.protectedLayers.some((id:string)=>s.presenterLayers.includes(id)||s.environmentLayers.includes(id)))fail(p,'protected information cannot be the presenter or background');
@@ -129,15 +131,29 @@ export function validateStaging(value:unknown):string[]{
     const p=`handoff ${a.id}->${b.id}`,tr=transitions.find((t:Row)=>t.fromShot===a.id&&t.toShot===b.id),t=tr?.takeover;
     if(!object(t)){fail(p,'A/B switch requires takeover: environment decision, reveal, bridge and proof layers');continue;}
     for(const k of ['reason','reveal','bridge'])if(!text(t[k]))fail(p,`${k} needs a concrete takeover decision`);
-    if(!['retained','reframed','transformed','replaced'].includes(t.environment))fail(p,'choose the actual environment treatment; a new backdrop is not mandatory');
+    if(!['transformed','replaced'].includes(t.environment))fail(p,'A/B backgrounds must differ: transform or replace the environment, not retain/reframe the same backdrop');
     if(!Number.isSafeInteger(t.completionFrame)||t.completionFrame<b.from||t.completionFrame>=b.to)fail(p,'completionFrame must locate the takeover in the destination shot');
     if(!range(tr?.range)||t.completionFrame<tr.range[0]||t.completionFrame>=tr.range[1])fail(p,'completionFrame must be covered by the reviewed transition range');
     if(!valid.has(a.id)||!valid.has(b.id))continue;
+    if(a.staging.scene===b.staging.scene)fail(p,'A/B requires distinct background scenes');
     if(t.completionFrame>b.staging.landing[0])fail(p,'takeover must complete before the destination landing');
+    const environments=[...a.staging.environmentLayers,...b.staging.environmentLayers];
+    if(!ids(t.environmentProofLayers)||!t.environmentProofLayers.length||t.environmentProofLayers.some((id:string)=>!environments.includes(id))){fail(p,'environmentProofLayers must identify the actual changed backgrounds');continue;}
     const content=[...a.staging.contentLayers,...b.staging.contentLayers],people=[...a.staging.presenterLayers,...b.staging.presenterLayers];
     if(!ids(t.proofLayers)||!t.proofLayers.length||t.proofLayers.some((id:string)=>!content.includes(id)||people.includes(id))){fail(p,'proofLayers must identify actual non-presenter content');continue;}
     if(!custom)try{
       const frame=(s:Row)=>Math.floor((s.landing[0]+s.landing[1]-1)/2);
+      const environmentIdentity=(f:number)=>t.environmentProofLayers.flatMap((id:string)=>{
+        const l=byId.get(id)!;if(!layerBounds(l,f,d))return [];
+        // Ignore aliases, presenter movement, camera/scale and tint-only changes.
+        return [JSON.stringify({type:l.type,asset:l.asset?(assetIdentity.get(l.asset)??l.asset):undefined,path:l.path})];
+      }).sort();
+      const beforeEnvironment=environmentIdentity(frame(a.staging)),afterEnvironment=environmentIdentity(frame(b.staging));
+      if(beforeEnvironment.some((identity:string)=>afterEnvironment.includes(identity))||!beforeEnvironment.length||!afterEnvironment.length)fail(p,'A/B background is unchanged or retained under an overlay; renaming, recoloring or resizing the same backdrop cannot pass');
+      for(const s of [a.staging,b.staging])for(let f=s.landing[0];f<s.landing[1];f++){
+        const background=t.environmentProofLayers.filter((id:string)=>s.environmentLayers.includes(id)).map((id:string)=>layerBounds(byId.get(id)!,f,d)).filter((v:Bounds|null):v is Bounds=>!!v);
+        if(coveredArea(background)<d.width*d.height*.9){fail(p,`background proof must cover the scene (at least 90% of frame) at landing frame ${f}, not just a small overlay`);break;}
+      }
       // IDs, declarations, scene names and presenter-only motion cannot satisfy this test.
       const signature=(f:number)=>t.proofLayers.flatMap((id:string)=>{
         const l=byId.get(id)!,box=layerBounds(l,f,d);if(!box)return [];

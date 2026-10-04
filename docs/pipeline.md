@@ -152,4 +152,4 @@ Archive the actual SHA256, version, specifications, meaningful ranges, asset ref
 
 ## 3.24: A/B staging, content takeover and information clearance
 
-See [A/B staging, content takeover and information clearance](presenter-staging.md). A/B requires shot staging roles, protected information, landing windows and transition takeover records. Same environment is allowed; presenter-only resizing is insufficient. Every transition frame must keep required information clear. General/full films remain outside A/B.
+See [A/B staging, content takeover and information clearance](presenter-staging.md). A/B requires shot staging roles, protected information, landing windows and transition takeover records. A/B must use distinct background scenes with an authored transition; the same backdrop is rejected even when content scales up. Every transition frame must keep required information clear. General/full films remain outside A/B.

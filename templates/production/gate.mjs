@@ -73,7 +73,7 @@ export async function checkGates(root,stage){
   const m=await load(root,'production-gates.json'),d=await load(root,'design.json');
   const result=verifyRecord(root,stage);result.errors??=[];
   const fail=(code,message)=>result.errors.push({code,path:'project',message});
-  for(const message of validateStaging(d))fail('ab_staging',message);
+  for(const message of validateStaging(d,await load(root,'assets.json')))fail('ab_staging',message);
   const inputs=await projectInputs(root);
   const key=x=>`${x.role}:${x.path}:${x.sha256}`;
   const actual=new Set((m.inputs??[]).map(key));

@@ -26,10 +26,10 @@ SPECIALIST_CHECKS = {
 # Silence is a sound decision to verify against the encode, never a waived gate.
 SILENCE_CHECKS = ("intentional_silence", "no_missing_audio", "transition_intent", "output_silence")
 AB_CHECKS = {
-    "design": ("ab_scene_role", "information_clearance"),
-    "animation": ("ab_content_priority", "information_clearance"),
-    "camera": ("ab_view_change", "information_clearance"),
-    "handoff": ("ab_takeover", "information_clearance"),
+    "design": ("ab_scene_role", "ab_background_distinction", "information_clearance"),
+    "animation": ("ab_content_priority", "ab_background_distinction", "information_clearance"),
+    "camera": ("ab_view_change", "ab_background_distinction", "information_clearance"),
+    "handoff": ("ab_takeover", "ab_background_distinction", "information_clearance"),
 }
 
 
@@ -297,7 +297,7 @@ def validate(data, base, stage):
                         fail("ab_roles", p + ".staging." + key, "Unique concrete layer IDs required")
                 people, content, environment, protected = [staging.get(k) for k in ("presenterLayers", "contentLayers", "environmentLayers", "protectedLayers")]
                 if all(isinstance(v, list) and all(isinstance(x, str) for x in v) for v in (people, content, environment, protected)):
-                    if not people or set(people) & (set(content) | set(environment)) or set(content) & set(environment):
+                    if not people or not environment or set(people) & (set(content) | set(environment)) or set(content) & set(environment):
                         fail("ab_roles", p, "Presenter/content/environment must be distinct actual roles")
                     if set(protected) & (set(people) | set(environment)):
                         fail("ab_protection", p, "Protect content, not the presenter or background")
@@ -389,8 +389,8 @@ def validate(data, base, stage):
                 fail("ab_takeover", p, "A/B needs a designed content takeover and return, not presenter scaling alone")
             else:
                 words(takeover, ["reason", "reveal", "bridge"], p + ".takeover")
-                if takeover.get("environment") not in ("retained", "reframed", "transformed", "replaced"):
-                    fail("ab_environment", p, "Declare treatment; retaining a world does not mean freezing its composition")
+                if takeover.get("environment") not in ("transformed", "replaced"):
+                    fail("ab_environment", p, "A/B must change background scenes, not retain the same backdrop")
                 end = takeover.get("completionFrame")
                 window = tr.get("range")
                 if not interval(window) or type(end) is not int or not window[0] <= end < window[1]:
@@ -400,6 +400,15 @@ def validate(data, base, stage):
                     fail("ab_takeover_timing", p, "Takeover must complete before the destination landing")
                 proofs = takeover.get("proofLayers")
                 stages = [s.get("staging") for s in (previous, following)]
+                if all(isinstance(s, dict) for s in stages):
+                    if stages[0].get("scene") == stages[1].get("scene"):
+                        fail("ab_environment", p, "A/B background scenes must be distinct")
+                    environment_proof = takeover.get("environmentProofLayers")
+                    environments = [s.get("environmentLayers", []) for s in stages]
+                    if not isinstance(environment_proof, list) or not environment_proof or any(not present(v) for v in environment_proof):
+                        fail("ab_environment_proof", p, "Identify the actual background changes")
+                    elif all(isinstance(v, list) for v in environments) and any(v not in environments[0] + environments[1] for v in environment_proof):
+                        fail("ab_environment_proof", p, "Background proof must reference environment roles")
                 if not isinstance(proofs, list) or not proofs or any(not present(v) for v in proofs):
                     fail("ab_proof", p, "Name non-presenter content that actually changes")
                 elif all(isinstance(s, dict) and isinstance(s.get("contentLayers"), list) and isinstance(s.get("presenterLayers"), list) for s in stages):

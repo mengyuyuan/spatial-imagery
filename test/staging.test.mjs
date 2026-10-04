@@ -11,15 +11,16 @@ function plan(){
     {id:'person',type:'video',from:0,to:60,asset:'presenter',x:keys(220,900),y:300,width:keys(400,180),height:keys(500,220)},
     {id:'content',type:'video',from:0,to:60,asset:'water',x:650,y:300,width:keys(140,240),height:keys(140,460)},
     {id:'title',type:'text',text:'Spatial Imagery',from:0,to:60,x:500,y:25,width:400,height:30},
-    {id:'background',type:'rect',from:0,to:60,fill:'#112233'}],shots:[
-    {id:'SH1',state:'A',from:0,to:30,intent:{focusAfter:'person'},staging:{scene:'shared-world',purpose:'Speaker introduces the demonstration',framing:'Presenter leads',presenterLayers:['person'],contentLayers:['content'],environmentLayers:['background'],protectedLayers:['title','content'],landing:[0,20]}},
-    {id:'SH2',state:'B',from:30,to:60,intent:{focusAfter:'content'},staging:{scene:'shared-world',purpose:'Inspect the water process',framing:'Demonstration leads',presenterLayers:['person'],contentLayers:['content'],environmentLayers:['background'],protectedLayers:['title','content'],landing:[40,60]}}],
-    transitions:[{id:'TR1',fromShot:'SH1',toShot:'SH2',range:[20,45],takeover:{environment:'retained',reason:'The same world connects speaker to evidence',reveal:'Water expands into the demonstration area',bridge:'The small water sample becomes the large view',completionFrame:40,proofLayers:['content']}}]};
+    {id:'background',type:'image',asset:'room',from:0,to:60,opacity:keys(1,0)},
+    {id:'backgroundB',type:'image',asset:'underwater',from:0,to:60,opacity:keys(0,1)}],shots:[
+    {id:'SH1',state:'A',from:0,to:30,intent:{focusAfter:'person'},staging:{scene:'presenter-room',purpose:'Speaker introduces the demonstration',framing:'Presenter leads',presenterLayers:['person'],contentLayers:['content'],environmentLayers:['background','backgroundB'],protectedLayers:['title','content'],landing:[0,20]}},
+    {id:'SH2',state:'B',from:30,to:60,intent:{focusAfter:'content'},staging:{scene:'water-scene',purpose:'Inspect the water process',framing:'Demonstration leads',presenterLayers:['person'],contentLayers:['content'],environmentLayers:['background','backgroundB'],protectedLayers:['title','content'],landing:[40,60]}}],
+    transitions:[{id:'TR1',fromShot:'SH1',toShot:'SH2',range:[20,45],takeover:{environment:'replaced',reason:'The room transforms into a water scene',reveal:'Water expands into the demonstration area',bridge:'The small water sample becomes the large view',completionFrame:40,proofLayers:['content'],environmentProofLayers:['background','backgroundB']}}]};
 }
 // Keep the presenter outside the information during the entire crossing, not only landings.
 function safe(){const d=plan();d.layers[0].y=[{frame:0,value:300},{frame:20,value:300},{frame:27,value:580},{frame:36,value:580},{frame:40,value:300},{frame:59,value:300}];d.layers[0].height=[{frame:0,value:500},{frame:20,value:500},{frame:27,value:20},{frame:36,value:20},{frame:40,value:220},{frame:59,value:220}];d.layers[0].x=[{frame:0,value:220},{frame:27,value:220},{frame:36,value:900},{frame:59,value:900}];return d;}
 
-test('retained environment passes when content genuinely takes over and stays clear',()=>assert.deepEqual(validateStaging(safe()),[]));
+test('distinct full-frame backgrounds pass with content takeover and clear information',()=>assert.deepEqual(validateStaging(safe()),[]));
 test('legacy A/B labels alone fail; general films remain outside the A/B contract',()=>{
  const d=safe();delete d.shots[0].staging;assert.match(validateStaging(d).join('\n'),/staging contract/);
  for(const s of d.shots)s.state='full';assert.deepEqual(validateStaging(d),[]);
@@ -69,4 +70,15 @@ test('video alpha flag is typed and accepted by the actual film validator',()=>{
  const assets=[{id:'p',kind:'video',duration:2,title:'Synthetic alpha fixture',source:'synthetic:test',license:'fixture-only',availability:'local',redistribution:'forbidden',review:'technical',tags:[],local:'fixture.webm',sha256:'0'.repeat(64)}],policy={music:'off',narration:'off',footage:'optional'};
  assert.deepEqual(validateFilm(d,scriptLines('Test'),assets,d.scriptSha256,policy),[]);
  d.layers[0].transparent='yes';assert.match(validateFilm(d,scriptLines('Test'),assets,d.scriptSha256,policy).join('\n'),/boolean alpha-decode/);
+});
+
+test('same background fails even when content expands and scene labels change',()=>{
+ const d=safe();d.layers.find(l=>l.id==='backgroundB').asset='room';
+ assert.match(validateStaging(d).join('\n'),/background is unchanged/);
+ const r=safe();r.transitions[0].takeover.environment='retained';assert.match(validateStaging(r).join('\n'),/backgrounds must differ/);
+});
+test('aliases for identical background bytes and small decorative substitutions fail',()=>{
+ const d=safe();assert.match(validateStaging(d,[{id:'room',sha256:'same'},{id:'underwater',sha256:'same'}]).join('\n'),/background is unchanged/);
+ const tiny=safe();Object.assign(tiny.layers.find(l=>l.id==='backgroundB'),{width:30,height:30});assert.match(validateStaging(tiny).join('\n'),/at least 90%/);
+ const overlay=safe();overlay.layers.find(l=>l.id==='background').opacity=1;Object.assign(overlay.layers.find(l=>l.id==='backgroundB'),{width:30,height:30});assert.match(validateStaging(overlay).join('\n'),/retained under an overlay/);
 });

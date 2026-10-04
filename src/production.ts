@@ -134,6 +134,6 @@ export function validateFilm(value:unknown,lines:readonly ScriptLine[],assets:re
     }
   }
   for(const id of used){const a=refs.get(id)!;if(a.license==='unknown'||a.redistribution==='unknown')errors.push(`${id}: license/use conditions must be recorded before rendering`);if(!a.local&&!a.download)errors.push(`${id}: reference link is not acquired media`);}
-  if(!errors.length)errors.push(...validateStaging(value));
+  if(!errors.length)errors.push(...validateStaging(value,assets));
   return errors;
 }

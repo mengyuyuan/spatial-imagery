@@ -110,16 +110,16 @@ class ProductionGateTests(unittest.TestCase):
     def add_ab(self):
         for index, shot in enumerate(self.data["shots"]):
             shot["state"] = "A" if index == 0 else "B"
-            shot["staging"] = {"scene": "shared-room", "purpose": "Presenter introduces evidence" if index == 0 else "Content demonstrates the joint",
+            shot["staging"] = {"scene": "presenter-room" if index == 0 else "process-world", "purpose": "Presenter introduces evidence" if index == 0 else "Content demonstrates the joint",
                                "framing": "Presenter large" if index == 0 else "Joint detail with small presenter",
-                               "presenterLayers": ["person"], "contentLayers": ["EL01"], "environmentLayers": ["room"],
+                               "presenterLayers": ["person"], "contentLayers": ["EL01"], "environmentLayers": ["room", "process-world"],
                                "protectedLayers": ["EL01"], "landing": [shot["to"] - 15, shot["to"]]}
             shot["intent"]["focusBefore"] = shot["intent"]["focusAfter"] = "person" if index == 0 else "EL01"
         tr = self.data["transitions"][0]
         tr["handoff"].update(kind="new_subject", outgoing="person", incoming="EL01")
-        tr["takeover"] = {"environment": "retained", "reason": "Keep spatial orientation while showing evidence",
+        tr["takeover"] = {"environment": "replaced", "reason": "Transform the room into a process scene",
                           "reveal": "Joint opens into the inspection view", "bridge": "Presenter passes attention to the joint",
-                          "completionFrame": 95, "proofLayers": ["EL01"]}
+                          "completionFrame": 95, "proofLayers": ["EL01"], "environmentProofLayers": ["room", "process-world"]}
         for name, keys in AB_CHECKS.items():
             for review in self.data["specialistGates"][name]["reviews"]:
                 review["checks"].update({k: {"status": "passed", "observed": "Synthetic AB criterion: " + k} for k in keys})
@@ -139,6 +139,14 @@ class ProductionGateTests(unittest.TestCase):
         self.assertIn("ab_staging", codes)
         self.assertIn("ab_takeover", codes)
         self.assertIn("ab_protection", codes)
+
+    def test_same_ab_background_and_missing_proof_are_blocked(self):
+        self.add_ab()
+        self.data["shots"][1]["staging"]["scene"] = self.data["shots"][0]["staging"]["scene"]
+        self.data["transitions"][0]["takeover"]["environment"] = "retained"
+        del self.data["transitions"][0]["takeover"]["environmentProofLayers"]
+        self.assertIn("ab_environment", self.codes("design"))
+        self.assertIn("ab_environment_proof", self.codes("design"))
 
     def test_ab_protection_changes_invalidate_review_binding(self):
         self.add_ab()
