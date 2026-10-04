@@ -14,10 +14,10 @@ const digest=(text:string)=>createHash('sha256').update(text).digest('hex');
 const json=(v:unknown)=>JSON.stringify(v,null,2)+'\n';
 /** Load the actual shipped method, not a second hand-maintained summary. */
 export async function loadPlannerContext(){
-  const files=['templates/production/planner.md','docs/design-principles.md','docs/design-synthesis.md','docs/pipeline.md'];
+  const files=['templates/production/planner.md','docs/design-principles.md','docs/design-synthesis.md','docs/pipeline.md','docs/presenter-staging.md'];
   const sources=await Promise.all(files.map(async path=>{const content=await readFile(join(packageRoot,path),'utf8');return {path,sha256:digest(content),content};}));
   const prompt=sources.map(s=>`\n<!-- source: ${s.path} -->\n${s.content}`).join('\n')+'\nReturn only the FilmDesign JSON contract specified in planner.md. The appended production method guides decisions; do not invent completed reviews or execute later SOP stages in your response.';
-  return {prompt,provenance:{standard:'3.23.0',systemSha256:digest(prompt),sources:sources.map(({content,...s})=>s)}};
+  return {prompt,provenance:{standard:'3.24.0',systemSha256:digest(prompt),sources:sources.map(({content,...s})=>s)}};
 }
 export interface ModelConfig {baseUrl:string;model:string;apiKeyEnv:string;jsonMode?:boolean;timeoutMs?:number}
 export interface FilmConfig {
@@ -171,10 +171,13 @@ export async function makeFilm(options:MakeOptions):Promise<{project:string;stat
     await writeFile(join(root,'storyboard.json'),json({...film,assets:acquired.map(a=>({...a,local:`public/${a.local}`}))}));
     const escape=(s:unknown)=>String(s).replace(/\|/g,'\\|').replace(/\r?\n/g,' ');
     await writeFile(join(root,'design-table.md'),`# ${film.title}\n\n${film.direction}\n\n| Shot | Frames | Script | Subject / change | Camera | Sound |\n|---|---|---|---|---|---|\n`+film.shots.map(s=>`| ${s.id} | ${s.from}–${s.to} | ${escape(s.lines.map(id=>lines.find(l=>l.id===id)?.text).join(' / '))} | ${escape(`${s.subject}: ${s.initial} → ${s.action} → ${s.result}`)} | ${escape(s.camera)} | ${escape(s.sound)} |`).join('\n')+'\n');
+    const stagingRows=film.shots.filter(s=>s.staging).map(s=>`| ${s.id} / ${s.state} | ${escape(s.staging!.purpose+' / '+s.staging!.framing)} | ${escape(s.staging!.presenterLayers.join(', '))} | ${escape(s.staging!.contentLayers.join(', '))} | ${escape(s.staging!.protectedLayers.join(', '))} | ${s.staging!.landing.join('–')} |`);
+    if(stagingRows.length)await writeFile(join(root,'design-table.md'),(await readFile(join(root,'design-table.md'),'utf8'))+'\n## A/B staging / 主次与避让\n\n| Shot | Purpose / framing | Presenter | Content | Protected information | Landing |\n|---|---|---|---|---|---|\n'+stagingRows.join('\n')+'\n\n'+(film.transitions??[]).filter(t=>t.takeover).map(t=>`- ${t.id}: ${escape(JSON.stringify(t.takeover))}`).join('\n')+'\n');
     await mark('assets','passed',{count:acquired.length,hashes:acquired.map(a=>({id:a.id,sha256:a.sha256})),visualReview:'Inspect acquired video content; decoding alone does not establish suitability.'});
     await mkdir(join(root,'src/sdk'),{recursive:true});
     for(const name of ['index.tsx','render.mjs','mix.mjs','package.json','package-lock.json','README.md','gate.mjs','verify_production_gates.py','production-gates-template.json','PRODUCTION-GATES.md','SPECIALIST-GATES.md'])await copyFile(join(templateRoot,name),join(root,name==='index.tsx'?'src/index.tsx':name));
-    for(const name of ['motion.js','audio.js','production.js','design-contract.js','storyboard.js','environment.js'])await copyFile(join(packageRoot,'dist',name),join(root,'src/sdk',name));
+    for(const name of ['motion.js','audio.js','production.js','design-contract.js','staging.js','storyboard.js','environment.js'])await copyFile(join(packageRoot,'dist',name),join(root,'src/sdk',name));
+    await copyFile(join(packageRoot,'docs/presenter-staging.md'),join(root,'PRESENTER-STAGING.md'));
     if(film.execution?.renderer==='custom')await writeFile(join(root,'src/index.tsx'),`// SPATIAL_IMAGERY_CUSTOM_IMPLEMENTATION_REQUIRED\n// Implement the required renderer against design.json, keeping Composition id Spatial-Imagery,\n// the same frame timeline, assets, audio and evidence gates. See design-instructions.md.\nthrow new Error('Custom renderer implementation required. The requested 3D/material behavior was not downgraded to CSS layers.');\n`);
     await copyFile(join(packageRoot,'LICENSE'),join(root,'src/sdk/LICENSE'));
     await writeFile(join(root,'.gitignore'),'node_modules/\npublic/assets/\nbuild/\noutput/\n.env*\n');

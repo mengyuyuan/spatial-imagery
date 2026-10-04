@@ -18,6 +18,12 @@ Non-applicability is not a blank checkbox. It requires empty targets and exactly
 
 G1 requires whole-film and per-SH design critiques, all eight applicability decisions and concrete plans. G2 additionally requires actual SH/TR playback, specialist review and listening. G3 repeats applicable playback/listening checks on the final encoded media; draft evidence cannot sign the final file. A `failed`, `unverified`, missing criterion, stale hash or missing target blocks its stage.
 
+## A/B takeover and protected information / 主次交接与人物避让（3.24）
+
+A/B applies only to talking-head films. A shared environment may persist, but presenter-only resizing cannot stand in for content takeover. Each A/B SH needs `staging` roles, `landing` and `protectedLayers`; each A↔B TR needs `takeover`. The default renderer checks every frame for presenter/protected rectangle overlap, settled subject priority, and an actual non-presenter content/view change. Review text, demonstration details and intermediate states, including moving hands; decoration may pass behind the person. See [PRESENTER-STAGING.md](PRESENTER-STAGING.md) for fields, conservative geometry limits and custom-renderer evidence requirements.
+
+Additional mandatory criteria: design SH `ab_scene_role` + `information_clearance`; animation SH `ab_content_priority` + `information_clearance`; camera A/B SH and A↔B TR `ab_view_change` + `information_clearance`; handoff A↔B TR `ab_takeover` + `information_clearance`. G1 evaluates the design; G2/G3 require actual encoded playback observations and before/middle/after evidence. These are conditional schema-4 requirements, not automatic passes. Updating staging/protection invalidates old bindings. General/full targets keep their existing criteria.
+
 ## Design / 设计门：先淘汰空洞方案
 
 Explain the principles behind important choices: how the relationship becomes visible, which cues preserve recognition, and what camera/rhythm contribute to the viewing experience. Technique or principle names alone are insufficient. Emotional and poetic purposes are valid; each shot need not add a new factual explanation. See the SDK's packaged docs/design-principles.md and docs/design-principles.zh-CN.md for reasoning and failure examples.

@@ -6,6 +6,7 @@ import {join,dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {pythonCommand} from './src/sdk/environment.js';
+import {validateStaging} from './src/sdk/staging.js';
 
 const home=dirname(fileURLToPath(import.meta.url));
 const load=async(root,name)=>JSON.parse(await readFile(join(root,name),'utf8'));
@@ -33,10 +34,10 @@ function clearReviews(m){
   m.filmDesignReview={status:'unverified'};
   for(const gate of Object.values(m.specialistGates??{}))gate.reviews=[];
 }
-const shotDecisionKeys=['meaning','identity','kind','changes','reading','intent','holdReason','noReadingReason'];
+const shotDecisionKeys=['meaning','identity','kind','changes','reading','intent','holdReason','noReadingReason','staging'];
 const shotCore=s=>({id:s.id,from:s.from,to:s.to,state:s.state,subject:s.subject,initial:s.initial,process:s.action,result:s.result,camera:s.camera});
 const shotEvidenceKeys=['id','from','to','state','subject','initial','process','result','camera',...shotDecisionKeys];
-const transitionDecisionKeys=['id','fromShot','toShot','range','method','reason','identity','motion','handoff'];
+const transitionDecisionKeys=['id','fromShot','toShot','range','method','reason','identity','motion','handoff','takeover'];
 const select=(value,keys)=>Object.fromEntries(keys.filter(k=>value[k]!==undefined).map(k=>[k,structuredClone(value[k])]));
 function applyDesignedDecisions(m,d){
   for(const [i,s] of d.shots.entries())Object.assign(m.shots[i],select(s,shotDecisionKeys));
@@ -72,6 +73,7 @@ export async function checkGates(root,stage){
   const m=await load(root,'production-gates.json'),d=await load(root,'design.json');
   const result=verifyRecord(root,stage);result.errors??=[];
   const fail=(code,message)=>result.errors.push({code,path:'project',message});
+  for(const message of validateStaging(d))fail('ab_staging',message);
   const inputs=await projectInputs(root);
   const key=x=>`${x.role}:${x.path}:${x.sha256}`;
   const actual=new Set((m.inputs??[]).map(key));

@@ -48,9 +48,7 @@ test('imported A/B designs require a talking-head project, not just a model decl
   const args={script:join(root,'script.md'),design:join(root,'design.json'),config:join(root,'config.json')};
   await assert.rejects(makeFilm({...args,out:join(root,'wrong-type')}),/videoType does not match/);
   await writeFile(join(root,'config.json'),JSON.stringify({policy,videoType:'talking-head'}));
-  const out=join(root,'talking-head');await makeFilm({...args,out});
-  const m=JSON.parse(await readFile(join(out,'production-gates.json'),'utf8'));
-  assert.equal(m.videoType,'talking-head');assert.deepEqual(m.shots.map(s=>s.state),['A','B']);
+  await assert.rejects(makeFilm({...args,out:join(root,'talking-head')}),/staging contract/);
   assert.throws(()=>validateConfig({videoType:'voiceover'}),/videoType/);
 }));
 test('model endpoint and key stay explicit; missing secrets do not trigger a fallback',async()=>{
