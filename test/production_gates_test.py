@@ -32,7 +32,7 @@ class ProductionGateTests(unittest.TestCase):
                            "approvalScope": "Synthetic contract fixture only; no real approval", **ref("reference.fixture")}],
             "audioExpected": True,
             "inputs": [{"role": role, **ref(role + ".txt")}
-                       for role in ("design", "timeline", "source", "assets", "sound")],
+                       for role in ("design", "timeline", "source", "assets", "sound", "brief")],
             "shots": [], "transitions": [],
             "media": [{"id": "final", "role": "final", "from": 0, "to": 180, **ref("media.fixture")}],
             "assetsReview": {"status": "passed", "observed": "Synthetic asset-review record", "evidence": ref("assets-review.txt")},
@@ -87,6 +87,10 @@ class ProductionGateTests(unittest.TestCase):
             row['cameraBinding'] = {'mode': 'animated', 'subject': 'EL01', 'channels': ['camera.x'], 'reason': 'Synthetic measured observation change'}
             if row in self.data['shots']:
                 row['motionBinding'] = {'mode': 'animated', 'subject': 'EL01', 'channels': ['layers.EL01.x'], 'reason': 'Synthetic measured part movement'}
+        self.data['requirementContract'] = {'version': 1, 'brief': 'brief.txt', 'requirements': [{
+            'id': 'R1', 'quote': 'Explain component assembly', 'kind': 'content',
+            'scopeReason': 'Both assembly shots', 'acceptance': 'Joined components visibly carry the load',
+            'fulfillments': [{'target': s['id'], 'initial': s['initial'], 'process': s['process'], 'result': s['result']} for s in self.data['shots']]}]}
         self.sign()
 
     def review(self, extent, method, frames=False):

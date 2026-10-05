@@ -2,7 +2,7 @@
 
 **v0.4:** motion, camera and sound are independent mandatory production gates, including verified intentional silence. Explicit `videoType` is required; A/B is restricted to `talking-head`, while other films use `general` + `full`. See the [portable production-gate guide](../templates/production/PRODUCTION-GATES.md) for review and migration.
 
-v0.4: first renders explicitly use `--draft` → `output/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
+v0.4: first renders explicitly use `--draft` → `qa/pipeline-review/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
 
 v0.2 adds an executable path: script → model-authored design → validation → acquired media → editable Remotion project → continuous sound mix → MP4 and QA. See the [detailed Chinese guide](script-to-video.zh-CN.md) and [worked example](../examples/script-to-film/README.md).
 

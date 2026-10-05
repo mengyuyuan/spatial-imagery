@@ -14,6 +14,10 @@ test('portable schema-v4 validator passes its synthetic regression suite',()=>{
   const p=pythonCommand(),r=spawnSync(p.bin,[...p.args,'-X','utf8','test/production_gates_test.py'],{encoding:'utf8'});
   assert.equal(r.status,0,r.stderr||r.stdout);
 });
+test('requirement and entrypoint regressions reject stale identities and playback substitution',()=>{
+  const p=pythonCommand(),r=spawnSync(p.bin,[...p.args,'-X','utf8','test/requirements_entrypoints_test.py'],{encoding:'utf8'});
+  assert.equal(r.status,0,r.stderr||r.stdout);
+});
 async function project(fn,complete=false){
   const root=await mkdtemp(join(tmpdir(),'si-gates-'));
   try{
@@ -35,6 +39,13 @@ test('fresh project cannot render production through either SDK or direct npm en
   await assert.rejects(g.runGate(root,'delivery').then(r=>{if(!r.eligible)throw Error('blocked');}),/blocked/);
   assert.equal(JSON.parse(await readFile(join(root,'delivery-status.json'),'utf8')).status,'blocked');
 }));
+test('draft entry checks current source identity and confines diagnostic output',()=>project(async(root,g)=>{
+  const result=await g.requireEntry(root,'draft','qa/pipeline-review/test.mp4');
+  assert.equal(result.completed,false);assert.equal(result.allowed,true);
+  await assert.rejects(g.requireEntry(root,'draft','output/complete-review.mp4'),/draft_destination/);
+  await writeFile(join(root,'src/index.tsx'),'// changed actual renderer');
+  await assert.rejects(g.requireEntry(root,'draft','qa/pipeline-review/test.mp4'),/active_identity/);
+},true));
 
 test('design view edits invalidate evidence and refresh preserves them before regeneration',()=>project(async(root,g)=>{
  const table=join(root,'design-table.md'),original=await readFile(table,'utf8');
@@ -51,13 +62,13 @@ test('design view edits invalidate evidence and refresh preserves them before re
 test('custom measurement registration binds the encode and never signs playback approval',()=>project(async(root,g)=>{
  const path=join(root,'production-gates.json'),d=JSON.parse(await readFile(join(root,'design.json'),'utf8'));
  d.execution.renderer='custom';await writeFile(join(root,'design.json'),JSON.stringify(d));await g.runGate(root,'refresh');
- await mkdir(join(root,'output'));await writeFile(join(root,'output/draft.mp4'),'Synthetic encode, not a video');
- const qa={technicalPassed:true,mode:'draft',fps:d.fps,frames:d.durationInFrames,inputs:await g.projectInputs(root),sha256:await g.hashFile(join(root,'output/draft.mp4')),audio:{audio:false}};
- await writeFile(join(root,'output/draft-qa.json'),JSON.stringify(qa));await g.runGate(root,'register-draft');
+ await mkdir(join(root,'output'));await mkdir(join(root,'qa/pipeline-review'),{recursive:true});await writeFile(join(root,'qa/pipeline-review/draft.mp4'),'Synthetic encode, not a video');
+ const qa={technicalPassed:true,mode:'draft',fps:d.fps,frames:d.durationInFrames,inputs:await g.projectInputs(root),sha256:await g.hashFile(join(root,'qa/pipeline-review/draft.mp4')),audio:{audio:false}};
+ await writeFile(join(root,'qa/pipeline-review/draft-qa.json'),JSON.stringify(qa));await g.runGate(root,'register-draft');
  const m=JSON.parse(await readFile(path,'utf8')),binding=(await g.checkGates(root,'design')).executionBinding;
- await writeFile(join(root,'output/draft-execution.json'),JSON.stringify({binding:'old',mediaSha256:qa.sha256}));
+ await writeFile(join(root,'qa/pipeline-review/draft-execution.json'),JSON.stringify({binding:'old',mediaSha256:qa.sha256}));
  await assert.rejects(g.runGate(root,'register-execution'),/binding\/video changed/);
- await writeFile(join(root,'output/draft-execution.json'),JSON.stringify({binding,mediaSha256:qa.sha256}));
+ await writeFile(join(root,'qa/pipeline-review/draft-execution.json'),JSON.stringify({binding,mediaSha256:qa.sha256}));
  await g.runGate(root,'register-execution');
  const next=JSON.parse(await readFile(path,'utf8'));assert.equal(next.executionEvidence.length,1);assert.deepEqual(next.technicalReview.evidence,m.technicalReview.evidence);assert.equal(next.technicalReview.status,'passed');assert.equal(next.technicalReview.binding,(await g.checkGates(root,'design')).binding);assert.equal(next.shots[0].review.status,'unverified');
  const result=await g.checkGates(root,'full-render');assert.equal(result.eligible,false);assert(result.errors.some(e=>e.code==='execution_evidence_binding'));

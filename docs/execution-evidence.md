@@ -31,7 +31,7 @@ For talking-head films the next settled A/B state is compared with the previous 
 G1 permits unimplemented custom work with concrete bindings. Draft rendering remains available. G2/G3 require an `executionEvidence` entry for every reviewed media file:
 
 ```json
-{"media":"draft","evidence":{"path":"output/draft-execution.json","sha256":"<actual file hash>"}}
+{"media":"draft","evidence":{"path":"qa/pipeline-review/draft-execution.json","sha256":"<actual file hash>"}}
 ```
 
 The renderer's JSON artifact must contain:
@@ -43,7 +43,7 @@ The renderer's JSON artifact must contain:
 
 Calculate presenter/content areas from the renderer's actual projected/alpha/occlusion result, after clipping and compositing, without double counting overlapping pixels. Background coverage is the effective environmental plate coverage before foreground compositing: it must fill the scene behind the presenter, not claim 90% of the final unobstructed pixels. Background identities describe environmental content; exclude camera pose, arbitrary scene names and tint-only changes. The gate checks complete ranges, finite values, actual channel change/hold, information overlap, A/B dominance, at least 90% environmental plate coverage and distinct landing backgrounds. For segmented drafts, every target must fit entirely in at least one registered media segment; keep enough transition context.
 
-Capture measurements while evaluating the real render, retain the input inventory, and finalize the artifact against that exact encode after media registration. `executionBinding` binds inputs and media; review `binding` additionally includes the measurement-file identity. Replacing measurements invalidates prior playback reviews without creating a circular hash. `gates register-execution` attaches the current `output/draft-execution.json` or `output/final-execution.json`; it rejects stale binding/video identities and clears playback approvals. It does not manufacture measurements or approve a film. Re-run all affected reviews after attachment. A file/hash check cannot prove that a dishonest producer measured real pixels: inspect the actual captures and normal-speed video as a separate requirement.
+Capture measurements while evaluating the real render, retain the input inventory, and finalize the artifact against that exact encode after media registration. `executionBinding` binds inputs and media; review `binding` additionally includes the measurement-file identity. Replacing measurements invalidates prior playback reviews without creating a circular hash. `gates register-execution` attaches the current `qa/pipeline-review/draft-execution.json` or `output/final-execution.json`; it rejects stale binding/video identities and clears playback approvals. It does not manufacture measurements or approve a film. Re-run all affected reviews after attachment. A file/hash check cannot prove that a dishonest producer measured real pixels: inspect the actual captures and normal-speed video as a separate requirement.
 
 ## Sound and source quality
 

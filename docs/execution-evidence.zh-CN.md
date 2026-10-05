@@ -33,7 +33,7 @@ G2/G3 每个 SH/TR 的 `implementation` 都须填真实 `路径:行号`：文件
 G1 允许只有明确设计与执行绑定，草样仍可制作。G2/G3 必须为每个已登记媒体提交一份测量文件，登记到 `executionEvidence`：
 
 ```json
-{"media":"draft","evidence":{"path":"output/draft-execution.json","sha256":"真实文件哈希"}}
+{"media":"draft","evidence":{"path":"qa/pipeline-review/draft-execution.json","sha256":"真实文件哈希"}}
 ```
 
 文件根字段为 `method: renderer-mask-projection`、`binding`（取当前门禁的 `executionBinding`）、实际编码 `mediaSha256`、真实 `width/height`、测量代码 `producer: src/measure.ts:1` 和按 SH/TR ID 索引的 `targets`。

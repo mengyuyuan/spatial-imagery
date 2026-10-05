@@ -29,7 +29,7 @@ node dist/cli.js doctor
 node dist/cli.js demo --out first-film --install --render
 ```
 
-Open `first-film/output/draft.mp4`. Expected: **6 seconds, 640×360, 30 fps, 180 decoded frames and stereo sound**. Technical results are in `first-film/output/draft-qa.json`. The fresh output directory must not already exist. The first install/browser download needs network access and disk space; no model key, stock-media download or private source is needed. Python can be absent for this diagnostic command even if `doctor` reports the production gate prerequisite missing.
+Open `first-film/qa/pipeline-review/draft.mp4`. Expected: **6 seconds, 640×360, 30 fps, 180 decoded frames and stereo sound**. Technical results are in `first-film/qa/pipeline-review/draft-qa.json`. The fresh output directory must not already exist. The first install/browser download needs network access and disk space; no model key, stock-media download or private source is needed. Python 3.11+ is required for draft identity and requirement preflight, as well as formal gates.
 
 Then edit `first-film/design.json` and `first-film/src/index.tsx`. The generated project is independent of the SDK checkout:
 
@@ -52,7 +52,7 @@ In a separate empty consumer directory:
 
 ```sh
 npm init -y
-npm install /absolute/path/spatial-imagery-0.5.0.tgz
+npm install /absolute/path/spatial-imagery-0.6.0.tgz
 npx --no-install spatial-imagery doctor
 npx --no-install spatial-imagery demo --out first-film --install --render
 ```

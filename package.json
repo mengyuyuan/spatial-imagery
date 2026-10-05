@@ -1,7 +1,7 @@
 {
   "name": "spatial-imagery",
-  "version": "0.5.0",
-  "description": "空间意象 — subject-led spatial storytelling, camera choreography and sound continuity SDK",
+  "version": "0.6.0",
+  "description": "\u7a7a\u95f4\u610f\u8c61 \u2014 subject-led spatial storytelling, camera choreography and sound continuity SDK",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

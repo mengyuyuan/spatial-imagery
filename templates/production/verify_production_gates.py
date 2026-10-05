@@ -10,6 +10,7 @@ import math
 import sys
 from pathlib import Path
 from verify_execution_evidence import execution_contract, custom_evidence
+from verify_requirements import requirement_contract
 
 
 # Independent vetoes: no averaging, overall-score substitution or automatic N/A.
@@ -152,6 +153,7 @@ def validate(data, base, stage):
     binding_payload = {"schemaVersion": data.get("schemaVersion"), "version": data.get("version"), "fps": fps, "scope": scope,
                        "executionContractVersion": data.get("executionContractVersion"), "execution": data.get("execution"), "width": data.get("width"), "height": data.get("height"),
                        "intentThesis": data.get("intentThesis"), "baselines": baselines, "videoType": data.get("videoType"),
+                       "requirementContract": data.get("requirementContract"),
                        "audioExpected": data.get("audioExpected"), "audioReason": data.get("audioReason"),
                        "inputs": inputs, "media": data.get("media", []), "shots": design_records("shots"),
                        "transitions": design_records("transitions")}
@@ -440,6 +442,7 @@ def validate(data, base, stage):
         fail("missing_handoff", "transitions", f"Missing TR {pair[0]} -> {pair[1]}")
 
     renderer = execution_contract(data, shots, transitions, stage, inputs, base, fail, present)
+    requirement_contract(data, shots, transitions, stage, inputs, base, fail, present)
     if renderer == 'custom' and stage != 'design':
         custom_evidence(data, shots, transitions, media, execution_binding, base, inputs, file_ref, fail)
 

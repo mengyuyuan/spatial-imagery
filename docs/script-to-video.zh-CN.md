@@ -2,7 +2,7 @@
 
 **v0.4：** 运动、镜头、声音为独立硬门禁，无声也须验证。`videoType` 必填；A/B 仅允许口播 `talking-head`，其他影片使用 `general` + `full`。见[门禁与迁移](../templates/production/PRODUCTION-GATES.md)。
 
-v0.4: first renders explicitly use `--draft` → `output/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
+v0.4: first renders explicitly use `--draft` → `qa/pipeline-review/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
 
 v0.2 增加了真实执行入口：脚本 → 模型设计 → 分镜/场景图校验 → 素材获取与核验 → 可编辑 Remotion 工程 → 连续音轨 → MP4 与 QA。原来的运动、相机、声音 SDK 和完整制作方法继续保留。
 
@@ -92,7 +92,7 @@ npm run render:draft
 # 或从 SDK 仓库运行：node dist/cli.js render /absolute/path/my-film
 ```
 
-修改 `design.json` 或工程源码后重新渲染；修改台词内容则重新设计并建立新版本。每次渲染重新验证设计与素材哈希；草样输出 `output/draft.mp4`，正式渲染输出 `output/final.mp4`、关键帧和 QA，核对解码帧数、音画时长、尺寸、帧率与完整解码。默认 `normalSpeed`、`listening`、`aesthetic` 保持未验证；需要按原管线完成真实审看/听审与返修，再把具体成片身份回库。该入口不会自动声称用户认可，也不会自动发布 GitHub、npm 或视频平台。
+修改 `design.json` 或工程源码后重新渲染；修改台词内容则重新设计并建立新版本。每次渲染重新验证设计与素材哈希；草样输出 `qa/pipeline-review/draft.mp4`，正式渲染输出 `output/final.mp4`、关键帧和 QA，核对解码帧数、音画时长、尺寸、帧率与完整解码。默认 `normalSpeed`、`listening`、`aesthetic` 保持未验证；需要按原管线完成真实审看/听审与返修，再把具体成片身份回库。该入口不会自动声称用户认可，也不会自动发布 GitHub、npm 或视频平台。
 
 当前仍需外部解决：真人转录/粗剪/抠像/重打光、配音生成、任意网站音效检索、专业审美评价。模型服务的可用性、费用和上下文长度由所选服务决定。运行需要 Node.js 22+、FFmpeg/ffprobe、Chromium、合适字体和独立渲染器依赖；本 SDK 核心仍没有运行时依赖。
 

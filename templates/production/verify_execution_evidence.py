@@ -133,6 +133,24 @@ def custom_evidence(data, shots, transitions, media, binding, base, inputs, file
                     changed = any(max(v[c] for v in values)-min(v[c] for v in values) > 1e-6 for c in channels)
                     if changed != (contract.get('mode') == 'animated'):
                         fail('execution_motion', p + '.' + sid, 'Measured movement contradicts the declared animated/hold mode')
+            # A moving unrelated channel cannot certify the specifically requested effect.
+            contract = data.get('requirementContract', {})
+            requests = contract.get('requirements', []) if isinstance(contract, dict) else []
+            for request in requests if isinstance(requests, list) else []:
+                if not isinstance(request, dict) or request.get('kind') not in ('motion', 'spatial'):
+                    continue
+                mappings = request.get('fulfillments', [])
+                for mapping in mappings if isinstance(mappings, list) else []:
+                    if not isinstance(mapping, dict) or mapping.get('target') != sid:
+                        continue
+                    required = mapping.get('depthChannels' if request['kind'] == 'spatial' else 'channels', [])
+                    if not isinstance(required, list):
+                        continue
+                    required = [c for c in required if isinstance(c, str) and c.rsplit('.', 1)[-1] not in ('sourceTime', 'time', 'frame', 'opacity')]
+                    if not required or any(not isinstance(f.get('values'), dict) or any(not finite(f['values'].get(c)) for c in required) for f in frames):
+                        fail('requirement_measured_channels', p + '.' + sid, 'Measure every specifically requested effect channel on every frame')
+                    elif not any(max(f['values'][c] for f in frames) - min(f['values'][c] for f in frames) > 1e-6 for c in required):
+                        fail('requirement_actual_motion', p + '.' + sid, 'Requested effect stays constant even if playback or other object channels move')
             is_ab = row.get('state') in ('A', 'B')
             s = row.get('staging') if is_ab else {'protectedLayers': protected_inserts.get(sid, []), 'landing': []}
             if not isinstance(s, dict) or not is_ab and sid not in protected_inserts:

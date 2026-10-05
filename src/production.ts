@@ -31,6 +31,11 @@ export interface FilmDesign extends Omit<Plan,'assets'|'shots'> {
   direction:string; shots:DesignedShot[];
   designRationale?:DesignRationale; execution?:ExecutionPlan; transitions?:DesignedTransition[];
   gatePlans?:Record<GateName,GatePlan>; audioReason?:string;
+  requirementContract?:{version:1;brief:string;requirements:Array<{
+    id:string;quote:string;kind:'content'|'asset'|'editorial'|'motion'|'spatial'|'audio';scopeReason:string;acceptance:string;
+    allowedDimensions?:Array<'2d'|'2.5d'|'3d'>;
+    fulfillments:Array<{target:string;initial:string;process:string;result:string;channels?:string[];depthChannels?:string[];dimension?:'2d'|'2.5d'|'3d';subject?:string;depthCue?:string;implementation?:string[]}>;
+  }>};
   mix?:MixPolicy;
   camera?:{x?:Channel;y?:Channel;zoom?:Channel;rotateZ?:Channel;perspective?:number};
   layers:Layer[]; cues:ProductionCue[];

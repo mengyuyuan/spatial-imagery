@@ -1,5 +1,13 @@
 # Changelog / 更新记录
 
+## 0.6.0
+
+- Bind current user requirements to SH/TR subjects, dimensions and measured effect channels. Presenter playback and an unrelated moving channel cannot satisfy a requested spatial transformation.
+- Ship portable entry preflight and current-project identity checks; generated renderers verify the selected composition's dimensions and frame timeline. G3 also checks the exact active final encode.
+- Move diagnostic video/QA/measurement output to `qa/pipeline-review`; drafts cannot claim completion. Preserve legitimate 2D projects and unreviewed diagnostic work.
+- Add English/Chinese migration guidance, package-consumer checks and regressions for stale sources/timelines and draft-as-delivery. Existing projects need explicit migration; no approvals are generated.
+- This release also includes the execution/evidence binding changes below. No OS-level bypass prevention or automatic aesthetic/listening approval is claimed.
+
 ## 0.4.0
 
 - Production standard 3.23 connects shipped design methods to the actual planner, persists instruction provenance and carries structured intent/handoff/specialist plans into unreviewed evidence. Refresh resynchronizes complete designs and invalidates prior reviews.

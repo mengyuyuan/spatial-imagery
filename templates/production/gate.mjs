@@ -13,6 +13,16 @@ import {designTable} from './src/sdk/design-table.js';
 const home=dirname(fileURLToPath(import.meta.url));
 const load=async(root,name)=>JSON.parse(await readFile(join(root,name),'utf8'));
 const save=async(root,name,data)=>writeFile(join(root,name),JSON.stringify(data,null,2)+'\n');
+const projectExecution=d=>({...(d.execution??{renderer:'layers-2.5d'}),designSource:'design.json',parameterSources:['src/index.tsx','design.json']});
+async function refreshActive(root,d){
+  await save(root,'pipeline-active.json',{version:1,manifest:'production-gates.json',entryPoint:{path:'src/index.tsx',sha256:await hashFile(join(root,'src/index.tsx'))},designSource:{path:'design.json',sha256:await hashFile(join(root,'design.json'))},scope:[0,d.durationInFrames],fps:d.fps,width:d.width,height:d.height});
+}
+export async function requireEntry(root,mode,output,media){
+  const d=await load(root,'design.json'),p=pythonCommand();
+  const r=spawnSync(p.bin,[...p.args,'-X','utf8',join(root,'pipeline_entry.py'),'--project',root,'--mode',mode,'--entry','src/index.tsx','--design','design.json','--output',output,'--range','0',String(d.durationInFrames),...(media?['--media',media]:[])],{encoding:'utf8',windowsHide:true,maxBuffer:16*1024*1024});
+  if(r.error||r.status!==0)throw Error(`Production gate blocked by entry preflight: ${r.stdout||r.stderr||r.error}`);
+  return JSON.parse(r.stdout);
+}
 export async function hashFile(file){const h=createHash('sha256');for await(const b of createReadStream(file))h.update(b);return h.digest('hex');}
 async function refreshDesignView(root){
   const expected=designTable(await load(root,'design.json'),await readFile(join(root,'script.md'),'utf8'));
@@ -26,6 +36,8 @@ export async function projectInputs(root){
   for(const [role,path] of [['design','design.json'],['timeline','design.json'],['sound','design.json'],['assets','assets.json'],['source','script.md'],['source','policy.json'],['source','package.json'],['source','render.mjs'],['source','mix.mjs'],['source','gate.mjs'],['source','verify_production_gates.py']])await add(role,path);
   await add('design','design-table.md');
   await add('source','verify_execution_evidence.py');
+  for(const path of ['verify_requirements.py','pipeline_entry.py','pipeline_entry.cjs'])await add('source',path);
+  await add('brief','user-brief.json');
   for(const path of ['package-lock.json','planner-context.json','design-instructions.md'])try{await stat(join(root,path));await add('source',path);}catch(e){if(e.code!=='ENOENT')throw e;}
   async function walk(folder){
     for(const e of (await readdir(join(root,folder),{withFileTypes:true})).sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0)){
@@ -51,6 +63,7 @@ const shotEvidenceKeys=['id','from','to','state','subject','initial','process','
 const transitionDecisionKeys=['id','fromShot','toShot','range','method','reason','identity','motion','handoff','takeover','cameraBinding'];
 const select=(value,keys)=>Object.fromEntries(keys.filter(k=>value[k]!==undefined).map(k=>[k,structuredClone(value[k])]));
 function applyDesignedDecisions(m,d){
+  m.requirementContract=d.requirementContract??null;
   for(const [i,s] of d.shots.entries())Object.assign(m.shots[i],select(s,shotDecisionKeys));
   if(d.transitions)m.transitions=d.transitions.map(t=>({...select(t,transitionDecisionKeys),review:{status:'unverified'}}));
   for(const [key,g] of Object.entries(d.gatePlans??{}))if(m.specialistGates[key])m.specialistGates[key]={...select(g,['applicable','reason','plan','targets']),reviews:[]};
@@ -59,7 +72,7 @@ function applyDesignedDecisions(m,d){
 export async function initializeGates(root){
   const d=await load(root,'design.json'),template=await load(root,'production-gates-template.json');
   await refreshDesignView(root);
-  const m={...template,executionContractVersion:1,version:'working-1',execution:d.execution??{renderer:'layers-2.5d'},width:d.width,height:d.height,videoType:d.videoType,intentThesis:d.direction,fps:d.fps,scope:[0,d.durationInFrames],audioExpected:d.cues.length>0,inputs:await projectInputs(root)};
+  const m={...template,executionContractVersion:1,version:'working-1',execution:projectExecution(d),width:d.width,height:d.height,videoType:d.videoType,intentThesis:d.direction,fps:d.fps,scope:[0,d.durationInFrames],audioExpected:d.cues.length>0,inputs:await projectInputs(root)};
   if(!m.audioExpected)m.audioReason=d.audioReason??'TODO';
   m.shots=d.shots.map(s=>({...structuredClone(template.shots[0]),id:s.id,from:s.from,to:s.to,state:s.state,subject:s.subject,meaning:'TODO',initial:s.initial,process:s.action,result:s.result,camera:s.camera,kind:'demonstration',changes:[],reading:s.readFrames?[s.to-s.readFrames,s.to]:null,identity:'TODO',intent:{sourceKind:'brief',cue:'TODO',cueRange:[s.from,s.to],before:'TODO',after:'TODO',why:'TODO',visualBridge:'TODO',focusBefore:'TODO',focusAfter:'TODO',revealFrame:s.from},implementation:[]}));
   m.transitions=d.shots.slice(1).map((s,i)=>({id:`TR${i+1}`,fromShot:d.shots[i].id,toShot:s.id,range:[Math.max(d.shots[i].from,s.from-2),Math.min(s.to,s.from+2)],method:d.shots[i].handoff?.method??'TODO',reason:'TODO',identity:'TODO',motion:d.shots[i].handoff?.continuity??'TODO',handoff:{kind:'new_subject',outgoing:'TODO',incoming:'TODO',exit:'TODO',entry:'TODO',meaningBridge:'TODO',cue:'TODO',cueRange:[s.from-1,s.from+1],focusFrame:s.from}}));
@@ -72,6 +85,7 @@ export async function initializeGates(root){
   }
   applyDesignedDecisions(m,d);
   await writeFile(join(root,'production-gates.json'),JSON.stringify(m,null,2)+'\n',{flag:'wx'});
+  await refreshActive(root,d);
   return {status:'unverified',manifest:'production-gates.json',note:'Complete design details and actual reviews; no approval was generated.'};
 }
 function verifyRecord(root,stage){
@@ -85,10 +99,11 @@ export async function checkGates(root,stage){
   const m=await load(root,'production-gates.json'),d=await load(root,'design.json');
   const result=verifyRecord(root,stage);result.errors??=[];
   const fail=(code,message)=>result.errors.push({code,path:'project',message});
+  if(JSON.stringify(m.requirementContract)!==JSON.stringify(d.requirementContract??null))fail('project_requirements','Requirements differ from the executed design; refresh and re-review.');
   for(const message of validateExecutionBindings(d))fail('execution_binding',message);
   if(!Array.isArray(d.transitions)||d.transitions.length!==Math.max(0,d.shots.length-1))fail('execution_binding','Bind every TR camera in design.json, including legacy imported projects, before G1.');
   for(const [i,s] of d.shots.entries())if(JSON.stringify(select(s,['motionBinding','cameraBinding']))!==JSON.stringify(select(m.shots?.[i]??{},['motionBinding','cameraBinding'])))fail('project_decisions',`Shot ${s.id} execution bindings differ from design.json.`);
-  if(JSON.stringify(m.execution)!==JSON.stringify(d.execution??{renderer:'layers-2.5d'})||m.width!==d.width||m.height!==d.height)fail('project_execution','Renderer and measurement dimensions must match design.json.');
+  if(JSON.stringify(m.execution)!==JSON.stringify(projectExecution(d))||m.width!==d.width||m.height!==d.height)fail('project_execution','Renderer and measurement dimensions must match design.json.');
   if(await readFile(join(root,'design-table.md'),'utf8')!==designTable(d,await readFile(join(root,'script.md'),'utf8')))fail('design_view_drift','design-table.md is a generated view. Edit design.json and refresh; preserve any prose edits before regenerating.');
   for(const message of validateStaging(d,await load(root,'assets.json')))fail('ab_staging',message);
   const inputs=await projectInputs(root);
@@ -124,7 +139,7 @@ export async function runGate(root,action){
   if(action==='register-execution'){
     const m=await load(root,'production-gates.json');
     if(m.execution?.renderer!=='custom'||m.media?.length!==1)throw Error('Register the current custom draft/final media first.');
-    const item=m.media[0],path=item.role==='final'?'output/final-execution.json':'output/draft-execution.json',doc=await load(root,path);
+    const item=m.media[0],path=item.role==='final'?'output/final-execution.json':'qa/pipeline-review/draft-execution.json',doc=await load(root,path);
     const current=verifyRecord(root,'design');
     if(doc.binding!==current.executionBinding||doc.mediaSha256!==item.sha256||await hashFile(join(root,item.path))!==item.sha256)throw Error('Measurement binding/video changed; collect evidence for the current encode.');
     const designReviews=m.specialistGates?.design?.reviews,overview=m.filmDesignReview,technical=m.technicalReview;
@@ -142,7 +157,7 @@ export async function runGate(root,action){
   if(action==='refresh'){
     const m=await load(root,'production-gates.json'),d=await load(root,'design.json');
     await refreshDesignView(root);
-    Object.assign(m,{execution:d.execution??{renderer:'layers-2.5d'},width:d.width,height:d.height});
+    Object.assign(m,{execution:projectExecution(d),width:d.width,height:d.height,requirementContract:d.requirementContract??null});
     if(d.shots.every(s=>s.intent)&&d.transitions&&d.gatePlans){
       m.shots=d.shots.map(s=>({...shotCore(s),implementation:[]}));
       Object.assign(m,{intentThesis:d.direction,fps:d.fps,videoType:d.videoType,scope:[0,d.durationInFrames],audioExpected:d.cues.length>0});
@@ -151,11 +166,12 @@ export async function runGate(root,action){
     }
     m.inputs=await projectInputs(root);m.media=[];clearReviews(m);
     await save(root,'production-gates.json',m);
+    await refreshActive(root,d);
     await save(root,'delivery-status.json',{status:'unverified',reason:'Inputs refreshed; register new media and review it.'});
     return {status:'unverified',note:'Input hashes refreshed; media and reviews invalidated. Structured design decisions resynced from design.json; legacy manual records need manual scope/shot maintenance.'};
   }
   if(action==='register-draft'||action==='register-final'){
-    const final=action==='register-final',qaPath=final?'output/qa.json':'output/draft-qa.json',file=final?'output/final.mp4':'output/draft.mp4';
+    const final=action==='register-final',qaPath=final?'output/qa.json':'qa/pipeline-review/draft-qa.json',file=final?'output/final.mp4':'qa/pipeline-review/draft.mp4';
     const qa=await load(root,qaPath),d=await load(root,'design.json'),m=await load(root,'production-gates.json');
     if(!qa.technicalPassed||qa.sha256!==await hashFile(join(root,file))||JSON.stringify(qa.inputs)!==JSON.stringify(await projectInputs(root)))throw Error('Render or source has changed; render a current version first.');
     const role=final?'final':'draft';
@@ -175,6 +191,10 @@ export async function runGate(root,action){
     return {status:'review_pending',binding,media:role,note:'Only technical review populated. Complete actual shot, transition, asset, listening and sequence reviews.'};
   }
   const result=await checkGates(root,action);
+  if(action==='delivery'&&result.eligible){
+    try{await requireEntry(root,'delivery','output/final.mp4','output/final.mp4');}
+    catch(error){result.eligible=false;result.errors.push({code:'entry_preflight',path:'project',message:error.message});}
+  }
   if(action==='delivery')await save(root,'delivery-status.json',{status:result.eligible?'evidence_complete':'blocked',...result,note:'Reviewer declarations validated; user approval remains separate. Re-run after any change.'});
   return result;
 }
