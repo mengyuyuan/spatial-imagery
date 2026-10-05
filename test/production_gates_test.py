@@ -24,7 +24,8 @@ class ProductionGateTests(unittest.TestCase):
             return {"path": name, "sha256": digest_file(path)}
 
         self.data = {
-            "schemaVersion": 4, "videoType": "talking-head", "version": "synthetic-only", "scope": [0, 180], "fps": 30,
+            "schemaVersion": 4, "executionContractVersion": 1, "videoType": "talking-head", "version": "synthetic-only", "scope": [0, 180], "fps": 30,
+            "execution": {"renderer": "layers-2.5d"}, "width": 640, "height": 360,
             "intentThesis": "Unconnected components gain a shared function through assembly",
             "baselines": [{"id": "synthetic-reference", "role": "primary", "range": [0, 180], "frames": 180, "fps": 30,
                            "mechanism": "A guiding part takes a new functional role", "adaptation": "Use joining components for this assembly brief",
@@ -81,6 +82,11 @@ class ProductionGateTests(unittest.TestCase):
                     review["comparison"] = {"before": ref(name + "-before.fixture"), "after": ref(name + "-after.fixture"), "alignment": "Same-frame/time synthetic comparison"}
                 gate["reviews"].append(review)
             self.data["specialistGates"][name] = gate
+        for row in self.data['shots'] + self.data['transitions']:
+            row['implementation'] = ['source.txt:1']
+            row['cameraBinding'] = {'mode': 'animated', 'subject': 'EL01', 'channels': ['camera.x'], 'reason': 'Synthetic measured observation change'}
+            if row in self.data['shots']:
+                row['motionBinding'] = {'mode': 'animated', 'subject': 'EL01', 'channels': ['layers.EL01.x'], 'reason': 'Synthetic measured part movement'}
         self.sign()
 
     def review(self, extent, method, frames=False):
@@ -173,6 +179,91 @@ class ProductionGateTests(unittest.TestCase):
     def test_complete_record_contract(self):
         for stage in ("design", "full-render", "delivery"):
             self.assertEqual(self.codes(stage), set())
+
+    def test_implementation_must_be_an_existing_bound_source_line(self):
+        for location in ('missing.tsx:999', 'source.txt:999', 'reference.fixture:1', 'source.txt'):
+            self.data['transitions'][0]['implementation'] = [location]
+            self.assertIn('implementation_location', self.codes())
+
+    def custom_measurements(self):
+        self.data['execution'] = {'renderer': 'custom'}
+        self.sign()
+        doc = {'method': 'renderer-mask-projection', 'binding': validate(self.data, self.root, 'design')['executionBinding'],
+               'mediaSha256': self.data['media'][0]['sha256'], 'width': 640, 'height': 360,
+               'producer': 'source.txt:1', 'targets': {}}
+        # Contract-only bytes and numbers, never a real renderer or viewing approval.
+        capture = self.root / 'capture.fixture'
+        capture.write_text('Synthetic capture identity', encoding='utf8')
+        for row in self.data['shots'] + self.data['transitions']:
+            start, end = row.get('range', [row.get('from'), row.get('to')])
+            values = [c for k in ('motionBinding', 'cameraBinding') for c in row.get(k, {}).get('channels', [])]
+            frames = [{'frame': f, 'values': {c: f for c in values}} for f in range(start, end)]
+            if row.get('state') in ('A', 'B'):
+                for frame in frames:
+                    frame['staging'] = {'protectedOverlap': {'EL01': 0}, 'presenterArea': 1000,
+                        'contentArea': 500 if row['state'] == 'A' else 2000, 'backgroundCoverage': 1,
+                        'backgroundIdentities': [('a' if row['state'] == 'A' else 'b')*64]}
+            doc['targets'][row['id']] = {'frames': frames, 'captures': [{'frame': f, 'path': capture.name, 'sha256': digest_file(capture)} for f in sorted({start, (start+end-1)//2, end-1})]}
+        self.save_measurements(doc)
+        return doc
+
+    def save_measurements(self, doc):
+        file = self.root / 'execution.json'
+        file.write_text(json.dumps(doc), encoding='utf8')
+        self.data['executionEvidence'] = [{'media': 'final', 'evidence': {'path': file.name, 'sha256': digest_file(file)}}]
+        self.sign()
+
+    def test_measurement_replacement_invalidates_existing_playback_reviews(self):
+        doc = self.custom_measurements()
+        self.assertEqual(self.codes(), set())
+        doc['targets']['SH1']['frames'][10]['values']['camera.x'] += .5
+        file = self.root / 'execution.json'; file.write_text(json.dumps(doc), encoding='utf8')
+        self.data['executionEvidence'][0]['evidence']['sha256'] = digest_file(file)
+        self.assertIn('stale_review', self.codes())
+
+    def test_custom_draft_planning_does_not_approve_an_unmeasured_render(self):
+        self.data['execution'] = {'renderer': 'custom'}
+        self.sign()
+        self.assertEqual(self.codes('design'), set())
+        self.assertIn('execution_evidence', self.codes('full-render'))
+        self.assertIn('execution_evidence', self.codes())
+        self.custom_measurements()
+        self.assertEqual(self.codes(), set())
+
+    def test_custom_evidence_checks_every_frame_channel_capture_and_binding(self):
+        original = self.custom_measurements()
+        for code, change in (
+            ('execution_frame_coverage', lambda d: d['targets']['SH1']['frames'].pop(30)),
+            ('execution_channels', lambda d: d['targets']['SH1']['frames'][30]['values'].pop('camera.x')),
+            ('execution_motion', lambda d: [f['values'].update({'camera.x': 1}) for f in d['targets']['SH1']['frames']]),
+            ('execution_captures', lambda d: d['targets']['TR1']['captures'].pop()),
+            ('execution_evidence_binding', lambda d: d.update(binding='stale')),
+            ('implementation_location', lambda d: d.update(producer='missing.tsx:1')),
+        ):
+            with self.subTest(code=code):
+                doc = copy.deepcopy(original); change(doc); self.save_measurements(doc)
+                self.assertIn(code, self.codes())
+        self.save_measurements(original)
+        (self.root / 'capture.fixture').write_text('Edited capture', encoding='utf8')
+        self.assertIn('stale_file', self.codes())
+
+    def test_custom_background_occlusion_and_dominance_need_actual_measurements(self):
+        self.add_ab()
+        original = self.custom_measurements()
+        self.assertEqual(self.codes(), set())
+        doc = copy.deepcopy(original);doc['targets']['SH2']['frames'][0]['staging']['protectedOverlap']['EL01'] = .01
+        self.save_measurements(doc);self.assertIn('execution_occlusion', self.codes())
+        doc = copy.deepcopy(original)
+        for frame in doc['targets']['SH2']['frames']:
+            frame['staging']['backgroundIdentities'] = ['a'*64]
+        self.save_measurements(doc);self.assertIn('execution_background', self.codes())
+        doc = copy.deepcopy(original);doc['targets']['SH2']['frames'][-1]['staging']['contentArea'] = .00001
+        self.save_measurements(doc);self.assertIn('execution_staging', self.codes())
+
+    def test_custom_malformed_artifact_identity_fails_without_crashing(self):
+        self.custom_measurements()
+        self.data['executionEvidence'][0]['media'] = []
+        self.assertIn('execution_evidence', self.codes())
 
     def test_technical_pass_cannot_replace_missing_midfilm_motion(self):
         self.data["shots"][1]["review"]["status"] = "unverified"

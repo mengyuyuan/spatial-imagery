@@ -26,9 +26,9 @@ try{
   const d=JSON.parse(await readFile(join(pkg,'templates/demo/design.json'),'utf8'));d.cues=[];for(const s of d.shots)s.assets=[];
   await writeFile(join(dir,'design.json'),JSON.stringify(withContract(d)));
   console.log(run(process.execPath,[join(pkg,'dist/cli.js'),'make',join(pkg,'templates/demo/script.md'),'--design','design.json','--config',join(pkg,'templates/demo/config.json'),'--out','editable']));
-  for(const f of ['gate.mjs','verify_production_gates.py','production-gates.json','package-lock.json','PRODUCTION-GATES.md','design-instructions.md','planner-context.json','src/sdk/design-contract.js','src/sdk/staging.js'])assert((await readFile(join(dir,'editable',f))).length>0);
+  for(const f of ['gate.mjs','verify_production_gates.py','production-gates.json','package-lock.json','PRODUCTION-GATES.md','design-instructions.md','planner-context.json','src/sdk/design-contract.js','src/sdk/staging.js','src/sdk/execution.js','src/sdk/design-table.js','verify_execution_evidence.py','EXECUTION-EVIDENCE.md'])assert((await readFile(join(dir,'editable',f))).length>0);
   const context=JSON.parse(await readFile(join(dir,'editable/planner-context.json'),'utf8'));
-  assert.equal(context.standard,'3.24.0');assert.equal(context.source,'imported');assert.equal(context.sources.length,5);
+  assert.equal(context.standard,'3.26.0');assert.equal(context.source,'imported');assert.equal(context.sources.length,6);
   const blocked=spawnSync(process.execPath,[join(dir,'editable/render.mjs')],{encoding:'utf8'});assert.notEqual(blocked.status,0);assert.match(blocked.stderr,/gate blocked/);
   const m=JSON.parse(await readFile(join(dir,'editable/production-gates.json'),'utf8'));assert.equal(m.shots[0].review.status,'unverified');
   assert.deepEqual(m.shots[0].intent,withContract(d).shots[0].intent);

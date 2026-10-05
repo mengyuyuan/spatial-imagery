@@ -1,5 +1,5 @@
 // Portable project evidence runner. Reviews remain observations supplied by a reviewer.
-import {readFile,writeFile,readdir,stat} from 'node:fs/promises';
+import {readFile,writeFile,readdir,stat,mkdir,copyFile} from 'node:fs/promises';
 import {createReadStream} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {join,dirname,resolve} from 'node:path';
@@ -7,15 +7,25 @@ import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {pythonCommand} from './src/sdk/environment.js';
 import {validateStaging} from './src/sdk/staging.js';
+import {validateExecutionBindings} from './src/sdk/execution.js';
+import {designTable} from './src/sdk/design-table.js';
 
 const home=dirname(fileURLToPath(import.meta.url));
 const load=async(root,name)=>JSON.parse(await readFile(join(root,name),'utf8'));
 const save=async(root,name,data)=>writeFile(join(root,name),JSON.stringify(data,null,2)+'\n');
 export async function hashFile(file){const h=createHash('sha256');for await(const b of createReadStream(file))h.update(b);return h.digest('hex');}
+async function refreshDesignView(root){
+  const expected=designTable(await load(root,'design.json'),await readFile(join(root,'script.md'),'utf8'));
+  const path=join(root,'design-table.md');
+  try{if(await readFile(path,'utf8')!==expected){await mkdir(join(root,'design-history'),{recursive:true});await copyFile(path,join(root,'design-history',`${await hashFile(path)}.md`));}}catch(e){if(e.code!=='ENOENT')throw e;}
+  await writeFile(path,expected);
+}
 export async function projectInputs(root){
   const inputs=[];
   async function add(role,path){inputs.push({role,path,sha256:await hashFile(join(root,path))});}
   for(const [role,path] of [['design','design.json'],['timeline','design.json'],['sound','design.json'],['assets','assets.json'],['source','script.md'],['source','policy.json'],['source','package.json'],['source','render.mjs'],['source','mix.mjs'],['source','gate.mjs'],['source','verify_production_gates.py']])await add(role,path);
+  await add('design','design-table.md');
+  await add('source','verify_execution_evidence.py');
   for(const path of ['package-lock.json','planner-context.json','design-instructions.md'])try{await stat(join(root,path));await add('source',path);}catch(e){if(e.code!=='ENOENT')throw e;}
   async function walk(folder){
     for(const e of (await readdir(join(root,folder),{withFileTypes:true})).sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0)){
@@ -29,15 +39,16 @@ export async function projectInputs(root){
   return inputs.sort((a,b)=>{const x=a.role+':'+a.path,y=b.role+':'+b.path;return x<y?-1:x>y?1:0;});
 }
 function clearReviews(m){
+  m.executionEvidence=[];
   for(const row of [...m.shots,...m.transitions])row.review={status:'unverified'};
   for(const key of ['assetsReview','soundReview','technicalReview','sequenceReview'])m[key]={status:'unverified'};
   m.filmDesignReview={status:'unverified'};
   for(const gate of Object.values(m.specialistGates??{}))gate.reviews=[];
 }
-const shotDecisionKeys=['meaning','identity','kind','changes','reading','intent','holdReason','noReadingReason','staging'];
+const shotDecisionKeys=['meaning','identity','kind','changes','reading','intent','holdReason','noReadingReason','staging','motionBinding','cameraBinding'];
 const shotCore=s=>({id:s.id,from:s.from,to:s.to,state:s.state,subject:s.subject,initial:s.initial,process:s.action,result:s.result,camera:s.camera});
 const shotEvidenceKeys=['id','from','to','state','subject','initial','process','result','camera',...shotDecisionKeys];
-const transitionDecisionKeys=['id','fromShot','toShot','range','method','reason','identity','motion','handoff','takeover'];
+const transitionDecisionKeys=['id','fromShot','toShot','range','method','reason','identity','motion','handoff','takeover','cameraBinding'];
 const select=(value,keys)=>Object.fromEntries(keys.filter(k=>value[k]!==undefined).map(k=>[k,structuredClone(value[k])]));
 function applyDesignedDecisions(m,d){
   for(const [i,s] of d.shots.entries())Object.assign(m.shots[i],select(s,shotDecisionKeys));
@@ -47,7 +58,8 @@ function applyDesignedDecisions(m,d){
 }
 export async function initializeGates(root){
   const d=await load(root,'design.json'),template=await load(root,'production-gates-template.json');
-  const m={...template,version:'working-1',videoType:d.videoType,intentThesis:d.direction,fps:d.fps,scope:[0,d.durationInFrames],audioExpected:d.cues.length>0,inputs:await projectInputs(root)};
+  await refreshDesignView(root);
+  const m={...template,executionContractVersion:1,version:'working-1',execution:d.execution??{renderer:'layers-2.5d'},width:d.width,height:d.height,videoType:d.videoType,intentThesis:d.direction,fps:d.fps,scope:[0,d.durationInFrames],audioExpected:d.cues.length>0,inputs:await projectInputs(root)};
   if(!m.audioExpected)m.audioReason=d.audioReason??'TODO';
   m.shots=d.shots.map(s=>({...structuredClone(template.shots[0]),id:s.id,from:s.from,to:s.to,state:s.state,subject:s.subject,meaning:'TODO',initial:s.initial,process:s.action,result:s.result,camera:s.camera,kind:'demonstration',changes:[],reading:s.readFrames?[s.to-s.readFrames,s.to]:null,identity:'TODO',intent:{sourceKind:'brief',cue:'TODO',cueRange:[s.from,s.to],before:'TODO',after:'TODO',why:'TODO',visualBridge:'TODO',focusBefore:'TODO',focusAfter:'TODO',revealFrame:s.from},implementation:[]}));
   m.transitions=d.shots.slice(1).map((s,i)=>({id:`TR${i+1}`,fromShot:d.shots[i].id,toShot:s.id,range:[Math.max(d.shots[i].from,s.from-2),Math.min(s.to,s.from+2)],method:d.shots[i].handoff?.method??'TODO',reason:'TODO',identity:'TODO',motion:d.shots[i].handoff?.continuity??'TODO',handoff:{kind:'new_subject',outgoing:'TODO',incoming:'TODO',exit:'TODO',entry:'TODO',meaningBridge:'TODO',cue:'TODO',cueRange:[s.from-1,s.from+1],focusFrame:s.from}}));
@@ -73,6 +85,11 @@ export async function checkGates(root,stage){
   const m=await load(root,'production-gates.json'),d=await load(root,'design.json');
   const result=verifyRecord(root,stage);result.errors??=[];
   const fail=(code,message)=>result.errors.push({code,path:'project',message});
+  for(const message of validateExecutionBindings(d))fail('execution_binding',message);
+  if(!Array.isArray(d.transitions)||d.transitions.length!==Math.max(0,d.shots.length-1))fail('execution_binding','Bind every TR camera in design.json, including legacy imported projects, before G1.');
+  for(const [i,s] of d.shots.entries())if(JSON.stringify(select(s,['motionBinding','cameraBinding']))!==JSON.stringify(select(m.shots?.[i]??{},['motionBinding','cameraBinding'])))fail('project_decisions',`Shot ${s.id} execution bindings differ from design.json.`);
+  if(JSON.stringify(m.execution)!==JSON.stringify(d.execution??{renderer:'layers-2.5d'})||m.width!==d.width||m.height!==d.height)fail('project_execution','Renderer and measurement dimensions must match design.json.');
+  if(await readFile(join(root,'design-table.md'),'utf8')!==designTable(d,await readFile(join(root,'script.md'),'utf8')))fail('design_view_drift','design-table.md is a generated view. Edit design.json and refresh; preserve any prose edits before regenerating.');
   for(const message of validateStaging(d,await load(root,'assets.json')))fail('ab_staging',message);
   const inputs=await projectInputs(root);
   const key=x=>`${x.role}:${x.path}:${x.sha256}`;
@@ -104,8 +121,28 @@ export async function requireGate(root,stage){
 }
 export async function runGate(root,action){
   if(action==='init')return initializeGates(root);
+  if(action==='register-execution'){
+    const m=await load(root,'production-gates.json');
+    if(m.execution?.renderer!=='custom'||m.media?.length!==1)throw Error('Register the current custom draft/final media first.');
+    const item=m.media[0],path=item.role==='final'?'output/final-execution.json':'output/draft-execution.json',doc=await load(root,path);
+    const current=verifyRecord(root,'design');
+    if(doc.binding!==current.executionBinding||doc.mediaSha256!==item.sha256||await hashFile(join(root,item.path))!==item.sha256)throw Error('Measurement binding/video changed; collect evidence for the current encode.');
+    const designReviews=m.specialistGates?.design?.reviews,overview=m.filmDesignReview,technical=m.technicalReview;
+    const decisions=Object.fromEntries(Object.entries(m.specialistGates??{}).filter(([,g])=>g.applicable===false).map(([k,g])=>[k,g.reviews]));
+    clearReviews(m);m.filmDesignReview=overview;m.technicalReview=technical;
+    if(m.specialistGates?.design)m.specialistGates.design.reviews=designReviews??[];
+    for(const [k,reviews] of Object.entries(decisions))m.specialistGates[k].reviews=reviews;
+    m.executionEvidence=[{media:item.id,evidence:{path,sha256:await hashFile(join(root,path))}}];
+    await save(root,'production-gates.json',m);
+    const binding=verifyRecord(root,'design').binding;
+    if(technical?.status==='passed'&&technical.binding===current.binding){m.technicalReview={...technical,binding};await save(root,'production-gates.json',m);}
+    await save(root,'delivery-status.json',{status:'unverified',reason:'Measurements attached; playback and listening reviews must be completed.'});
+    return {status:'review_pending',binding,note:'Measurement artifact registered, never approved. Run gates and complete the actual reviews.'};
+  }
   if(action==='refresh'){
     const m=await load(root,'production-gates.json'),d=await load(root,'design.json');
+    await refreshDesignView(root);
+    Object.assign(m,{execution:d.execution??{renderer:'layers-2.5d'},width:d.width,height:d.height});
     if(d.shots.every(s=>s.intent)&&d.transitions&&d.gatePlans){
       m.shots=d.shots.map(s=>({...shotCore(s),implementation:[]}));
       Object.assign(m,{intentThesis:d.direction,fps:d.fps,videoType:d.videoType,scope:[0,d.durationInFrames],audioExpected:d.cues.length>0});

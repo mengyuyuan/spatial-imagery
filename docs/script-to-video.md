@@ -22,7 +22,7 @@ Every nonblank content line is assigned a stable line ID. Designs must cover all
 
 ## Design contract and execution boundary
 
-The model's system context is assembled from the packaged planner, design principles, design synthesis and production SOP. `design-instructions.md` saves that context; `planner-context.json` records standard 3.24, individual source hashes and the combined hash. This makes the actual method inspectable without requiring private skill files. Imported designs record `source: imported`; this is not a claim that a model used those instructions.
+The model's system context is assembled from the packaged planner, design principles, design synthesis and production SOP. `design-instructions.md` saves that context; `planner-context.json` records standard 3.26, individual source hashes and the combined hash. This makes the actual method inspectable without requiring private skill files. Imported designs record `source: imported`; this is not a claim that a model used those instructions.
 
 Model-authored `FilmDesign` must supply `designRationale` (basis, alternatives, choice, perception, risk), `execution` (renderer, reason, requirements), shot meaning/identity/kind/changes/intent/reading, one structured `transitions` entry per adjacent pair, and all eight `gatePlans`. See the shipped [planner contract](../templates/production/planner.md) and exported types. Focus IDs must reference layers active at the relevant shot boundaries and connect across handoffs. Motion, camera and sound plans cannot be disabled. Silence needs an explicit `audioReason`. Design decisions are retained in `production-gates.json`; the runner never accepts model-generated approvals. Legacy `--design` imports remain usable but require manual completion of missing gate decisions.
 
@@ -34,7 +34,7 @@ The optional `search: {"provider":"pexels","apiKeyEnv":"PEXELS_API_KEY","perQuer
 
 Project policy is explicit: `music: allowed|off`, `narration: off|provided`, `footage: required|optional`. Music is no longer globally prohibited. A provided narration requires a real audio cue. Default footage policy requires acquired video; an explicitly procedural-only project may choose optional. Canvas, duration, palette and motion are project decisions, not fixed to the launch film.
 
-The generated renderer supports text, rectangles, ellipses, SVG paths, images and video in a 2D/CSS 2.5D scene graph with global-frame channels and a camera. It is not a full 3D geometry/lighting engine. Edit `src/index.tsx` to add bespoke Three.js scenes or another renderer. Audio uses acquired recordings, sample-rate motion envelopes, entry/tail fades, source trims, equal-power movement panning and smooth narration ducking. Stereo music/narration are preserved. Whole-film two-pass normalization defaults to -16 LUFS and a -1.5 dBTP ceiling, configurable through design.mix.lufs / truePeakDb. The current offline audio bus has a 512 MiB memory budget; longer films need segment rendering, never silent truncation.
+The generated renderer supports text, rectangles, ellipses, SVG paths, images and video in a 2D/CSS 2.5D scene graph with global-frame channels and a camera. It is not a full 3D geometry/lighting engine. Edit `src/index.tsx` to add bespoke Three.js scenes or another renderer. Audio uses acquired recordings, sample-rate motion envelopes, entry/tail fades, source trims, equal-power movement panning and optional smooth narration ducking. Stereo music/narration are preserved. The default preserves levels and disables automatic ducking. Opt into two-pass normalization with design.mix.normalization=loudness and explicit lufs/truePeakDb targets; configure ducking.amount/attack/release explicitly when needed. The current offline audio bus has a 512 MiB memory budget; longer films need segment rendering, never silent truncation.
 
 `--install` runs npm ci with the bundled renderer lockfile; `--render --draft` produces diagnostic media; `--render` alone requires production evidence. Omitting those flags leaves an editable project. Existing output directories are never overwritten by `make`.
 
@@ -50,6 +50,9 @@ Still external: speech transcription/editing, person matting/relighting, voice g
 
 Protocol references: [Chat Completions](https://developers.openai.com/api/reference/resources/chat), [Pexels API](https://www.pexels.com/api/documentation/), [Remotion rendering](https://www.remotion.dev/docs/renderer/render-media).
 
-## 3.24: A/B executable contract and migration
+## 3.26: A/B executable contract and migration
 
 See [A/B executable contract and migration](presenter-staging.md). A/B requires shot staging roles, protected information, landing windows and transition takeover records. A/B must use distinct background scenes with an authored transition; the same backdrop is rejected even when content scales up. Every transition frame must keep required information clear. General/full films remain outside A/B.
+
+
+Current [execution/evidence contract 3.26](execution-evidence.md) is mandatory: canonical JSON/read-only table, measured channel bindings, source locations, custom renderer evidence, A/B across full inserts and explicit audio policy. It carries forward source-quality requirements from 3.25.

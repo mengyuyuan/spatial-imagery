@@ -7,6 +7,7 @@ import {npmEntry} from './environment.js';
 import type {VideoType} from './storyboard.js';
 import {sha256File,probeMedia} from './node.js';
 import {normalizeScript,scriptLines,validateFilm,defaultPolicy,type FilmDesign,type ProductionAsset,type ProductionPolicy} from './production.js';
+import {designTable} from './design-table.js';
 
 const packageRoot=fileURLToPath(new URL('../',import.meta.url));
 const templateRoot=join(packageRoot,'templates/production');
@@ -14,10 +15,10 @@ const digest=(text:string)=>createHash('sha256').update(text).digest('hex');
 const json=(v:unknown)=>JSON.stringify(v,null,2)+'\n';
 /** Load the actual shipped method, not a second hand-maintained summary. */
 export async function loadPlannerContext(){
-  const files=['templates/production/planner.md','docs/design-principles.md','docs/design-synthesis.md','docs/pipeline.md','docs/presenter-staging.md'];
+  const files=['templates/production/planner.md','docs/design-principles.md','docs/design-synthesis.md','docs/pipeline.md','docs/presenter-staging.md','docs/execution-evidence.md'];
   const sources=await Promise.all(files.map(async path=>{const content=await readFile(join(packageRoot,path),'utf8');return {path,sha256:digest(content),content};}));
   const prompt=sources.map(s=>`\n<!-- source: ${s.path} -->\n${s.content}`).join('\n')+'\nReturn only the FilmDesign JSON contract specified in planner.md. The appended production method guides decisions; do not invent completed reviews or execute later SOP stages in your response.';
-  return {prompt,provenance:{standard:'3.24.0',systemSha256:digest(prompt),sources:sources.map(({content,...s})=>s)}};
+  return {prompt,provenance:{standard:'3.26.0',systemSha256:digest(prompt),sources:sources.map(({content,...s})=>s)}};
 }
 export interface ModelConfig {baseUrl:string;model:string;apiKeyEnv:string;jsonMode?:boolean;timeoutMs?:number}
 export interface FilmConfig {
@@ -169,15 +170,14 @@ export async function makeFilm(options:MakeOptions):Promise<{project:string;stat
     await writeFile(join(root,'assets.json'),json(acquired));
     await writeFile(join(root,'policy.json'),json(policy));
     await writeFile(join(root,'storyboard.json'),json({...film,assets:acquired.map(a=>({...a,local:`public/${a.local}`}))}));
-    const escape=(s:unknown)=>String(s).replace(/\|/g,'\\|').replace(/\r?\n/g,' ');
-    await writeFile(join(root,'design-table.md'),`# ${film.title}\n\n${film.direction}\n\n| Shot | Frames | Script | Subject / change | Camera | Sound |\n|---|---|---|---|---|---|\n`+film.shots.map(s=>`| ${s.id} | ${s.from}–${s.to} | ${escape(s.lines.map(id=>lines.find(l=>l.id===id)?.text).join(' / '))} | ${escape(`${s.subject}: ${s.initial} → ${s.action} → ${s.result}`)} | ${escape(s.camera)} | ${escape(s.sound)} |`).join('\n')+'\n');
-    const stagingRows=film.shots.filter(s=>s.staging).map(s=>`| ${s.id} / ${s.state} | ${escape(s.staging!.purpose+' / '+s.staging!.framing)} | ${escape(s.staging!.presenterLayers.join(', '))} | ${escape(s.staging!.contentLayers.join(', '))} | ${escape(s.staging!.protectedLayers.join(', '))} | ${s.staging!.landing.join('–')} |`);
-    if(stagingRows.length)await writeFile(join(root,'design-table.md'),(await readFile(join(root,'design-table.md'),'utf8'))+'\n## A/B staging / 主次与避让\n\n| Shot | Purpose / framing | Presenter | Content | Protected information | Landing |\n|---|---|---|---|---|---|\n'+stagingRows.join('\n')+'\n\n'+(film.transitions??[]).filter(t=>t.takeover).map(t=>`- ${t.id}: ${escape(JSON.stringify(t.takeover))}`).join('\n')+'\n');
     await mark('assets','passed',{count:acquired.length,hashes:acquired.map(a=>({id:a.id,sha256:a.sha256})),visualReview:'Inspect acquired video content; decoding alone does not establish suitability.'});
     await mkdir(join(root,'src/sdk'),{recursive:true});
-    for(const name of ['index.tsx','render.mjs','mix.mjs','package.json','package-lock.json','README.md','gate.mjs','verify_production_gates.py','production-gates-template.json','PRODUCTION-GATES.md','SPECIALIST-GATES.md'])await copyFile(join(templateRoot,name),join(root,name==='index.tsx'?'src/index.tsx':name));
-    for(const name of ['motion.js','audio.js','production.js','design-contract.js','staging.js','storyboard.js','environment.js'])await copyFile(join(packageRoot,'dist',name),join(root,'src/sdk',name));
-    await copyFile(join(packageRoot,'docs/presenter-staging.md'),join(root,'PRESENTER-STAGING.md'));
+    await writeFile(join(root,'design-table.md'),designTable(film,script));
+    for(const name of ['index.tsx','render.mjs','mix.mjs','package.json','package-lock.json','README.md','gate.mjs','verify_production_gates.py','verify_execution_evidence.py','production-gates-template.json','PRODUCTION-GATES.md','SPECIALIST-GATES.md'])await copyFile(join(templateRoot,name),join(root,name==='index.tsx'?'src/index.tsx':name));
+    for(const name of ['motion.js','audio.js','production.js','design-contract.js','staging.js','execution.js','design-table.js','storyboard.js','environment.js'])await copyFile(join(packageRoot,'dist',name),join(root,'src/sdk',name));
+    await writeFile(join(root,'PRESENTER-STAGING.md'),(await readFile(join(packageRoot,'docs/presenter-staging.md'),'utf8')).replaceAll('(execution-evidence.md)','(EXECUTION-EVIDENCE.md)'));
+    await copyFile(join(packageRoot,'docs/execution-evidence.md'),join(root,'EXECUTION-EVIDENCE.md'));
+    for(const name of ['execution-evidence.zh-CN.md','recording-quality-and-repair.zh-CN.md'])await writeFile(join(root,name),(await readFile(join(packageRoot,'docs',name),'utf8')).replaceAll('(presenter-staging.md)','(PRESENTER-STAGING.md)'));
     if(film.execution?.renderer==='custom')await writeFile(join(root,'src/index.tsx'),`// SPATIAL_IMAGERY_CUSTOM_IMPLEMENTATION_REQUIRED\n// Implement the required renderer against design.json, keeping Composition id Spatial-Imagery,\n// the same frame timeline, assets, audio and evidence gates. See design-instructions.md.\nthrow new Error('Custom renderer implementation required. The requested 3D/material behavior was not downgraded to CSS layers.');\n`);
     await copyFile(join(packageRoot,'LICENSE'),join(root,'src/sdk/LICENSE'));
     await writeFile(join(root,'.gitignore'),'node_modules/\npublic/assets/\nbuild/\noutput/\n.env*\n');
@@ -198,8 +198,8 @@ export async function installProject(root:string):Promise<void>{
 }
 export async function gateProject(root:string,action='design'):Promise<void>{
   if(action!=='init'){
-    const manifest=JSON.parse(await readFile(join(resolve(root),'production-gates.json'),'utf8')) as {schemaVersion?:number};
-    if(manifest.schemaVersion!==4)throw new Error('Production gate blocked: SDK 0.4 requires a schema-4 project with independent motion/camera/sound gates. Preserve this old project and generate a current version; no automatic approval migration.');
+    const manifest=JSON.parse(await readFile(join(resolve(root),'production-gates.json'),'utf8')) as {schemaVersion?:number;executionContractVersion?:number};
+    if(manifest.schemaVersion!==4||manifest.executionContractVersion!==1)throw new Error('Production gate blocked: SDK 0.5 requires a schema-4 project with execution contract 1 and independent motion/camera/sound gates. Preserve this old project and generate a current version; no automatic approval migration.');
   }
   await run(process.execPath,[join(resolve(root),'gate.mjs'),action],resolve(root));
 }

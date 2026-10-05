@@ -52,7 +52,7 @@ In a separate empty consumer directory:
 
 ```sh
 npm init -y
-npm install /absolute/path/spatial-imagery-0.4.0.tgz
+npm install /absolute/path/spatial-imagery-0.5.0.tgz
 npx --no-install spatial-imagery doctor
 npx --no-install spatial-imagery demo --out first-film --install --render
 ```

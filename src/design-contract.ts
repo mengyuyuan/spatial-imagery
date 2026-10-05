@@ -1,5 +1,6 @@
 import type {Shot} from './storyboard.js';
 import type {Staging,Takeover} from './staging.js';
+import {validateExecutionBindings,type ExecutionBinding} from './execution.js';
 
 export const gateNames=['design','animation','camera','handoff','color','matting','denoise','soundfx'] as const;
 export type GateName=typeof gateNames[number];
@@ -13,11 +14,13 @@ export interface DesignedShot extends Shot {
   kind?:'transformation'|'handoff'|'demonstration'|'hold'; changes?:string[];
   intent?:Intent; reading?:[number,number]|null; holdReason?:string; noReadingReason?:string;
   staging?:Staging;
+  motionBinding?:ExecutionBinding; cameraBinding?:ExecutionBinding;
 }
 export interface DesignedTransition {
   id:string; fromShot:string; toShot:string; range:[number,number];
   method:string; reason:string; identity:string; motion:string;
   takeover?:Takeover;
+  cameraBinding?:ExecutionBinding;
   handoff:{kind:'same_subject'|'new_subject'|'intentional_cut'; outgoing:string; incoming:string;
     exit:string; entry:string; meaningBridge:string; cue:string; cueRange:[number,number]; focusFrame:number; timingReason?:string};
 }
@@ -110,5 +113,6 @@ export function validateDesignContract(value:Record<string,unknown>,required=fal
     if(name==='denoise'&&Array.isArray(value.cues)&&value.cues.length===0&&g.applicable)errors.push(`${p}: silent films require an evidenced denoise N/A decision later`);
     if(!Array.isArray(g.targets)||new Set(g.targets).size!==g.targets.length||g.targets.some(t=>!available.includes(t))||g.applicable&&(!g.targets.length||mandatory&&g.targets.length!==available.length)||g.applicable===false&&g.targets.length)errors.push(`${p}.targets: exact affected SH/TR coverage required`);
   }
+  errors.push(...validateExecutionBindings(value,contract));
   return errors;
 }

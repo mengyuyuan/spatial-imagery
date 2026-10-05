@@ -1,7 +1,8 @@
 import {validatePlan, type Plan, type Asset} from './storyboard.js';
-import {validateCue, type SoundCue} from './audio.js';
+import {validateCue,resolveMixPolicy,type MixPolicy,type SoundCue} from './audio.js';
 import {validateStaging} from './staging.js';
 export {validateStaging,layerBounds,channelValue,type Staging,type Takeover} from './staging.js';
+export {validateExecutionBindings,type ExecutionBinding} from './execution.js';
 import {validateDesignContract,rejectUnknown,type DesignedShot,type DesignedTransition,type GateName,type GatePlan,type DesignRationale,type ExecutionPlan} from './design-contract.js';
 export type {DesignedShot,DesignedTransition,GateName,GatePlan,DesignRationale,ExecutionPlan,Intent} from './design-contract.js';
 
@@ -30,7 +31,7 @@ export interface FilmDesign extends Omit<Plan,'assets'|'shots'> {
   direction:string; shots:DesignedShot[];
   designRationale?:DesignRationale; execution?:ExecutionPlan; transitions?:DesignedTransition[];
   gatePlans?:Record<GateName,GatePlan>; audioReason?:string;
-  mix?:{lufs?:number;truePeakDb?:number};
+  mix?:MixPolicy;
   camera?:{x?:Channel;y?:Channel;zoom?:Channel;rotateZ?:Channel;perspective?:number};
   layers:Layer[]; cues:ProductionCue[];
 }
@@ -69,8 +70,7 @@ export function validateFilm(value:unknown,lines:readonly ScriptLine[],assets:re
   errors.push(...validatePlan({...value,assets}).filter(i=>i.severity==='error').map(i=>`${i.path}: ${i.message}`));
   const frames=Number(value.durationInFrames), fps=Number(value.fps);
   if(value.mix!==undefined){
-    if(!object(value.mix))errors.push('mix: expected object');
-    else for(const [key,min,max] of [['lufs',-36,-8],['truePeakDb',-9,-1]] as const){const n=value.mix[key];if(n!==undefined&&(typeof n!=='number'||!Number.isFinite(n)||n<min||n>max))errors.push(`mix.${key}: expected ${min}..${max}`);}
+    try{resolveMixPolicy(value.mix);}catch(e){errors.push(e instanceof Error?e.message:'Invalid mix policy');}
   }
   const knownLines=new Set(lines.map(l=>l.id)),covered=new Set<string>();
   if(Array.isArray(value.shots))for(const shot of value.shots){

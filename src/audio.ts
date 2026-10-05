@@ -40,3 +40,20 @@ export function gainEnvelope(cue: SoundCue, sampleRate: number, start: number, c
   for (let i=0;i<count;i++) out[i]=sampleCue(cue,start+i/sampleRate).gain;
   return out;
 }
+export interface MixPolicy {
+  normalization?:'preserve'|'loudness'; lufs?:number; truePeakDb?:number;
+  ducking?:{amount:number;attack:number;release:number};
+}
+export function resolveMixPolicy(value:unknown={}) {
+  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('mix: expected a policy object');
+  const p=value as MixPolicy;
+  if(Object.keys(p).some(k=>!['normalization','lufs','truePeakDb','ducking'].includes(k)))throw Error('mix: unsupported field');
+  const normalization=p.normalization??(p.lufs!==undefined||p.truePeakDb!==undefined?'loudness':'preserve');
+  if(!['preserve','loudness'].includes(normalization))throw Error('mix.normalization: choose preserve or loudness');
+  for(const [key,min,max] of [['lufs',-36,-8],['truePeakDb',-9,-1]] as const){const n=p[key];if(n!==undefined&&(!Number.isFinite(n)||n<min||n>max))throw Error(`mix.${key}: expected ${min}..${max}`);}
+  if(normalization==='preserve'&&(p.lufs!==undefined||p.truePeakDb!==undefined))throw Error('mix: preserve cannot specify normalization targets');
+  if(normalization==='loudness'&&(p.lufs===undefined||p.truePeakDb===undefined))throw Error('mix: loudness requires explicit lufs and truePeakDb targets');
+  const ducking=p.ducking??{amount:0,attack:.15,release:.3};
+  if(!ducking||typeof ducking!=='object'||Object.keys(ducking).some(k=>!['amount','attack','release'].includes(k))||!Number.isFinite(ducking.amount)||ducking.amount<0||ducking.amount>1||!Number.isFinite(ducking.attack)||ducking.attack<0||!Number.isFinite(ducking.release)||ducking.release<0)throw Error('mix.ducking: finite amount 0..1 and nonnegative attack/release required');
+  return {normalization,lufs:p.lufs,truePeakDb:p.truePeakDb,ducking};
+}
