@@ -26,9 +26,9 @@ try{
   const d=JSON.parse(await readFile(join(pkg,'templates/demo/design.json'),'utf8'));d.cues=[];for(const s of d.shots)s.assets=[];
   await writeFile(join(dir,'design.json'),JSON.stringify(withContract(d)));
   console.log(run(process.execPath,[join(pkg,'dist/cli.js'),'make',join(pkg,'templates/demo/script.md'),'--design','design.json','--config',join(pkg,'templates/demo/config.json'),'--out','editable']));
-  for(const f of ['gate.mjs','verify_production_gates.py','production-gates.json','package-lock.json','PRODUCTION-GATES.md','design-instructions.md','planner-context.json','src/sdk/design-contract.js','src/sdk/staging.js'])assert((await readFile(join(dir,'editable',f))).length>0);
+  for(const f of ['gate.mjs','verify_production_gates.py','production-gates.json','package-lock.json','PRODUCTION-GATES.md','design-instructions.md','planner-context.json','src/sdk/design-contract.js','src/sdk/staging.js','src/sdk/execution.js','src/sdk/design-table.js','verify_execution_evidence.py','EXECUTION-EVIDENCE.md','pipeline_entry.py','pipeline_entry.cjs','pipeline-active.json','verify_requirements.py','user-brief.json','REQUIREMENTS-AND-ENTRYPOINTS.md'])assert((await readFile(join(dir,'editable',f))).length>0);
   const context=JSON.parse(await readFile(join(dir,'editable/planner-context.json'),'utf8'));
-  assert.equal(context.standard,'3.24.0');assert.equal(context.source,'imported');assert.equal(context.sources.length,5);
+  assert.equal(context.standard,'3.27.0');assert.equal(context.source,'imported');assert.equal(context.sources.length,7);
   const blocked=spawnSync(process.execPath,[join(dir,'editable/render.mjs')],{encoding:'utf8'});assert.notEqual(blocked.status,0);assert.match(blocked.stderr,/gate blocked/);
   const m=JSON.parse(await readFile(join(dir,'editable/production-gates.json'),'utf8'));assert.equal(m.shots[0].review.status,'unverified');
   assert.deepEqual(m.shots[0].intent,withContract(d).shots[0].intent);
@@ -40,11 +40,11 @@ try{
     console.log(run(process.execPath,[join(pkg,'dist/cli.js'),'demo','--out','demo','--install']));
     console.log(run(process.execPath,[npmCli,'run','browser:install'],join(dir,'demo')));
     console.log(run(process.execPath,[npmCli,'run','render:draft'],join(dir,'demo')));
-    const qa=JSON.parse(await readFile(join(dir,'demo/output/draft-qa.json'),'utf8'));
+    const qa=JSON.parse(await readFile(join(dir,'demo/qa/pipeline-review/draft-qa.json'),'utf8'));
     assert.equal(qa.technicalPassed,true);assert.equal(qa.frames,180);assert.equal(qa.fps,30);assert.equal(qa.width,640);assert.equal(qa.height,360);assert.equal(qa.audio.audio,true);assert.equal(qa.review.listening,'unverified');
     console.log(run(process.execPath,[join(pkg,'dist/cli.js'),'gates',join(dir,'demo'),'register-draft']));
     const delivery=spawnSync(process.execPath,[join(pkg,'dist/cli.js'),'gates',join(dir,'demo'),'delivery'],{encoding:'utf8'});assert.notEqual(delivery.status,0);
-    console.log(JSON.stringify({consumer:dir,video:join(dir,'demo/output/draft.mp4'),sha256:qa.sha256,technicalPassed:true,review:qa.review}));
+    console.log(JSON.stringify({consumer:dir,video:join(dir,'demo/qa/pipeline-review/draft.mp4'),sha256:qa.sha256,technicalPassed:true,review:qa.review}));
   }
   passed=true;
 }finally{

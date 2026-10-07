@@ -8,6 +8,8 @@ export interface Staging {
   protectedLayers:string[];
 }
 export interface Takeover {
+  /** Originating A/B shot when full-frame inserts intervene. */
+  fromShot?:string;
   environment:'transformed'|'replaced';
   reason:string; reveal:string; bridge:string; completionFrame:number;
   proofLayers:string[]; environmentProofLayers:string[];
@@ -29,14 +31,15 @@ export function channelValue(c:any,f:number,fallback:number):number {
 export type Bounds={left:number;top:number;right:number;bottom:number};
 const area=(b:Bounds|null)=>b?Math.max(0,b.right-b.left)*Math.max(0,b.bottom-b.top):0;
 const intersect=(a:Bounds,b:Bounds):Bounds=>({left:Math.max(a.left,b.left),top:Math.max(a.top,b.top),right:Math.min(a.right,b.right),bottom:Math.min(a.bottom,b.bottom)});
-// Union area, not an enclosing box: distant tiny objects must not claim the empty gap.
-const coveredArea=(boxes:Bounds[])=>{
-  const xs=[...new Set(boxes.flatMap(b=>[b.left,b.right]))].sort((a,b)=>a-b);let total=0;
+// Occupancy used for clearance stays conservative. Dominance/coverage must instead
+// account for visibility: a transparent rectangle does not own the picture.
+const visibleArea=(boxes:(Bounds&{alpha:number})[])=>{
+  const xs=[...new Set(boxes.flatMap(b=>[b.left,b.right]))].sort((a,b)=>a-b);
+  let total=0;
   for(let i=1;i<xs.length;i++){
-    const x0=xs[i-1]!,x1=xs[i]!,ys=boxes.filter(b=>b.left<x1&&b.right>x0).map(b=>[b.top,b.bottom]).sort((a,b)=>a[0]!-b[0]!);
-    let end=-Infinity,height=0;
-    for(const [top,bottom] of ys){height+=Math.max(0,bottom!-Math.max(top!,end));end=Math.max(end,bottom!);}
-    total+=(x1-x0)*height;
+    const slice=boxes.filter(b=>b.left<xs[i]!&&b.right>xs[i-1]!);
+    const ys=[...new Set(slice.flatMap(b=>[b.top,b.bottom]))].sort((a,b)=>a-b);
+    for(let j=1;j<ys.length;j++)total+=(xs[i]!-xs[i-1]!)*(ys[j]!-ys[j-1]!)*Math.max(0,...slice.filter(b=>b.top<ys[j]!&&b.bottom>ys[j-1]!).map(b=>b.alpha));
   }
   return total;
 };
@@ -107,6 +110,7 @@ export function validateStaging(value:unknown,assets:readonly {id:string;sha256?
   }
   if(errors.length)return errors;
   const boxes=(s:Row,key:string,f:number)=>s[key].map((id:string)=>layerBounds(byId.get(id)!,f,d)).filter((b:Bounds|null):b is Bounds=>!!b);
+  const visible=(ids:string[],f:number)=>visibleArea(ids.flatMap(id=>{const l=byId.get(id)!,b=layerBounds(l,f,d);return b?[{...b,alpha:Math.min(1,channelValue(l.opacity,f,1))}]:[];}));
   const custom=d.execution?.renderer==='custom';
   if(!custom)for(const shot of shots){
     if(!valid.has(shot.id))continue;
@@ -118,18 +122,22 @@ export function validateStaging(value:unknown,assets:readonly {id:string;sha256?
         const covered=s.protectedLayers.find((id:string)=>{const b=layerBounds(byId.get(id)!,f,d);return b&&people.some((a:Bounds)=>area(intersect(a,b))>1e-6);});
         if(covered){fail(p,`presenter overlaps protected information ${covered} at frame ${f}; recompose/crop/move the presenter`);break;}
         if(f>=s.landing[0]&&f<s.landing[1]){
-          const person=coveredArea(people),content=coveredArea(boxes(s,'contentLayers',f));
+          const person=visible(s.presenterLayers,f),content=visible(s.contentLayers,f);
           if(person<=0||shot.state==='B'&&content<=person||shot.state==='A'&&person<=content){fail(p,`A/B primary subject does not own the planned landing at frame ${f}`);break;}
         }
       }
     }catch(e){fail(p,e instanceof Error?e.message:'Cannot evaluate staging geometry');}
   }
   const transitions=Array.isArray(d.transitions)?d.transitions.filter(object):[];
-  for(let i=1;i<shots.length;i++){
-    const a=shots[i-1]!,b=shots[i]!;
-    if(!['A','B'].includes(a.state)||!['A','B'].includes(b.state)||a.state===b.state)continue;
-    const p=`handoff ${a.id}->${b.id}`,tr=transitions.find((t:Row)=>t.fromShot===a.id&&t.toShot===b.id),t=tr?.takeover;
+  let previousAB:Row|undefined;
+  for(let i=0;i<shots.length;i++){
+    const b=shots[i]!;
+    if(!['A','B'].includes(b.state))continue;
+    const a=previousAB;previousAB=b;
+    if(!a||a.state===b.state)continue;
+    const p=`handoff ${a.id}->${b.id}`,tr=transitions.find((t:Row)=>t.toShot===b.id),t=tr?.takeover;
     if(!object(t)){fail(p,'A/B switch requires takeover: environment decision, reveal, bridge and proof layers');continue;}
+    if((tr?.fromShot!==a.id||t.fromShot!==undefined)&&t.fromShot!==a.id)fail(p,'takeover.fromShot must preserve the A/B origin across full-frame inserts');
     for(const k of ['reason','reveal','bridge'])if(!text(t[k]))fail(p,`${k} needs a concrete takeover decision`);
     if(!['transformed','replaced'].includes(t.environment))fail(p,'A/B backgrounds must differ: transform or replace the environment, not retain/reframe the same backdrop');
     if(!Number.isSafeInteger(t.completionFrame)||t.completionFrame<b.from||t.completionFrame>=b.to)fail(p,'completionFrame must locate the takeover in the destination shot');
@@ -142,6 +150,13 @@ export function validateStaging(value:unknown,assets:readonly {id:string;sha256?
     const content=[...a.staging.contentLayers,...b.staging.contentLayers],people=[...a.staging.presenterLayers,...b.staging.presenterLayers];
     if(!ids(t.proofLayers)||!t.proofLayers.length||t.proofLayers.some((id:string)=>!content.includes(id)||people.includes(id))){fail(p,'proofLayers must identify actual non-presenter content');continue;}
     if(!custom)try{
+      // Full-frame inserts cannot hide a presenter crossing protected information.
+      const protectedIds=[...new Set([...a.staging.protectedLayers,...b.staging.protectedLayers])];
+      for(let f=a.to;f<b.from;f++){
+        const presenterBoxes=people.map((id:string)=>layerBounds(byId.get(id)!,f,d)).filter(Boolean) as Bounds[];
+        const blocked=protectedIds.find(id=>{const box=layerBounds(byId.get(id)!,f,d);return box&&presenterBoxes.some(p=>area(intersect(p,box))>1e-6);});
+        if(blocked){fail(p,`presenter overlaps protected information ${blocked} at frame ${f} inside a full-frame insert`);break;}
+      }
       const frame=(s:Row)=>Math.floor((s.landing[0]+s.landing[1]-1)/2);
       const environmentIdentity=(f:number)=>t.environmentProofLayers.flatMap((id:string)=>{
         const l=byId.get(id)!;if(!layerBounds(l,f,d))return [];
@@ -151,8 +166,8 @@ export function validateStaging(value:unknown,assets:readonly {id:string;sha256?
       const beforeEnvironment=environmentIdentity(frame(a.staging)),afterEnvironment=environmentIdentity(frame(b.staging));
       if(beforeEnvironment.some((identity:string)=>afterEnvironment.includes(identity))||!beforeEnvironment.length||!afterEnvironment.length)fail(p,'A/B background is unchanged or retained under an overlay; renaming, recoloring or resizing the same backdrop cannot pass');
       for(const s of [a.staging,b.staging])for(let f=s.landing[0];f<s.landing[1];f++){
-        const background=t.environmentProofLayers.filter((id:string)=>s.environmentLayers.includes(id)).map((id:string)=>layerBounds(byId.get(id)!,f,d)).filter((v:Bounds|null):v is Bounds=>!!v);
-        if(coveredArea(background)<d.width*d.height*.9){fail(p,`background proof must cover the scene (at least 90% of frame) at landing frame ${f}, not just a small overlay`);break;}
+        const background=t.environmentProofLayers.filter((id:string)=>s.environmentLayers.includes(id));
+        if(visible(background,f)<d.width*d.height*.9){fail(p,`background proof must visibly cover the scene (at least 90% of frame) at landing frame ${f}, not a transparent/small overlay`);break;}
       }
       // IDs, declarations, scene names and presenter-only motion cannot satisfy this test.
       const signature=(f:number)=>t.proofLayers.flatMap((id:string)=>{

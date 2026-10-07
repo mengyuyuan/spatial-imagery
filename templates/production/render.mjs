@@ -4,7 +4,7 @@ import {createReadStream} from 'node:fs';
 import {join,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
-import {requireGate,projectInputs} from './gate.mjs';
+import {requireGate,projectInputs,requireEntry} from './gate.mjs';
 import {mix} from './mix.mjs';
 import {normalizeScript,scriptLines,validateFilm} from './src/sdk/production.js';
 const root=dirname(fileURLToPath(import.meta.url));
@@ -12,6 +12,7 @@ if(process.argv.slice(2).some(a=>a!=='--draft'))throw Error('Only --draft is sup
 const draft=process.argv.includes('--draft');
 if(!draft)await requireGate(root,'full-render');
 if((await readFile(join(root,'src/index.tsx'),'utf8')).includes('SPATIAL_IMAGERY_CUSTOM_IMPLEMENTATION_REQUIRED'))throw Error('Custom renderer implementation required; complete src/index.tsx before rendering. No 3D-to-2.5D fallback was applied.');
+await requireEntry(root,draft?'draft':'full-render',draft?'qa/pipeline-review/draft.mp4':'output/final.mp4');
 const {bundle}=await import('@remotion/bundler');
 const {selectComposition,renderMedia,renderStill}=await import('@remotion/renderer');
 const load=async f=>JSON.parse(await readFile(join(root,f),'utf8'));
@@ -21,8 +22,8 @@ const script=await readFile(join(root,'script.md'),'utf8'),policy=await load('po
 const scriptHash=createHash('sha256').update(normalizeScript(script)).digest('hex');
 const invalid=validateFilm(design,scriptLines(script),assets,scriptHash,policy);
 if(invalid.length)throw Error(invalid.join('\n'));
-await mkdir(join(root,'build/temp'),{recursive:true});await mkdir(join(root,'output'),{recursive:true});
-const output=join(root,draft?'output/draft.mp4':'output/final.mp4');
+await mkdir(join(root,'build/temp'),{recursive:true});await mkdir(join(root,'output'),{recursive:true});await mkdir(join(root,'qa/pipeline-review'),{recursive:true});
+const output=join(root,draft?'qa/pipeline-review/draft.mp4':'output/final.mp4');
 try{await stat(output);throw Error('Output already exists. Preserve/rename the previous output and QA or use a new project before rendering another version.');}catch(e){if(e.code!=='ENOENT')throw e;}
 await writeFile(join(root,'delivery-status.json'),JSON.stringify({status:'unverified',reason:'New render started; final review required.'}));
 const inputs=await projectInputs(root);
@@ -32,6 +33,7 @@ const audio=await mix(root,design,assets);
 const serveUrl=await bundle({entryPoint:join(root,'src/index.tsx'),publicDir:join(root,'public'),outDir:join(root,'build/bundle')});
 const options={serveUrl,logLevel:'error',timeoutInMilliseconds:120000,browserExecutable:process.env.REMOTION_BROWSER_EXECUTABLE,chromiumOptions:{gl:'angle'}};
 const composition=await selectComposition({...options,id:'Spatial-Imagery'});
+if(composition.width!==design.width||composition.height!==design.height||composition.fps!==design.fps||composition.durationInFrames!==design.durationInFrames)throw Error('Actual composition differs from the active design format/timeline');
 const stillFrames=[...new Set(design.shots.flatMap(s=>[s.from,Math.floor((s.from+s.to)/2),s.to-1]))];
 const stillDir=join(root,draft?'output/draft-frames':'output/final-frames');await mkdir(stillDir,{recursive:true});
 for(const frame of stillFrames)await renderStill({...options,composition,frame,output:join(stillDir,`frame-${frame}.png`)});
@@ -46,6 +48,6 @@ if(audio.audio&&(!a||Math.abs(Number(a.duration)-duration)>2/design.fps))issues.
 const decode=spawnSync(process.env.FFMPEG_BIN??'ffmpeg',['-v','error','-i',output,'-f','null','-'],{encoding:'utf8'});if(decode.error||decode.status!==0||decode.stderr.trim())issues.push('Full decode failed');
 if(JSON.stringify(inputs)!==JSON.stringify(await projectInputs(root)))issues.push('Project inputs changed during rendering; output needs rerendering');
 const evidence={file:draft?'draft.mp4':'final.mp4',mode:draft?'draft':'production',inputs,fps:design.fps,sha256:await hash(output),scriptSha256:await hash(join(root,'script.md')),designSha256:await hash(join(root,'design.json')),compositionSha256:await hash(join(root,'src/index.tsx')),technicalPassed:!issues.length,issues,frames:design.durationInFrames,seconds:duration,width:design.width,height:design.height,audio,stills:stillFrames,review:{normalSpeed:'unverified',listening:'unverified',aesthetic:'unreviewed'}};
-await writeFile(join(root,draft?'output/draft-qa.json':'output/qa.json'),JSON.stringify(evidence,null,2));
+await writeFile(join(root,draft?'qa/pipeline-review/draft-qa.json':'output/qa.json'),JSON.stringify(evidence,null,2));
 if(issues.length)throw Error(issues.join('; '));
 console.log(JSON.stringify({video:output,technicalPassed:true,review:'Visual and listening review still required'}));

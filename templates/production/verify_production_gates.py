@@ -9,6 +9,8 @@ import json
 import math
 import sys
 from pathlib import Path
+from verify_execution_evidence import execution_contract, custom_evidence
+from verify_requirements import requirement_contract
 
 
 # Independent vetoes: no averaging, overall-score substitution or automatic N/A.
@@ -149,7 +151,9 @@ def validate(data, base, stage):
                 if isinstance(entry, dict) else entry for entry in entries]
 
     binding_payload = {"schemaVersion": data.get("schemaVersion"), "version": data.get("version"), "fps": fps, "scope": scope,
+                       "executionContractVersion": data.get("executionContractVersion"), "execution": data.get("execution"), "width": data.get("width"), "height": data.get("height"),
                        "intentThesis": data.get("intentThesis"), "baselines": baselines, "videoType": data.get("videoType"),
+                       "requirementContract": data.get("requirementContract"),
                        "audioExpected": data.get("audioExpected"), "audioReason": data.get("audioReason"),
                        "inputs": inputs, "media": data.get("media", []), "shots": design_records("shots"),
                        "transitions": design_records("transitions")}
@@ -162,8 +166,14 @@ def validate(data, base, stage):
     design_payload = {k: v for k, v in binding_payload.items() if k != "media"}
     design_binding = hashlib.sha256(json.dumps(design_payload, sort_keys=True, ensure_ascii=False,
                                                separators=(",", ":")).encode("utf-8")).hexdigest()
-    binding = hashlib.sha256(json.dumps(binding_payload, sort_keys=True, ensure_ascii=False,
+    execution_binding = hashlib.sha256(json.dumps(binding_payload, sort_keys=True, ensure_ascii=False,
                                         separators=(",", ":")).encode("utf-8")).hexdigest()
+    # Measurements bind inputs/media; reviews also bind the measurement artifact.
+    # Separate identities avoid a circular JSON-file hash while invalidating edited evidence.
+    if isinstance(data.get('execution'), dict) and data['execution'].get('renderer') == 'custom':
+        binding_payload['executionEvidence'] = data.get('executionEvidence', [])
+    binding = hashlib.sha256(json.dumps(binding_payload, sort_keys=True, ensure_ascii=False,
+                                       separators=(",", ":")).encode("utf-8")).hexdigest()
 
     media = {}
     if stage != "design":
@@ -341,6 +351,12 @@ def validate(data, base, stage):
     if interval(scope) and cursor != scope[1]:
         fail("timeline", "shots", "Last shot must end at scope.to")
     transitions = rows("transitions")
+    ab_origins, last_ab = {}, None
+    for shot in shots:
+        if shot.get('state') in ('A', 'B'):
+            if last_ab and last_ab['state'] != shot['state']:
+                ab_origins[shot.get('id')] = last_ab
+            last_ab = shot
     expected = {(a.get("id"), b.get("id")) for a, b in zip(shots, shots[1:])
                 if isinstance(a.get("id"), str) and isinstance(b.get("id"), str)}
     seen, transition_ids = set(), set()
@@ -383,11 +399,14 @@ def validate(data, base, stage):
             if not isinstance(old_intent, dict) or not isinstance(new_intent, dict) or old != old_intent.get("focusAfter") or new != new_intent.get("focusBefore"):
                 fail("broken_focus_chain", p, "Handoff subjects must match the outgoing/incoming SH attention states")
             cue_timing(handoff, extent, "focusFrame", p + ".handoff")
-        if previous and following and previous.get("state") in ("A", "B") and following.get("state") in ("A", "B") and previous["state"] != following["state"]:
+        ab_previous = ab_origins.get(following.get('id')) if following else None
+        if ab_previous and following:
             takeover = tr.get("takeover")
             if not isinstance(takeover, dict):
                 fail("ab_takeover", p, "A/B needs a designed content takeover and return, not presenter scaling alone")
             else:
+                if (tr.get('fromShot') != ab_previous['id'] or takeover.get('fromShot') is not None) and takeover.get('fromShot') != ab_previous['id']:
+                    fail('ab_origin', p, 'takeover.fromShot must preserve the A/B origin across full-frame inserts')
                 words(takeover, ["reason", "reveal", "bridge"], p + ".takeover")
                 if takeover.get("environment") not in ("transformed", "replaced"):
                     fail("ab_environment", p, "A/B must change background scenes, not retain the same backdrop")
@@ -399,7 +418,7 @@ def validate(data, base, stage):
                 if type(end) is not int or not following["from"] <= end < following["to"] or interval(landing) and end > landing[0]:
                     fail("ab_takeover_timing", p, "Takeover must complete before the destination landing")
                 proofs = takeover.get("proofLayers")
-                stages = [s.get("staging") for s in (previous, following)]
+                stages = [s.get("staging") for s in (ab_previous, following)]
                 if all(isinstance(s, dict) for s in stages):
                     if stages[0].get("scene") == stages[1].get("scene"):
                         fail("ab_environment", p, "A/B background scenes must be distinct")
@@ -421,6 +440,11 @@ def validate(data, base, stage):
             intent_review(tr.get("review"), p + ".review.intentChecks")
     for pair in sorted(expected - seen):
         fail("missing_handoff", "transitions", f"Missing TR {pair[0]} -> {pair[1]}")
+
+    renderer = execution_contract(data, shots, transitions, stage, inputs, base, fail, present)
+    requirement_contract(data, shots, transitions, stage, inputs, base, fail, present)
+    if renderer == 'custom' and stage != 'design':
+        custom_evidence(data, shots, transitions, media, execution_binding, base, inputs, file_ref, fail)
 
     overview = data.get("filmDesignReview")
     if not isinstance(overview, dict):
@@ -502,8 +526,7 @@ def validate(data, base, stage):
             required_criteria = SILENCE_CHECKS if name == "soundfx" and data.get("audioExpected") is False else criteria
             ab_target = item.get("state") in ("A", "B")
             if target in transition_ids:
-                pair = [shot_map.get(item.get(k), {}) for k in ("fromShot", "toShot")]
-                ab_target = all(s.get("state") in ("A", "B") for s in pair) and pair[0].get("state") != pair[1].get("state")
+                ab_target = item.get('toShot') in ab_origins
             if ab_target:
                 required_criteria = (*required_criteria, *AB_CHECKS.get(name, ()))
             for key in required_criteria:
@@ -532,7 +555,7 @@ def validate(data, base, stage):
         playback_review(data.get("technicalReview"), "technicalReview", scope, "technical", evidence=True)
     if stage == "delivery":
         playback_review(data.get("sequenceReview"), "sequenceReview", scope, "normal_speed")
-    return {"schemaVersion": 4, "stage": stage, "version": data.get("version"), "binding": binding, "designBinding": design_binding,
+    return {"schemaVersion": 4, "stage": stage, "version": data.get("version"), "binding": binding, "executionBinding": execution_binding, "designBinding": design_binding,
             "eligible": not errors, "errors": errors,
             "limits": ["This validates records and hashes, not pixels or audio perception.",
                        "Actual semantic review, listening and source completeness remain the producer's responsibility.",
@@ -551,7 +574,7 @@ def main():
         data = json.loads(manifest.read_text(encoding="utf-8-sig"))
         result = validate(data, manifest.parent, args.stage)
         if args.print_binding:
-            print(json.dumps({"binding": result.get("binding"), "designBinding": result.get("designBinding"), "isGatePass": False}))
+            print(json.dumps({"binding": result.get("binding"), "executionBinding": result.get("executionBinding"), "designBinding": result.get("designBinding"), "isGatePass": False}))
             return 0 if result.get("binding") else 1
         if args.report:
             output = args.report.resolve()

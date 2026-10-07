@@ -857,5 +857,32 @@
       "fadeOut": 0.07,
       "gainDb": -15
     }
-  ]
+  ],
+  "requirementContract": {
+    "version": 1,
+    "brief": "user-brief.json",
+    "requirements": [
+      {
+        "id": "R1",
+        "kind": "content",
+        "quote": "Procedural-only installation test; no model, stock downloads or creative approval required.",
+        "scopeReason": "Installation sample only, not a user film approval",
+        "acceptance": "A moving cluster opens into an array in a six-second diagnostic",
+        "fulfillments": [
+          {
+            "target": "SH1",
+            "initial": "cluster enters",
+            "process": "travels with a following camera",
+            "result": "centered subject"
+          },
+          {
+            "target": "SH2",
+            "initial": "closed cluster",
+            "process": "separate pieces unfold into a rectangular array",
+            "result": "open structure and readable title"
+          }
+        ]
+      }
+    ]
+  }
 }

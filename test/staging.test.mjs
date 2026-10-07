@@ -82,3 +82,18 @@ test('aliases for identical background bytes and small decorative substitutions 
  const tiny=safe();Object.assign(tiny.layers.find(l=>l.id==='backgroundB'),{width:30,height:30});assert.match(validateStaging(tiny).join('\n'),/at least 90%/);
  const overlay=safe();overlay.layers.find(l=>l.id==='background').opacity=1;Object.assign(overlay.layers.find(l=>l.id==='backgroundB'),{width:30,height:30});assert.match(validateStaging(overlay).join('\n'),/retained under an overlay/);
 });
+
+test('near-transparent content and backgrounds cannot claim visible dominance or coverage',()=>{
+ const d=safe();d.layers.find(l=>l.id==='content').opacity=1e-9;
+ assert.match(validateStaging(d).join('\n'),/primary subject/);
+ const b=safe();b.layers.find(l=>l.id==='backgroundB').opacity=keys(0,1e-9);
+ assert.match(validateStaging(b).join('\n'),/at least 90%/);
+});
+function bridge(){const d=safe();d.shots[0].to=25;d.shots[1].from=35;d.shots.splice(1,0,{id:'INSERT',state:'full',from:25,to:35});d.transitions[0].fromShot='INSERT';d.transitions[0].takeover.fromShot='SH1';return d;}
+test('full inserts preserve AB origin, distinct backgrounds and all-frame clearance',()=>{
+ assert.deepEqual(validateStaging(bridge()),[]);
+ const origin=bridge();delete origin.transitions[0].takeover.fromShot;assert.match(validateStaging(origin).join('\n'),/preserve the A\/B origin/);
+ const same=bridge();same.layers.find(l=>l.id==='backgroundB').asset='room';assert.match(validateStaging(same).join('\n'),/background is unchanged/);
+ const cover=bridge();cover.layers[0].x=[{frame:0,value:220},{frame:29,value:220},{frame:30,value:650},{frame:31,value:900},{frame:59,value:900}];cover.layers[0].y=300;
+ assert.match(validateStaging(cover).join('\n'),/frame 30 inside a full-frame insert/);
+});

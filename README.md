@@ -10,7 +10,7 @@ https://github.com/user-attachments/assets/37f98ee4-dff0-4948-8d79-7f060c86b287
 
 **30-second launch film — sound on.** Kinetic type, spatial camera moves, transforming shapes and a shared music beat. [Download the MP4](media/spatial-imagery-kinetic-v2.mp4).
 
-**Status: v0.4.0 — script-to-video runner and SDK.** A configured OpenAI-compatible model can turn a script into an editable timed design, acquire selected media, generate a Remotion project and render an MP4 with sound and QA. You can also import a design from Codex or a designer. Artistic review, speech transcription, person matting and relighting remain separate production work. [Script-to-video guide](docs/script-to-video.md).
+**Status: v0.6.0 — script-to-video runner and SDK.** A configured OpenAI-compatible model can turn a script into an editable timed design, acquire selected media, generate a Remotion project and render an MP4 with sound and QA. You can also import a design from Codex or a designer. Artistic review, speech transcription, person matting and relighting remain separate production work. [Script-to-video guide](docs/script-to-video.md).
 
 **First run: a bundled film with no model key or stock downloads.** [Installation / 安装排错](docs/quickstart.md).
 
@@ -21,7 +21,7 @@ node dist/cli.js doctor
 node dist/cli.js demo --out first-film --install --render
 ```
 
-6s / 640×360 / 30 fps / stereo: `first-film/output/draft.mp4`. [G1/G2/G3 production gates / 正式门禁](templates/production/PRODUCTION-GATES.md).
+6s / 640×360 / 30 fps / stereo: `first-film/qa/pipeline-review/draft.mp4`. [G1/G2/G3 production gates / 正式门禁](templates/production/PRODUCTION-GATES.md).
 
 **Eight independent quality gates:** design, motion, camera, handoffs, color/lighting, matting, denoise and sound. Repeated title cards with fades/moves/zooms do not satisfy the design contract. Every applicable gate needs actual evidence; source-inspected non-applicability is explicit. [Strict criteria](templates/production/SPECIALIST-GATES.md).
 
@@ -53,7 +53,7 @@ npm test
 node dist/cli.js init ./my-film
 node dist/cli.js check ./my-film/storyboard.json
 npm pack
-# In another project, install the generated spatial-imagery-0.4.0.tgz.
+# In another project, install the generated spatial-imagery-0.6.0.tgz.
 ```
 
 The complete source is on `main`. Never run `npm install spatial-imagery` assuming this repository owns a registry name.
@@ -92,3 +92,7 @@ To reproduce the launch film, follow [the example instructions](examples/launch-
 Run `npm test` and add behavioral tests for new public functions. Keep every frame deterministic, use explicit time units, preserve source attribution, and separate technical validation from subjective approval. See [CONTRIBUTING](CONTRIBUTING.md).
 
 Original code: **MIT**. Workflow prose: **CC BY 4.0**. Media and optional renderers have separate terms: [NOTICE](NOTICE.md). No paid library or personal source footage is bundled.
+
+[Execution/evidence contract 3.26 and migration](docs/execution-evidence.md). SDK 0.5 requires execution contract 1; old project approvals are not migrated.
+
+**3.27 / v0.6:** [Requirements and guarded entrypoints](docs/requirements-and-entrypoints.md).

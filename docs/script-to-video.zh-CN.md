@@ -2,7 +2,7 @@
 
 **v0.4：** 运动、镜头、声音为独立硬门禁，无声也须验证。`videoType` 必填；A/B 仅允许口播 `talking-head`，其他影片使用 `general` + `full`。见[门禁与迁移](../templates/production/PRODUCTION-GATES.md)。
 
-v0.4: first renders explicitly use `--draft` → `output/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
+v0.4: first renders explicitly use `--draft` → `qa/pipeline-review/draft.mp4` and `draft-qa.json`. Formal rendering requires bundled G1/G2 evidence; delivery requires G3. Python 3.11+ is required for gates only. See the generated `PRODUCTION-GATES.md`. / 首次出片为明确的诊断草样，正式渲染与交付须完成随工程携带的门禁。
 
 v0.2 增加了真实执行入口：脚本 → 模型设计 → 分镜/场景图校验 → 素材获取与核验 → 可编辑 Remotion 工程 → 连续音轨 → MP4 与 QA。原来的运动、相机、声音 SDK 和完整制作方法继续保留。
 
@@ -60,7 +60,7 @@ node dist/cli.js make examples/script-to-film/script.md --config examples/script
 
 ## 设计合同与执行边界
 
-规划器的实际系统上下文由包内 `planner.md`、`design-principles.md`、`design-synthesis.md`、`pipeline.md` 组装。工程的 `design-instructions.md` 保存完整指令，`planner-context.json` 保存标准 3.24、各文件和整体哈希；不依赖作者本机技能。导入设计标为 `source: imported`，只记录可用的方法版本，不冒称曾调用模型。
+规划器的实际系统上下文由包内 `planner.md`、`design-principles.md`、`design-synthesis.md`、`pipeline.md` 组装。工程的 `design-instructions.md` 保存完整指令，`planner-context.json` 保存标准 3.26、各文件和整体哈希；不依赖作者本机技能。导入设计标为 `source: imported`，只记录可用的方法版本，不冒称曾调用模型。
 
 模型必须交付 `designRationale`（依据、替代方案、选择、感知、风险）、`execution`（引擎、理由、能力需求）、逐 SH 的意义/身份/变化/意向/阅读区间、每对相邻 SH 的 `transitions`，以及八项 `gatePlans`。字段见[规划合同](../templates/production/planner.md)与导出的类型。焦点 ID 必须对应镜头边界时实际存在的图层，TR 必须接上两侧焦点；运动、镜头和声音计划不可关闭。有意无声写 `audioReason`。这些决策进入 `production-gates.json`，审核仍全部未验证，模型不能生成通过记录。旧版 `--design` 可继续导入，但缺少的门禁设计内容须人工补齐。
 
@@ -79,7 +79,7 @@ node dist/cli.js make examples/script-to-film/script.md --config examples/script
 - 视频：默认 `required`；明确选择纯程序动画的项目可用 `optional`。它不是省略实际素材研究的借口。
 - 时长、尺寸、帧率、风格和阅读节奏按项目设置，没有“只能 30 秒”或“只能宇宙”的限制。镜头观察任务、空间形式与转场无需固定配额。
 
-音效使用实际录音，按事件覆盖动作过程，具备淡入淡出、强度轨道、声像和重叠区间；音乐/人声保留立体声，运动/接触音先下混单声道再做等功率声像。人声事件会平滑降低竞争音轨。混音进行整片两遍响度处理，默认 -16 LUFS、真峰值上限 -1.5 dBTP；可在设计表 mix.lufs / mix.truePeakDb 调整。报告记录实测值与总线减益，不把它当听感结论。长片超过当前 512 MiB 混音缓冲预算时明确报错，需分段渲染；不会静默截短。
+音效使用实际录音，按事件覆盖动作过程，具备淡入淡出、强度轨道、声像和重叠区间；音乐/人声保留立体声，运动/接触音先下混单声道再做等功率声像。默认保留电平，不自动压低竞争音轨；按实际听感显式配置 mix.ducking.amount/attack/release。需整片两遍响度处理时，设置 mix.normalization=loudness 并明确 mix.lufs / mix.truePeakDb 两个目标；不对每句独立归一。报告记录实测值与总线减益，不把它当听感结论。长片超过当前 512 MiB 混音缓冲预算时明确报错，需分段渲染；不会静默截短。
 
 ## 查看、返修和交付
 
@@ -92,10 +92,13 @@ npm run render:draft
 # 或从 SDK 仓库运行：node dist/cli.js render /absolute/path/my-film
 ```
 
-修改 `design.json` 或工程源码后重新渲染；修改台词内容则重新设计并建立新版本。每次渲染重新验证设计与素材哈希；草样输出 `output/draft.mp4`，正式渲染输出 `output/final.mp4`、关键帧和 QA，核对解码帧数、音画时长、尺寸、帧率与完整解码。默认 `normalSpeed`、`listening`、`aesthetic` 保持未验证；需要按原管线完成真实审看/听审与返修，再把具体成片身份回库。该入口不会自动声称用户认可，也不会自动发布 GitHub、npm 或视频平台。
+修改 `design.json` 或工程源码后重新渲染；修改台词内容则重新设计并建立新版本。每次渲染重新验证设计与素材哈希；草样输出 `qa/pipeline-review/draft.mp4`，正式渲染输出 `output/final.mp4`、关键帧和 QA，核对解码帧数、音画时长、尺寸、帧率与完整解码。默认 `normalSpeed`、`listening`、`aesthetic` 保持未验证；需要按原管线完成真实审看/听审与返修，再把具体成片身份回库。该入口不会自动声称用户认可，也不会自动发布 GitHub、npm 或视频平台。
 
 当前仍需外部解决：真人转录/粗剪/抠像/重打光、配音生成、任意网站音效检索、专业审美评价。模型服务的可用性、费用和上下文长度由所选服务决定。运行需要 Node.js 22+、FFmpeg/ffprobe、Chromium、合适字体和独立渲染器依赖；本 SDK 核心仍没有运行时依赖。
 
-## 3.24: A/B 可执行契约与旧工程迁移
+## 3.26: A/B 可执行契约与旧工程迁移
 
 参见 [A/B 主次交接与人物避让](presenter-staging.zh-CN.md)。每镜必须记录人物、内容、环境、信息保护区和落稳区间，每个 A/B 接口必须设计内容接管。A/B 背景场景必须不同并设计换场，不能保留同背景只调整人物或内容大小；转场全程须让必要信息可见。非口播 full 不强加 A/B。
+
+
+制作必须执行 [3.26 设计、执行与证据契约](execution-evidence.zh-CN.md)：统一设计源、运动/镜头绑定、真实源码引用、自定义渲染逐帧证据、跨 full 的 A/B 检查及显式音频策略，并保留 3.25 原片保真要求。

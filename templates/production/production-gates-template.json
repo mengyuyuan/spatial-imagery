@@ -100,6 +100,22 @@
             "observed": "待验证"
           }
         }
+      },
+      "cameraBinding": {
+        "mode": "hold",
+        "subject": "TODO",
+        "channels": [
+          "camera.x"
+        ],
+        "reason": "TODO"
+      },
+      "motionBinding": {
+        "mode": "hold",
+        "subject": "TODO",
+        "channels": [
+          "layers.TODO.x"
+        ],
+        "reason": "TODO"
       }
     }
   ],
@@ -220,5 +236,12 @@
       "reviews": []
     }
   },
-  "videoType": "general"
+  "videoType": "general",
+  "executionContractVersion": 1,
+  "execution": {
+    "renderer": "custom"
+  },
+  "width": 1920,
+  "height": 1080,
+  "executionEvidence": []
 }
